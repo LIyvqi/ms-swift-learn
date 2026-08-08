@@ -1,0 +1,60 @@
+# 这是叠加在机器预装 ROCm 镜像之上的持久化训练依赖。
+# 只能使用以下命令重建：uv pip install --python .venv/bin/python --no-deps -r requirements-local.txt
+# 不要让依赖解析器使用普通 CUDA 软件包覆盖系统自带的 ROCm 版 PyTorch。
+absl-py==2.5.0
+addict==2.4.0
+aiofiles==24.1.0
+aliyun-python-sdk-core==2.16.0
+aliyun-python-sdk-kms==2.16.5
+attrdict==2.0.1
+binpacking==2.0.1
+brotli==1.2.0
+contourpy==1.3.3
+cpm-kernels==1.0.11
+crcmod==1.7
+cycler==0.12.1
+dacite==1.9.2
+datasets==4.8.4
+defusedxml==0.7.1
+ffmpy==1.0.0
+fonttools==4.63.0
+fsspec==2026.2.0
+gradio==5.50.0
+gradio-client==1.14.0
+groovy==0.1.2
+jmespath==0.10.0
+json-repair==0.62.0
+kiwisolver==1.5.0
+markdown==3.10.3
+matplotlib==3.11.1
+# 使用官方 Git 标签 v4.4.3，对应提交 e1287928，并固定保存在 third_party/ 中。
+-e ./third_party/ms-swift-v4.4.3
+nltk==3.10.2
+orjson==3.11.9
+oss2==2.19.1
+pandas==2.3.3
+pillow==11.3.0
+pycryptodome==3.23.0
+pydantic==2.12.3
+pydantic-core==2.41.4
+pydub==0.25.1
+pyparsing==3.3.2
+pytz==2026.3.post1
+rouge==1.0.1
+ruff==0.16.2
+safehttpx==0.1.7
+simplejson==4.1.1
+sortedcontainers==2.4.0
+starlette==0.52.1
+tensorboard==2.21.0
+tensorboard-data-server==0.7.2
+tomlkit==0.13.3
+transformers==5.12.1
+transformers-stream-generator==0.0.5
+trl==0.29.1
+tzdata==2026.3
+websockets==15.0.1
+decord==0.6.0
+qwen-vl-utils==0.0.14
+fla-core==0.5.1
+flash-linear-attention==0.5.1

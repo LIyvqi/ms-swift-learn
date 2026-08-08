@@ -1,0 +1,96 @@
+# ms-swift-learn
+
+这是一个围绕 `Qwen3.5-0.8B-Base` 和 ms-swift 4.4.3 编写的大模型训练学习仓库。项目使用固定的 1000 条 GSM8K 数据，从监督微调开始，依次实践 LoRA、全参 SFT、GRPO、单教师 OPD、双教师 MOPD 和离线 GKD，并保留统一生成评测和中文实验笔记。
+
+## 已完成实验
+
+| 方法 | 主要用途 | 当前最佳结果 |
+|---|---|---:|
+| CoT-LoRA | 训练轻量推理教师 | 27% |
+| 全参混合 SFT | 让 Base 模型学会指令格式 | 6% |
+| GRPO | 无教师强化学习基线 | 5% |
+| CoT-OPD | 单教师在线蒸馏 | **58%** |
+| MOPD | CoT/Direct 双教师路由 | 28% |
+| CoT-GKD | 离线知识蒸馏 | 57% |
+
+这里的正确率来自固定 100 条验证题、温度为 0 的实际生成。完整参数、轮次、格式率和长度对照见 [多轮调参报告](course/TUNING_RESULTS.md)。
+
+## 仓库结构
+
+```text
+ms-swift-learn/
+├── course/                     # 按学习顺序组织的训练课程与中文笔记
+├── datasets/gsm8k_1k/         # 固定 1000 条教学数据和 SHA-256 校验值
+├── results/evaluations/       # 33 组逐题生成评测
+├── results/figures/           # 精选训练曲线
+├── scripts/                   # 环境重建脚本
+├── tools/                     # 数据准备工具
+├── activate.sh                # 激活持久化环境并设置缓存路径
+├── verify_environment.py      # 环境与 GPU 能力验证
+└── TRAINING_ENVIRONMENT.md    # AMD ROCm 环境和踩坑记录
+```
+
+模型权重、训练检查点、虚拟环境、缓存、完整日志和第三方源码不会提交到 Git。它们都可以根据文档重新下载或训练。
+
+## 环境准备
+
+本项目实测环境为 Ubuntu 22.04、Python 3.12、AMD MI308X、ROCm 7.2 和 PyTorch 2.11 ROCm 开发构建。其他 ROCm/CUDA 组合需要自行验证版本兼容性。
+
+在已经预装兼容 PyTorch、FlashAttention 和 vLLM 的训练镜像中执行：
+
+```bash
+git clone https://github.com/LIyvqi/ms-swift-learn.git
+cd ms-swift-learn
+bash scripts/setup_environment.sh
+source ./activate.sh
+```
+
+下载基础模型：
+
+```bash
+modelscope download \
+  --model Qwen/Qwen3.5-0.8B-Base \
+  --local_dir models/Qwen3.5-0.8B-Base
+```
+
+仓库已经包含固定教学数据。如需从 ModelScope 重新生成并核验：
+
+```bash
+python tools/prepare_gsm8k.py
+bash course/00_setup/verify.sh
+```
+
+## 推荐学习顺序
+
+1. 阅读 [环境记录](TRAINING_ENVIRONMENT.md)，了解 ROCm、持久化缓存和版本约束。
+2. 按 [课程入口](course/README.md) 完成 LoRA 和全参 SFT。
+3. 对比 GRPO、OPD 和 MOPD，理解任务奖励与教师分布信号的区别。
+4. 运行 GKD，比较 forward KL 与 JSD，以及 batch、轮次和速度的权衡。
+5. 阅读 [100 步结果](course/RESULTS_100_STEPS.md) 和 [完整调参结果](course/TUNING_RESULTS.md)。
+6. 在 [逐题评测](results/evaluations/) 中检查模型真实输出，避免只看训练 loss。
+
+## 复现命令
+
+```bash
+source ./activate.sh
+
+# 环境验证
+bash course/00_setup/verify.sh
+
+# 监督训练参数网格
+bash course/07_tuning/run_sft_grid.sh
+
+# 强化学习与在线/离线蒸馏
+bash course/07_tuning/run_rl_distill_tuning.sh
+bash course/07_tuning/run_extra_rounds.sh
+
+# 固定验证集生成评测
+bash course/07_tuning/run_generation_eval.sh
+bash course/07_tuning/run_final_eval.sh
+```
+
+训练产物默认写入被 Git 忽略的 `outputs/`。项目不会自动上传模型或检查点。
+
+## 第三方内容
+
+本仓库使用 Qwen3.5、ms-swift、ModelScope 和 GSM8K。代码、模型与数据分别遵守各自上游项目的许可证，具体来源见 [第三方说明](THIRD_PARTY_NOTICES.md)。本仓库当前未额外声明覆盖全部内容的统一开源许可证。

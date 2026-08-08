@@ -1,0 +1,38 @@
+# 本地 Python 环境与包构建产物
+.venv/
+*.egg-info/
+build/
+dist/
+
+# 模型、训练检查点、缓存与第三方源码
+models/
+outputs/
+third_party/
+.cache/
+checkpoint-*/
+*.safetensors
+*.pt
+*.pth
+training_args.bin
+
+# Python 与 Jupyter 自动生成文件
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+
+# 训练服务和实验平台日志
+*.log
+runs/
+wandb/
+
+# 本地密钥和证书
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# 编辑器与操作系统文件
+.DS_Store
+.idea/
+.vscode/
