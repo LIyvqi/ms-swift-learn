@@ -4,6 +4,23 @@
 
 所有实验已经进一步完成 100 步实测，定量结果、稳定性问题和调参建议见 [RESULTS_100_STEPS.md](RESULTS_100_STEPS.md)。多轮、学习率、散度参数、batch 与统一生成评测的最终对照见 [TUNING_RESULTS.md](TUNING_RESULTS.md)。
 
+## 分目录详细教程
+
+每个目录都提供数据 JSONL 格式、字段解释、关键参数、自定义数据方法和实验注意事项：
+
+| 目录 | 详细教程 |
+|---|---|
+| `00_setup` | [环境、模型与数据资产检查](00_setup/README.md) |
+| `01_lora_sft` | [CoT/Direct LoRA 监督微调](01_lora_sft/README.md) |
+| `02_full_sft` | [全参数混合 SFT 学生](02_full_sft/README.md) |
+| `03_grpo` | [GRPO 奖励强化学习](03_grpo/README.md) |
+| `04_opd` | [单教师 OPD 在线蒸馏](04_opd/README.md) |
+| `05_mopd` | [多教师 MOPD 路由蒸馏](05_mopd/README.md) |
+| `06_offline_gkd` | [离线 GKD 知识蒸馏](06_offline_gkd/README.md) |
+| `07_tuning` | [参数矩阵与统一生成评测](07_tuning/README.md) |
+| `plugins` | [奖励插件与自定义奖励](plugins/README.md) |
+| `tools` | [数据生成与资产校验](tools/README.md) |
+
 ## 先做环境检查
 
 ```bash
