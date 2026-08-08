@@ -1,6 +1,6 @@
 # ms-swift-learn
 
-这是一个围绕 `Qwen3.5-0.8B-Base` 和 ms-swift 4.4.3 编写的大模型训练学习仓库。项目使用固定的 GSM8K 与复旦新闻分类教学数据，从监督微调开始，依次实践 LoRA、全参 SFT、GRPO、RLOO、自定义奖励、单教师 OPD、双教师 MOPD 和离线 GKD，并保留统一生成评测和中文实验笔记。
+这是一个围绕 `Qwen3.5-0.8B-Base` 和 ms-swift 4.4.3 编写的大模型训练学习仓库。项目使用固定的 GSM8K 与复旦新闻分类教学数据，从监督微调开始，依次实践 LoRA、全参 SFT、GRPO、Direct-RLOO、CoT-RLOO、自定义奖励、单教师 OPD、双教师 MOPD 和离线 GKD，并保留统一生成评测和中文实验笔记。
 
 ## 已完成实验
 
@@ -11,11 +11,14 @@
 | GRPO | 无教师强化学习基线 | 5% |
 | 新闻分类 SFT | 四分类监督基线 | **99.06%** |
 | RLOO 新闻分类 | 自定义正确性与格式奖励 | 98.75% |
+| CoT-RLOO 新闻分类 | 人工证据过程代理奖励 | **97.50%** |
 | CoT-OPD | 单教师在线蒸馏 | **58%** |
 | MOPD | CoT/Direct 双教师路由 | 28% |
 | CoT-GKD | 离线知识蒸馏 | 57% |
 
 这里的正确率来自固定 100 条验证题、温度为 0 的实际生成。完整参数、轮次、格式率和长度对照见 [多轮调参报告](course/TUNING_RESULTS.md)。
+
+新闻分类 SFT/RLOO 的 Direct 结果与 CoT-RLOO 使用不同输出要求；97.50% 是 320 条独立新闻上的显式 CoT 分类结果，不应只按数值与 99.06% 的 Direct 短答案结果判断优劣。
 
 ## 仓库结构
 
@@ -24,6 +27,7 @@ ms-swift-learn/
 ├── course/                     # 按学习顺序组织的训练课程与中文笔记
 ├── datasets/gsm8k_1k/         # 固定 1000 条教学数据和 SHA-256 校验值
 ├── datasets/fudan_news_4class/ # 固定 1600 条四分类数据和校验值
+├── datasets/fudan_news_cot_50/ # 50 条人工证据 CoT 分类子集
 ├── results/evaluations/       # 33 组逐题生成评测
 ├── results/figures/           # 精选训练曲线
 ├── scripts/                   # 环境重建脚本
@@ -71,7 +75,8 @@ bash course/00_setup/verify.sh
 4. 运行 GKD，比较 forward KL 与 JSD，以及 batch、轮次和速度的权衡。
 5. 阅读 [100 步结果](course/RESULTS_100_STEPS.md) 和 [完整调参结果](course/TUNING_RESULTS.md)。
 6. 完成 [RLOO 自定义奖励分类教程](course/08_rloo_classification/README.md)，比较 SFT 与在线强化学习。
-7. 在 [逐题评测](results/evaluations/) 中检查模型真实输出，避免只看训练 loss。
+7. 完成 [CoT-RLOO 证据分类教程](course/09_rloo_cot_classification/README.md)，比较结果奖励与过程代理奖励。
+8. 在 [逐题评测](results/evaluations/) 中检查模型真实输出，避免只看训练 loss。
 
 ## 复现命令
 
@@ -97,6 +102,12 @@ bash course/08_rloo_classification/prepare_data.sh
 bash course/08_rloo_classification/train_sft.sh
 bash course/08_rloo_classification/train_rloo.sh
 TARGET=all bash course/08_rloo_classification/evaluate.sh
+
+# CoT-RLOO 人工证据分类完整实验
+bash course/09_rloo_cot_classification/prepare_data.sh
+bash course/09_rloo_cot_classification/train_sft.sh
+bash course/09_rloo_cot_classification/train_rloo.sh
+TARGET=all bash course/09_rloo_cot_classification/evaluate.sh
 ```
 
 训练产物默认写入被 Git 忽略的 `outputs/`。项目不会自动上传模型或检查点。

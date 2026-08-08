@@ -1,6 +1,6 @@
 # 数据与资产校验工具
 
-本目录保存课程内部校验工具。`validate_assets.py` 检查当前模型和 GSM8K 固定数据；仓库根目录的 `tools/prepare_gsm8k.py` 负责生成数学数据视图，`tools/prepare_fudan_classification.py` 负责生成新闻分类视图。
+本目录保存课程内部校验工具。`validate_assets.py` 检查当前模型和全部固定数据；仓库根目录的 `tools/prepare_gsm8k.py` 负责生成数学数据视图，`tools/prepare_fudan_classification.py` 负责生成新闻分类视图，`tools/prepare_fudan_cot.py` 根据人工标注生成 CoT 分类视图。
 
 ## 原始 GSM8K 格式
 
@@ -50,6 +50,7 @@ bash course/00_setup/verify.sh
 - 新闻分类文件的 SHA-256、样本数和四类平衡正确。
 - 分类 SFT/验证数据含 `assistant`，RLOO 数据不含 `assistant`。
 - 分类 SFT、RLOO 与验证主集合正文互不重叠，冒烟集属于 RLOO 训练集。
+- CoT 分类的五个文件数量和摘要正确，40 条训练与 10 条证据留出记录不重叠。
 
 ## 扩展自己的数据
 
@@ -71,6 +72,14 @@ bash course/08_rloo_classification/prepare_data.sh
 脚本会从 ModelScope 下载固定版本的复旦新闻 CSV 到 `downloads/`，然后执行 `tools/prepare_fudan_classification.py`。输出包括含 `assistant` 的 SFT/验证数据、无 `assistant` 的 RLOO 数据、16 条冒烟子集和校验清单。四个主类别分别抽取 80 条 SFT、240 条 RLOO 和 80 条验证记录，三个主集合不重叠。
 
 原始 CSV 的核心字段是 `prompt` 与 `answer`；`answer` 保存英文类别名。转换脚本用显式 `标签映射` 生成中文标签，并把分类标准答案保留为 JSONL 顶层 `label`，供自定义奖励按参数名读取。
+
+## CoT 证据分类数据生成
+
+```bash
+bash course/09_rloo_cot_classification/prepare_data.sh
+```
+
+`datasets/fudan_news_cot_50/annotations.json` 保存 50 条人工筛选记录和每条三个原文证据词。`tools/prepare_fudan_cot.py` 校验证据确实出现于新闻正文，再生成 40 条 SFT/RLOO 双视图、8 条冒烟、10 条人工证据留出集和 320 条独立 CoT 验证视图。派生 JSONL 不应直接修改。
 
 ## 注意事项
 

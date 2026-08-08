@@ -1,6 +1,6 @@
 # Qwen3.5-0.8B 训练与蒸馏课程
 
-本目录使用同一个 `Qwen3.5-0.8B-Base`，按从监督学习到在线/离线蒸馏的顺序组织。第 00 至 07 节使用固定 1000 条 GSM8K 数据；第 08 节改用复旦新闻四分类数据，演示 RLOO 与自定义奖励。GSM8K 实验默认跑 900 条训练、100 条验证；分类实验的数量单独写在第 08 节教程中。
+本目录使用同一个 `Qwen3.5-0.8B-Base`，按从监督学习到在线/离线蒸馏的顺序组织。第 00 至 07 节使用固定 1000 条 GSM8K 数据；第 08 节改用复旦新闻四分类数据，演示 Direct-RLOO；第 09 节进一步加入人工证据和独立的 CoT-RLOO。GSM8K 实验默认跑 900 条训练、100 条验证；分类实验的数量写在各节教程中。
 
 所有实验已经进一步完成 100 步实测，定量结果、稳定性问题和调参建议见 [RESULTS_100_STEPS.md](RESULTS_100_STEPS.md)。多轮、学习率、散度参数、batch 与统一生成评测的最终对照见 [TUNING_RESULTS.md](TUNING_RESULTS.md)。
 
@@ -19,6 +19,7 @@
 | `06_offline_gkd` | [离线 GKD 知识蒸馏](06_offline_gkd/README.md) |
 | `07_tuning` | [参数矩阵与统一生成评测](07_tuning/README.md) |
 | `08_rloo_classification` | [RLOO 自定义奖励新闻分类](08_rloo_classification/README.md) |
+| `09_rloo_cot_classification` | [CoT-RLOO 人工证据新闻分类](09_rloo_cot_classification/README.md) |
 | `plugins` | [奖励插件与自定义奖励](plugins/README.md) |
 | `tools` | [数据生成与资产校验](tools/README.md) |
 
@@ -123,6 +124,18 @@ TARGET=all bash course/08_rloo_classification/evaluate.sh
 
 这一节使用 4 类中文新闻和两个自定义 reward，重点学习顶层 `label` 如何传入插件、留一基线如何构造 advantage，以及小输出空间为什么需要先检查组内采样差异。100 步实测结果见 [RLOO 分类结果](RLOO_CLASSIFICATION_RESULTS.md)。
 
+### 8. CoT-RLOO：给分类理由增加过程代理奖励
+
+```bash
+bash course/09_rloo_cot_classification/prepare_data.sh
+bash course/09_rloo_cot_classification/train_sft.sh
+SMOKE=1 bash course/09_rloo_cot_classification/train_rloo.sh
+bash course/09_rloo_cot_classification/train_rloo.sh
+TARGET=all bash course/09_rloo_cot_classification/evaluate.sh
+```
+
+本节人工筛选 50 条语义明确新闻并标注原文证据词，以 40 条训练、10 条留出；奖励由最终标签、严格 CoT 格式、思考块证据覆盖和推理结论一致性构成。重点是区分“结果奖励”“可计算过程代理”和真正的过程奖励模型，并学习 Qwen3.5 的 thinking 模板参数。100 step 独立验证准确率为 97.50%，完整结果见 [CoT-RLOO 实测报告](RLOO_COT_CLASSIFICATION_RESULTS.md)。
+
 ## 先跑完整冒烟测试链路
 
 ```bash
@@ -137,6 +150,7 @@ SMOKE=1 STYLE=cot bash course/06_offline_gkd/train.sh
 SMOKE=1 STYLE=direct bash course/06_offline_gkd/train.sh
 SMOKE=1 bash course/05_mopd/run.sh
 SMOKE=1 bash course/08_rloo_classification/train_rloo.sh
+SMOKE=1 bash course/09_rloo_cot_classification/train_rloo.sh
 ```
 
 冒烟测试输出带 `_smoke` 后缀，不会被正式实验误用。正式实验不设置 `SMOKE`，脚本会自动寻找同一模式下最近的前置检查点。

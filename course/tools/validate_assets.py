@@ -13,6 +13,7 @@ ROOT = Path(__file__).resolve().parents[2]
 DATA = ROOT / "datasets" / "gsm8k_1k"
 MODEL = ROOT / "models" / "Qwen3.5-0.8B-Base"
 CLASSIFICATION_DATA = ROOT / "datasets" / "fudan_news_4class"
+COT_CLASSIFICATION_DATA = ROOT / "datasets" / "fudan_news_cot_50"
 
 
 def read_rows(path: Path) -> list[dict]:
@@ -77,4 +78,40 @@ assert classification_texts["sft_train.jsonl"].isdisjoint(classification_texts["
 assert classification_texts["sft_train.jsonl"].isdisjoint(classification_texts["val.jsonl"])
 assert classification_texts["rl_train.jsonl"].isdisjoint(classification_texts["val.jsonl"])
 assert classification_texts["rl_smoke.jsonl"] <= classification_texts["rl_train.jsonl"]
+
+cot_manifest = json.loads(
+    COT_CLASSIFICATION_DATA.joinpath("checksums.json").read_text(encoding="utf-8")
+)
+cot_counts = {
+    "sft_train.jsonl": 40,
+    "rl_train.jsonl": 40,
+    "rl_smoke.jsonl": 8,
+    "evidence_val.jsonl": 10,
+    "cot_val_320.jsonl": 320,
+}
+cot_rows = {}
+for name, expected_count in cot_counts.items():
+    path = COT_CLASSIFICATION_DATA / name
+    rows = read_rows(path)
+    cot_rows[name] = rows
+    assert len(rows) == expected_count, name
+    assert hashlib.sha256(path.read_bytes()).hexdigest() == cot_manifest["文件"][name]["SHA-256"], name
+
+# SFT 与留出集必须有参考答案，RLOO 数据必须只含提示。
+for name in ("sft_train.jsonl", "evidence_val.jsonl", "cot_val_320.jsonl"):
+    assert all(row["messages"][-1]["role"] == "assistant" for row in cot_rows[name]), name
+for name in ("rl_train.jsonl", "rl_smoke.jsonl"):
+    assert all(
+        all(message["role"] != "assistant" for message in row["messages"])
+        for row in cot_rows[name]
+    ), name
+
+cot_train_ids = {row["source_record_id"] for row in cot_rows["rl_train.jsonl"]}
+cot_heldout_ids = {row["source_record_id"] for row in cot_rows["evidence_val.jsonl"]}
+assert cot_train_ids.isdisjoint(cot_heldout_ids)
+assert {row["source_record_id"] for row in cot_rows["rl_smoke.jsonl"]} <= cot_train_ids
+assert Counter(row["label"] for row in cot_rows["rl_train.jsonl"]) == Counter(
+    {label: 10 for label in classification_labels}
+)
+assert all(len(row["evidence_terms"].split("|||")) == 3 for row in cot_rows["rl_train.jsonl"])
 print("ASSET_CHECK=PASS")

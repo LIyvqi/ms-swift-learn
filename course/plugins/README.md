@@ -1,6 +1,6 @@
 # 奖励插件说明
 
-本目录存放 ms-swift 可动态加载的自定义奖励。`gsm8k_rewards.py` 用于数学答案与 `\boxed{}` 格式；`classification_rewards.py` 用于中文四分类正确性与严格短格式。
+本目录存放 ms-swift 可动态加载的自定义奖励。`gsm8k_rewards.py` 用于数学答案与 `\boxed{}` 格式；`classification_rewards.py` 用于中文四分类正确性与严格短格式；`cot_classification_rewards.py` 进一步奖励分类 CoT 的证据覆盖和结论一致性。
 
 ## 数据格式与参数传递
 
@@ -59,6 +59,16 @@ def __call__(self, completions, solution, **kwargs):
 ```
 
 正确性奖励允许从非严格回答中提取最后一个合法标签，格式奖励只接受完整的 `\boxed{标签}`，两者组合可以同时学习任务与输出约束。完整示例见 [RLOO 分类教程](../08_rloo_classification/README.md)。
+
+## CoT 分类奖励格式
+
+CoT-RLOO 数据再增加一个由 `|||` 分隔的顶层证据字段：
+
+```json
+{"messages":[{"role":"user","content":"球队在世界杯比赛中获胜。"}],"label":"体育","evidence_terms":"球队|||世界杯|||比赛"}
+```
+
+`cot_classification_rewards.py` 注册标签正确性、严格 CoT 结构、思考块证据覆盖比例和推理结论一致性四个奖励。证据奖励只搜索 `<think>` 内部，防止把关键词堆到最终答案区就得分。它仍只是字符串过程代理，无法证明理由在语义或因果上正确。完整规则、权重和奖励投机边界见 [CoT-RLOO 教程](../09_rloo_cot_classification/README.md)。
 
 ## 添加自己的奖励
 

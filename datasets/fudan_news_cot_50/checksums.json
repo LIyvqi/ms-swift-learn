@@ -1,0 +1,27 @@
+{
+  "数据来源": "datasets/fudan_news_4class/rl_train.jsonl 与 val.jsonl",
+  "标注方式": "人工筛选语义明确样本并标注三个原文证据词，参考理由由固定模板生成",
+  "证据分隔符": "|||",
+  "文件": {
+    "sft_train.jsonl": {
+      "样本数": 40,
+      "SHA-256": "50824bd091e18fa5620e4c21c33252898ea2ae0c68104b12734cc2102fe8082e"
+    },
+    "rl_train.jsonl": {
+      "样本数": 40,
+      "SHA-256": "5e24181b13279e798dce44cd826868dda8f8465d9b07db0440c39f82f0b32e24"
+    },
+    "rl_smoke.jsonl": {
+      "样本数": 8,
+      "SHA-256": "78c1030667585d28f9ddca9e42859830c6e9655bac7194fb20f9d14d29ad1d8a"
+    },
+    "evidence_val.jsonl": {
+      "样本数": 10,
+      "SHA-256": "b519b8173a9d4558141564ba89cec5fe9f2dc533886f0ae85819e6f662f929a5"
+    },
+    "cot_val_320.jsonl": {
+      "样本数": 320,
+      "SHA-256": "2e191279fe5240dbad0342eef8655972f2f25f98546c5ac76701c1df4f2a8038"
+    }
+  }
+}

@@ -1,0 +1,63 @@
+{
+  "说明": "从复旦新闻四分类 RL 集中人工筛选语义明确的样本，并人工标注三个正文证据词。",
+  "训练": [
+    {"record_id":"Politics-rl-0018","evidence_terms":["邓小平","第一生产力","社会主义"]},
+    {"record_id":"Politics-rl-0200","evidence_terms":["现代企业制度","党组织","政治核心"]},
+    {"record_id":"Politics-rl-0234","evidence_terms":["朝鲜","统一","联邦制"]},
+    {"record_id":"Politics-rl-0067","evidence_terms":["政治稳定","政治改革","邓小平"]},
+    {"record_id":"Politics-rl-0236","evidence_terms":["社会主义民主","政治创新","民主"]},
+    {"record_id":"Politics-rl-0012","evidence_terms":["戈尔巴乔夫","社会主义思想","苏共中央"]},
+    {"record_id":"Politics-rl-0085","evidence_terms":["阿尔巴尼亚","外交委员会","意大利"]},
+    {"record_id":"Politics-rl-0082","evidence_terms":["马克思","社会解放","民主政治"]},
+    {"record_id":"Politics-rl-0171","evidence_terms":["干部人事制度","中共中央","改革"]},
+    {"record_id":"Politics-rl-0033","evidence_terms":["领导班子","思想政治建设","一把手"]},
+
+    {"record_id":"Economy-rl-0072","evidence_terms":["市场经济","政治经济学","资本"]},
+    {"record_id":"Economy-rl-0199","evidence_terms":["澳门经济","财政","银行"]},
+    {"record_id":"Economy-rl-0003","evidence_terms":["知识经济","统计核算","产业"]},
+    {"record_id":"Economy-rl-0021","evidence_terms":["通货紧缩","流动性陷阱","宏观经济政策"]},
+    {"record_id":"Economy-rl-0041","evidence_terms":["区域经济政策","贸易","投资"]},
+    {"record_id":"Economy-rl-0077","evidence_terms":["数字经济","产业","企业"]},
+    {"record_id":"Economy-rl-0154","evidence_terms":["有效投资","资本形成","工业"]},
+    {"record_id":"Economy-rl-0029","evidence_terms":["金融创新","新经济","资本"]},
+    {"record_id":"Economy-rl-0127","evidence_terms":["天然气工业","经济","中西部"]},
+    {"record_id":"Economy-rl-0169","evidence_terms":["国民经济","中长期发展战略","金融"]},
+
+    {"record_id":"Sports-rl-0233","evidence_terms":["冬泳","体育","北京"]},
+    {"record_id":"Sports-rl-0226","evidence_terms":["奥林匹克日","长跑","体育"]},
+    {"record_id":"Sports-rl-0116","evidence_terms":["高校体操","体育教学","体操"]},
+    {"record_id":"Sports-rl-0090","evidence_terms":["滑水运动","运动员","比赛"]},
+    {"record_id":"Sports-rl-0122","evidence_terms":["体育科学","空翻","运动员"]},
+    {"record_id":"Sports-rl-0049","evidence_terms":["跨栏跑","运动成绩","运动员"]},
+    {"record_id":"Sports-rl-0169","evidence_terms":["健身运动","体育","控制仪"]},
+    {"record_id":"Sports-rl-0188","evidence_terms":["中国武术","文化特征","发展前景"]},
+    {"record_id":"Sports-rl-0163","evidence_terms":["世界杯乒乓球","瑞典男队","冠军"]},
+    {"record_id":"Sports-rl-0128","evidence_terms":["体育专业","基本能力","培养模式"]},
+
+    {"record_id":"Computer-rl-0064","evidence_terms":["对象抽取","模块内聚性","算法"]},
+    {"record_id":"Computer-rl-0222","evidence_terms":["稳态优化","控制算法","收敛性"]},
+    {"record_id":"Computer-rl-0094","evidence_terms":["地下管线","网络","信息系统"]},
+    {"record_id":"Computer-rl-0012","evidence_terms":["触发器","计算机应用","数据库"]},
+    {"record_id":"Computer-rl-0039","evidence_terms":["神经计算","坐标变换","网络模型"]},
+    {"record_id":"Computer-rl-0211","evidence_terms":["并发实时系统","自动验证","软件"]},
+    {"record_id":"Computer-rl-0213","evidence_terms":["Client/Server","安全","网络"]},
+    {"record_id":"Computer-rl-0001","evidence_terms":["手写速记符","识别","特征匹配"]},
+    {"record_id":"Computer-rl-0011","evidence_terms":["智能控制系统","模糊逻辑","专家系统"]},
+    {"record_id":"Computer-rl-0019","evidence_terms":["多媒体对象","Agent","集成模型"]}
+  ],
+  "留出": [
+    {"record_id":"Politics-rl-0225","evidence_terms":["政治体制改革","政府职能","改革"]},
+    {"record_id":"Politics-rl-0118","evidence_terms":["苏联东欧","社会道德","政治"]},
+    {"record_id":"Politics-rl-0142","evidence_terms":["马克思主义政治学","邓小平","政治理论"]},
+
+    {"record_id":"Economy-rl-0209","evidence_terms":["市场经济","政府作用","企业"]},
+    {"record_id":"Economy-rl-0159","evidence_terms":["市场经济","法治","市场"]},
+    {"record_id":"Economy-rl-0067","evidence_terms":["财政支出","韩国经济","消费"]},
+
+    {"record_id":"Sports-rl-0187","evidence_terms":["中学生运动员","世界中学生运动会","金牌"]},
+    {"record_id":"Sports-rl-0207","evidence_terms":["体育","社会功能","体育的社会功能"]},
+
+    {"record_id":"Computer-rl-0045","evidence_terms":["网络多媒体","实时传输协议","计算机"]},
+    {"record_id":"Computer-rl-0070","evidence_terms":["数据库操作模块","设计与实现","计算机工程"]}
+  ]
+}
