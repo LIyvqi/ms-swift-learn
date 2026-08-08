@@ -1,6 +1,6 @@
 # ms-swift-learn
 
-这是一个围绕 `Qwen3.5-0.8B-Base` 和 ms-swift 4.4.3 编写的大模型训练学习仓库。项目使用固定的 GSM8K 与复旦新闻分类教学数据，从监督微调开始，依次实践 LoRA、全参 SFT、GRPO、Direct-RLOO、CoT-RLOO、自定义奖励、单教师 OPD、双教师 MOPD 和离线 GKD，并保留统一生成评测和中文实验笔记。
+这是一个围绕 `Qwen3.5-0.8B-Base` 和 ms-swift 4.4.3 源码环境编写的大模型训练学习仓库。项目使用固定的 GSM8K 与复旦新闻教学数据，覆盖 LoRA/全参 SFT、DFT、DPO、RM/PPO、KTO、CPO、SimPO、ORPO、GRPO/RLOO/DAPO/GSPO、自定义奖励、GKD、OPD/MOPD/OPSD，以及 Regression-Aware REAL 的核心教学复现。所有新增课程、脚本注释和笔记都使用中文。
 
 ## 已完成实验
 
@@ -20,6 +20,8 @@
 
 新闻分类 SFT/RLOO 的 Direct 结果与 CoT-RLOO 使用不同输出要求；97.50% 是 320 条独立新闻上的显式 CoT 分类结果，不应只按数值与 99.06% 的 Direct 短答案结果判断优劣。
 
+第 10～22 节新增的人类偏好对齐方法共享同一套数据划分与 SFT 起点，重点是学习数据格式、损失差异、显存成本和框架边界；实测对照见 [对齐课程实测报告](course/ALIGNMENT_RESULTS.md)。
+
 ## 仓库结构
 
 ```text
@@ -28,6 +30,8 @@ ms-swift-learn/
 ├── datasets/gsm8k_1k/         # 固定 1000 条教学数据和 SHA-256 校验值
 ├── datasets/fudan_news_4class/ # 固定 1600 条四分类数据和校验值
 ├── datasets/fudan_news_cot_50/ # 50 条人工证据 CoT 分类子集
+├── datasets/alignment_news/   # SFT、成对偏好、KTO、prompt 与 OPSD 视图
+├── datasets/real_judge_1to5/ # 1～5 分回归感知评分数据
 ├── results/evaluations/       # 33 组逐题生成评测
 ├── results/figures/           # 精选训练曲线
 ├── scripts/                   # 环境重建脚本
@@ -77,6 +81,8 @@ bash course/00_setup/verify.sh
 6. 完成 [RLOO 自定义奖励分类教程](course/08_rloo_classification/README.md)，比较 SFT 与在线强化学习。
 7. 完成 [CoT-RLOO 证据分类教程](course/09_rloo_cot_classification/README.md)，比较结果奖励与过程代理奖励。
 8. 在 [逐题评测](results/evaluations/) 中检查模型真实输出，避免只看训练 loss。
+9. 从 [统一对齐数据](course/10_alignment_data/README.md) 开始，对比 DPO、RM/PPO、KTO、CPO、SimPO、ORPO 与 GRPO 变体。
+10. 完成 [Regression-Aware REAL](course/22_real_regression/README.md)，理解 RAIL 期望分数、RLOO、CoT exploration 与 prediction refinement。
 
 ## 复现命令
 
@@ -108,6 +114,18 @@ bash course/09_rloo_cot_classification/prepare_data.sh
 bash course/09_rloo_cot_classification/train_sft.sh
 bash course/09_rloo_cot_classification/train_rloo.sh
 TARGET=all bash course/09_rloo_cot_classification/evaluate.sh
+
+# 经典偏好对齐，详细依赖顺序见课程入口
+bash course/10_alignment_data/prepare_data.sh
+bash course/11_sft_dft/train_sft.sh
+bash course/12_dpo/train.sh
+bash course/13_reward_model/train.sh
+bash course/14_ppo/train.sh
+
+# 回归感知 REAL
+bash course/22_real_regression/prepare_data.sh
+bash course/22_real_regression/train_sft.sh
+bash course/22_real_regression/train_real.sh
 ```
 
 训练产物默认写入被 Git 忽略的 `outputs/`。项目不会自动上传模型或检查点。

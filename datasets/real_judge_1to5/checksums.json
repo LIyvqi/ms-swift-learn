@@ -1,0 +1,29 @@
+{
+  "文件": {
+    "sft_train.jsonl": {
+      "条数": 90,
+      "SHA-256": "39ddd2acdfad7025c912b5d393f82f8bfef1d0bb23e9874f7ccfa990715f905b"
+    },
+    "prompts_train.jsonl": {
+      "条数": 90,
+      "SHA-256": "738862ae4f8c24807e37657bd3386426be0e9320e340c39bce7c835418451fa3"
+    },
+    "sft_val.jsonl": {
+      "条数": 30,
+      "SHA-256": "2c6546706dafb6f270069ec4aa1190b41be1b4f8c3b359a8830eab625667dca1"
+    },
+    "prompts_val.jsonl": {
+      "条数": 30,
+      "SHA-256": "70c3473ccbe6de5fd1779d33587817cbd5366e8de5f23e6ce9d1b7b64bb38baf"
+    },
+    "sft_smoke.jsonl": {
+      "条数": 10,
+      "SHA-256": "f633138aaaad7d962068b047714cf315355ba38d285eccc0b16144ddf8ddd7d8"
+    },
+    "prompts_smoke.jsonl": {
+      "条数": 10,
+      "SHA-256": "a8273fa71ae1db4c15c8a8c7db702e9159ee4b5048144adfbd2525b732a0a56c"
+    }
+  },
+  "分数量表": "1 到 5，每个题目各生成一条"
+}

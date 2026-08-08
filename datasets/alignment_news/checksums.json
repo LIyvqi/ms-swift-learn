@@ -1,0 +1,84 @@
+{
+  "来源": "/mnt/workspace/ms-swift-learn/datasets/fudan_news_4class/sft_train.jsonl",
+  "划分": "每类前 64 条训练、后 16 条验证；冒烟集取每类前 4 条",
+  "类别": [
+    "政治",
+    "财经",
+    "体育",
+    "计算机"
+  ],
+  "文件": {
+    "sft_train.jsonl": {
+      "条数": 256,
+      "SHA-256": "2dc8aa0eb98dcbb37ed05a98c2d04158060e1e476cee81571122ef789b3c61a6"
+    },
+    "pairwise_train.jsonl": {
+      "条数": 256,
+      "SHA-256": "b24aa05b26ef4048383c614c4aa4b465e94429543177fe8eb70fe4f703128cae"
+    },
+    "rm_train.jsonl": {
+      "条数": 512,
+      "SHA-256": "780fa7c2b2785670ed63730e2e21ae097b2b162d150f72f334ec344e62595379"
+    },
+    "kto_train.jsonl": {
+      "条数": 512,
+      "SHA-256": "6f1a140895a5ba888d190f60f7f4538a3fb019b754c13bfcc766a0565a747547"
+    },
+    "prompts_train.jsonl": {
+      "条数": 256,
+      "SHA-256": "c8c6486f06494d4fa564a9570a7cebde489b139e6e386b66131d209591052549"
+    },
+    "opsd_train.jsonl": {
+      "条数": 256,
+      "SHA-256": "adb32092936896f775a5ac54cd100a5ae3b381d0a84bdbd4ad689a495e44bdd1"
+    },
+    "sft_val.jsonl": {
+      "条数": 64,
+      "SHA-256": "e6a74193fe6316184aa400f342574f6a8cf23e825d7ed23794d4a4ead03a5cd9"
+    },
+    "pairwise_val.jsonl": {
+      "条数": 64,
+      "SHA-256": "203a2910f914de07c1dcdacc95c89a607ec66d8a2fde65c33158bca9e6554661"
+    },
+    "rm_val.jsonl": {
+      "条数": 128,
+      "SHA-256": "6694141d73da3b04a5c6d55bcc72a694dd025adf9c61e6ce8e787aa2d87f3760"
+    },
+    "kto_val.jsonl": {
+      "条数": 128,
+      "SHA-256": "4ff9f21fbcee58354b5d2ed634be8cd436115cccf8974fc1e900adf1a1db0084"
+    },
+    "prompts_val.jsonl": {
+      "条数": 64,
+      "SHA-256": "e0eb6955f2d862299d7dfd573e8c72605c554ce3c0dab332f7e24f707d8ed1fd"
+    },
+    "opsd_val.jsonl": {
+      "条数": 64,
+      "SHA-256": "5cb347830c817b1febe63b5abcb904bb9db51faa5b5d653387874cc0bae5b339"
+    },
+    "sft_smoke.jsonl": {
+      "条数": 16,
+      "SHA-256": "c6550671c5b4f483ea6744f2fb31ac74bd3e4160845ff4caf2fef817a93c59fc"
+    },
+    "pairwise_smoke.jsonl": {
+      "条数": 16,
+      "SHA-256": "a08026d166cb2df9723489238d4917e0251ba3f301204ddd02c35edbac6a27ba"
+    },
+    "rm_smoke.jsonl": {
+      "条数": 32,
+      "SHA-256": "6710a94b5e170c0566b8c361b3b4e4643dc75d336be5e61f2954b5212307faca"
+    },
+    "kto_smoke.jsonl": {
+      "条数": 32,
+      "SHA-256": "d932a3811ef643bd395e92d3496b692931732bd6330e23df3c91b9676afdf18e"
+    },
+    "prompts_smoke.jsonl": {
+      "条数": 16,
+      "SHA-256": "81396e8a5b918c5881dee42d240f3f7aa86a7173477ab0529195d8d0261e02ee"
+    },
+    "opsd_smoke.jsonl": {
+      "条数": 16,
+      "SHA-256": "91ef477efe09ff4adba1e4fc2ee3a91e87dda76da8c0fb5c17d54d285c94c846"
+    }
+  }
+}

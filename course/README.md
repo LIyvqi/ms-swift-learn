@@ -1,6 +1,6 @@
 # Qwen3.5-0.8B 训练与蒸馏课程
 
-本目录使用同一个 `Qwen3.5-0.8B-Base`，按从监督学习到在线/离线蒸馏的顺序组织。第 00 至 07 节使用固定 1000 条 GSM8K 数据；第 08 节改用复旦新闻四分类数据，演示 Direct-RLOO；第 09 节进一步加入人工证据和独立的 CoT-RLOO。GSM8K 实验默认跑 900 条训练、100 条验证；分类实验的数量写在各节教程中。
+本目录使用同一个 `Qwen3.5-0.8B-Base`，按从监督学习到在线/离线蒸馏和人类偏好对齐的顺序组织。第 00 至 07 节使用固定 1000 条 GSM8K 数据；第 08 至 09 节演示 Direct-RLOO 与 CoT-RLOO；第 10 至 22 节使用统一新闻偏好数据和 1～5 分评分数据，系统比较 SFT/DFT、DPO、RM/PPO、KTO、CPO、SimPO、ORPO、GRPO/DAPO/GSPO、GKD/OPD-RL/OPSD 以及两个同名 REAL。
 
 所有实验已经进一步完成 100 步实测，定量结果、稳定性问题和调参建议见 [RESULTS_100_STEPS.md](RESULTS_100_STEPS.md)。多轮、学习率、散度参数、batch 与统一生成评测的最终对照见 [TUNING_RESULTS.md](TUNING_RESULTS.md)。
 
@@ -20,6 +20,19 @@
 | `07_tuning` | [参数矩阵与统一生成评测](07_tuning/README.md) |
 | `08_rloo_classification` | [RLOO 自定义奖励新闻分类](08_rloo_classification/README.md) |
 | `09_rloo_cot_classification` | [CoT-RLOO 人工证据新闻分类](09_rloo_cot_classification/README.md) |
+| `10_alignment_data` | [统一对齐数据与方法地图](10_alignment_data/README.md) |
+| `11_sft_dft` | [SFT 与动态权重 DFT](11_sft_dft/README.md) |
+| `12_dpo` | [DPO 成对偏好优化](12_dpo/README.md) |
+| `13_reward_model` | [RM 奖励模型](13_reward_model/README.md) |
+| `14_ppo` | [RM 驱动的 PPO](14_ppo/README.md) |
+| `15_kto` | [KTO 点偏好对齐](15_kto/README.md) |
+| `16_cpo` | [CPO 无参考偏好优化](16_cpo/README.md) |
+| `17_simpo` | [SimPO 序列平均隐式奖励](17_simpo/README.md) |
+| `18_orpo` | [ORPO 单阶段几率比优化](18_orpo/README.md) |
+| `19_grpo_dapo_gspo` | [GRPO、DAPO 与 GSPO](19_grpo_dapo_gspo/README.md) |
+| `20_gkd_opd_opsd` | [GKD、OPD-RL 与 OPSD](20_gkd_opd_opsd/README.md) |
+| `21_real_rewards_as_labels` | [ms-swift 原生 Rewards-as-Labels REAL](21_real_rewards_as_labels/README.md) |
+| `22_real_regression` | [Regression-Aware REAL 核心复现](22_real_regression/README.md) |
 | `plugins` | [奖励插件与自定义奖励](plugins/README.md) |
 | `tools` | [数据生成与资产校验](tools/README.md) |
 
@@ -135,6 +148,38 @@ TARGET=all bash course/09_rloo_cot_classification/evaluate.sh
 ```
 
 本节人工筛选 50 条语义明确新闻并标注原文证据词，以 40 条训练、10 条留出；奖励由最终标签、严格 CoT 格式、思考块证据覆盖和推理结论一致性构成。重点是区分“结果奖励”“可计算过程代理”和真正的过程奖励模型，并学习 Qwen3.5 的 thinking 模板参数。100 step 独立验证准确率为 97.50%，完整结果见 [CoT-RLOO 实测报告](RLOO_COT_CLASSIFICATION_RESULTS.md)。
+
+### 9. 经典偏好对齐课程
+
+先生成一次共享数据，再按依赖顺序运行：
+
+```bash
+bash course/10_alignment_data/prepare_data.sh
+bash course/11_sft_dft/train_sft.sh
+bash course/12_dpo/train.sh
+bash course/13_reward_model/train.sh
+bash course/14_ppo/train.sh
+bash course/15_kto/train.sh
+bash course/16_cpo/train.sh
+bash course/17_simpo/train.sh
+bash course/18_orpo/train.sh
+bash course/19_grpo_dapo_gspo/train_grpo.sh
+bash course/19_grpo_dapo_gspo/train_dapo.sh
+bash course/19_grpo_dapo_gspo/train_gspo.sh
+bash course/20_gkd_opd_opsd/train_opsd.sh
+```
+
+DPO/KTO 使用参考策略，CPO/SimPO/ORPO 不需要独立参考模型，PPO 必须先训练 RM。所有数据格式和字段映射都集中在第 10 节，每一节另有算法公式、参数和自定义数据注意事项。
+
+### 10. Regression-Aware REAL
+
+```bash
+bash course/22_real_regression/prepare_data.sh
+bash course/22_real_regression/train_sft.sh
+bash course/22_real_regression/train_real.sh
+```
+
+第 22 节是用户指定的 LLM-as-a-Judge 回归感知 REAL；第 21 节是 ms-swift 原生的另一篇同名 REAL。两者的目标函数、数据和评测都不同，不能混用。
 
 ## 先跑完整冒烟测试链路
 
