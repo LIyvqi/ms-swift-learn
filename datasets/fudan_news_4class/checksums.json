@@ -1,0 +1,36 @@
+{
+  "数据来源": "damo/zh_cls_fudan-news",
+  "来源地址": "https://modelscope.cn/datasets/damo/zh_cls_fudan-news",
+  "来源版本": "1810dce2722d76e714db8290c9a4de3f6c8340f2",
+  "许可协议": "Apache-2.0",
+  "随机种子": 42,
+  "正文最大字符数": 600,
+  "原始四类记录数": 2004,
+  "规范化后全局唯一正文数": 1927,
+  "丢弃的跨标签冲突正文数": 0,
+  "去除的重复或冲突记录数": 77,
+  "标签映射": {
+    "Politics": "政治",
+    "Economy": "财经",
+    "Sports": "体育",
+    "Computer": "计算机"
+  },
+  "文件": {
+    "sft_train.jsonl": {
+      "样本数": 320,
+      "SHA-256": "93adda598c4337dd547245ac37ac6320ff4c729eedb40e3f5dc9d95b45e64c37"
+    },
+    "rl_train.jsonl": {
+      "样本数": 960,
+      "SHA-256": "873b98bfd80ac69a189fe8b81fa8b6436d018ab590c81d68f71a68090dc66103"
+    },
+    "rl_smoke.jsonl": {
+      "样本数": 16,
+      "SHA-256": "157ccd54e47cb7eb729980152d9859fe30d30cad5ed8d61a1289ae63cad321fd"
+    },
+    "val.jsonl": {
+      "样本数": 320,
+      "SHA-256": "7777915ebc98f9454ee05dd82c96da25765bbce1b2c07348d1780386627157ea"
+    }
+  }
+}

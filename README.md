@@ -1,6 +1,6 @@
 # ms-swift-learn
 
-这是一个围绕 `Qwen3.5-0.8B-Base` 和 ms-swift 4.4.3 编写的大模型训练学习仓库。项目使用固定的 1000 条 GSM8K 数据，从监督微调开始，依次实践 LoRA、全参 SFT、GRPO、单教师 OPD、双教师 MOPD 和离线 GKD，并保留统一生成评测和中文实验笔记。
+这是一个围绕 `Qwen3.5-0.8B-Base` 和 ms-swift 4.4.3 编写的大模型训练学习仓库。项目使用固定的 GSM8K 与复旦新闻分类教学数据，从监督微调开始，依次实践 LoRA、全参 SFT、GRPO、RLOO、自定义奖励、单教师 OPD、双教师 MOPD 和离线 GKD，并保留统一生成评测和中文实验笔记。
 
 ## 已完成实验
 
@@ -9,6 +9,8 @@
 | CoT-LoRA | 训练轻量推理教师 | 27% |
 | 全参混合 SFT | 让 Base 模型学会指令格式 | 6% |
 | GRPO | 无教师强化学习基线 | 5% |
+| 新闻分类 SFT | 四分类监督基线 | **99.06%** |
+| RLOO 新闻分类 | 自定义正确性与格式奖励 | 98.75% |
 | CoT-OPD | 单教师在线蒸馏 | **58%** |
 | MOPD | CoT/Direct 双教师路由 | 28% |
 | CoT-GKD | 离线知识蒸馏 | 57% |
@@ -21,6 +23,7 @@
 ms-swift-learn/
 ├── course/                     # 按学习顺序组织的训练课程与中文笔记
 ├── datasets/gsm8k_1k/         # 固定 1000 条教学数据和 SHA-256 校验值
+├── datasets/fudan_news_4class/ # 固定 1600 条四分类数据和校验值
 ├── results/evaluations/       # 33 组逐题生成评测
 ├── results/figures/           # 精选训练曲线
 ├── scripts/                   # 环境重建脚本
@@ -67,7 +70,8 @@ bash course/00_setup/verify.sh
 3. 对比 GRPO、OPD 和 MOPD，理解任务奖励与教师分布信号的区别。
 4. 运行 GKD，比较 forward KL 与 JSD，以及 batch、轮次和速度的权衡。
 5. 阅读 [100 步结果](course/RESULTS_100_STEPS.md) 和 [完整调参结果](course/TUNING_RESULTS.md)。
-6. 在 [逐题评测](results/evaluations/) 中检查模型真实输出，避免只看训练 loss。
+6. 完成 [RLOO 自定义奖励分类教程](course/08_rloo_classification/README.md)，比较 SFT 与在线强化学习。
+7. 在 [逐题评测](results/evaluations/) 中检查模型真实输出，避免只看训练 loss。
 
 ## 复现命令
 
@@ -87,10 +91,16 @@ bash course/07_tuning/run_extra_rounds.sh
 # 固定验证集生成评测
 bash course/07_tuning/run_generation_eval.sh
 bash course/07_tuning/run_final_eval.sh
+
+# RLOO 新闻分类完整实验
+bash course/08_rloo_classification/prepare_data.sh
+bash course/08_rloo_classification/train_sft.sh
+bash course/08_rloo_classification/train_rloo.sh
+TARGET=all bash course/08_rloo_classification/evaluate.sh
 ```
 
 训练产物默认写入被 Git 忽略的 `outputs/`。项目不会自动上传模型或检查点。
 
 ## 第三方内容
 
-本仓库使用 Qwen3.5、ms-swift、ModelScope 和 GSM8K。代码、模型与数据分别遵守各自上游项目的许可证，具体来源见 [第三方说明](THIRD_PARTY_NOTICES.md)。本仓库当前未额外声明覆盖全部内容的统一开源许可证。
+本仓库使用 Qwen3.5、ms-swift、ModelScope、GSM8K 和复旦新闻分类数据。代码、模型与数据分别遵守各自上游项目的许可证，具体来源见 [第三方说明](THIRD_PARTY_NOTICES.md)。本仓库当前未额外声明覆盖全部内容的统一开源许可证。

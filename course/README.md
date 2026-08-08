@@ -1,6 +1,6 @@
 # Qwen3.5-0.8B 训练与蒸馏课程
 
-本目录使用同一个 `Qwen3.5-0.8B-Base` 和固定 1000 条 GSM8K 数据，按从监督学习到在线/离线蒸馏的顺序组织。所有实验默认跑 900 条训练、100 条验证；加 `SMOKE=1` 时只读 16 条并训练 1 step。
+本目录使用同一个 `Qwen3.5-0.8B-Base`，按从监督学习到在线/离线蒸馏的顺序组织。第 00 至 07 节使用固定 1000 条 GSM8K 数据；第 08 节改用复旦新闻四分类数据，演示 RLOO 与自定义奖励。GSM8K 实验默认跑 900 条训练、100 条验证；分类实验的数量单独写在第 08 节教程中。
 
 所有实验已经进一步完成 100 步实测，定量结果、稳定性问题和调参建议见 [RESULTS_100_STEPS.md](RESULTS_100_STEPS.md)。多轮、学习率、散度参数、batch 与统一生成评测的最终对照见 [TUNING_RESULTS.md](TUNING_RESULTS.md)。
 
@@ -18,6 +18,7 @@
 | `05_mopd` | [多教师 MOPD 路由蒸馏](05_mopd/README.md) |
 | `06_offline_gkd` | [离线 GKD 知识蒸馏](06_offline_gkd/README.md) |
 | `07_tuning` | [参数矩阵与统一生成评测](07_tuning/README.md) |
+| `08_rloo_classification` | [RLOO 自定义奖励新闻分类](08_rloo_classification/README.md) |
 | `plugins` | [奖励插件与自定义奖励](plugins/README.md) |
 | `tools` | [数据生成与资产校验](tools/README.md) |
 
@@ -110,6 +111,18 @@ STYLE=direct bash course/06_offline_gkd/train.sh
 
 对照建议：保持数据、步数和 LoRA rank 不变，比较 `beta=0`（forward KL）、`0.5`（JSD）、`1`（reverse KL）对输出覆盖度和长度的影响。
 
+### 7. RLOO：自定义分类奖励
+
+```bash
+bash course/08_rloo_classification/prepare_data.sh
+bash course/08_rloo_classification/train_sft.sh
+SMOKE=1 bash course/08_rloo_classification/train_rloo.sh
+bash course/08_rloo_classification/train_rloo.sh
+TARGET=all bash course/08_rloo_classification/evaluate.sh
+```
+
+这一节使用 4 类中文新闻和两个自定义 reward，重点学习顶层 `label` 如何传入插件、留一基线如何构造 advantage，以及小输出空间为什么需要先检查组内采样差异。100 步实测结果见 [RLOO 分类结果](RLOO_CLASSIFICATION_RESULTS.md)。
+
 ## 先跑完整冒烟测试链路
 
 ```bash
@@ -123,6 +136,7 @@ SMOKE=1 STYLE=direct bash course/04_opd/train.sh
 SMOKE=1 STYLE=cot bash course/06_offline_gkd/train.sh
 SMOKE=1 STYLE=direct bash course/06_offline_gkd/train.sh
 SMOKE=1 bash course/05_mopd/run.sh
+SMOKE=1 bash course/08_rloo_classification/train_rloo.sh
 ```
 
 冒烟测试输出带 `_smoke` 后缀，不会被正式实验误用。正式实验不设置 `SMOKE`，脚本会自动寻找同一模式下最近的前置检查点。

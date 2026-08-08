@@ -1,6 +1,6 @@
 # 奖励插件说明
 
-本目录存放 ms-swift 可动态加载的自定义奖励。当前 `gsm8k_rewards.py` 注册两个奖励：答案正确性和 `\boxed{}` 格式。
+本目录存放 ms-swift 可动态加载的自定义奖励。`gsm8k_rewards.py` 用于数学答案与 `\boxed{}` 格式；`classification_rewards.py` 用于中文四分类正确性与严格短格式。
 
 ## 数据格式与参数传递
 
@@ -41,6 +41,24 @@ def __call__(self, completions, solution, **kwargs):
 ```
 
 多个奖励默认共同进入训练信号。新增奖励时应先确认量纲，避免某个连续高分奖励完全淹没其他奖励。
+
+## 分类奖励格式
+
+分类在线 RL 数据不含 `assistant`，标准标签放在顶层 `label`：
+
+```json
+{"messages":[{"role":"system","content":"可选类别只有正面、负面，只输出类别。"},{"role":"user","content":"这家店很好。"}],"label":"正面"}
+```
+
+`classification_rewards.py` 的正确性奖励按同名参数接收 `label`，格式奖励则只读取 `completions`。当前合法标签是政治、财经、体育、计算机；移植到自己的分类任务时必须同步修改插件中的 `允许标签`，不能只改数据。
+
+```text
+--external_plugins course/plugins/classification_rewards.py
+--reward_funcs course_classification_accuracy course_classification_format
+--reward_weights 1.0 0.2
+```
+
+正确性奖励允许从非严格回答中提取最后一个合法标签，格式奖励只接受完整的 `\boxed{标签}`，两者组合可以同时学习任务与输出约束。完整示例见 [RLOO 分类教程](../08_rloo_classification/README.md)。
 
 ## 添加自己的奖励
 
