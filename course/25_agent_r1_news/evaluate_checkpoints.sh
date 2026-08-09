@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+ROOT="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/../.." && pwd)"
+source "${ROOT}/activate.sh"
+
+SFT_ROOT="${SFT_OUTPUT:-${ROOT}/outputs/25_agent_r1_news/sft_2epoch}"
+RUN_DIR="${RUN_DIR:-$({ find "${SFT_ROOT}" -mindepth 1 -maxdepth 1 -type d -printf '%T@ %p\n' 2>/dev/null || true; } | sort -nr | head -n 1 | cut -d' ' -f2-)}"
+if [[ -z "${RUN_DIR}" ]]; then
+  echo "找不到 SFT 运行目录：${SFT_ROOT}" >&2
+  exit 1
+fi
+
+mapfile -t CHECKPOINTS < <(find "${RUN_DIR}" -mindepth 1 -maxdepth 1 -type d -name 'checkpoint-*' | sort -V)
+if [[ "${#CHECKPOINTS[@]}" -eq 0 ]]; then
+  echo "运行目录中没有 checkpoint：${RUN_DIR}" >&2
+  exit 1
+fi
+
+# 对每个 epoch checkpoint 使用同一批动态环境样本，便于选择轮次。
+for checkpoint in "${CHECKPOINTS[@]}"; do
+  step="${checkpoint##*-}"
+  python "${ROOT}/course/25_agent_r1_news/evaluate_agent.py" \
+    --adapter "${checkpoint}" \
+    --dataset "${EVAL_DATASET:-${ROOT}/datasets/agent_r1_news/rl_smoke.jsonl}" \
+    --maximum-samples "${EVAL_SAMPLES:-12}" \
+    --output "${ROOT}/outputs/25_agent_r1_news/${EVAL_PREFIX:-sft}_checkpoint_${step}_evaluation.json"
+done

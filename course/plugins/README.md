@@ -1,6 +1,6 @@
 # 奖励插件说明
 
-本目录存放 ms-swift 可动态加载的自定义奖励。`gsm8k_rewards.py` 同时提供数学答案、严格显式 CoT、可执行计算代理和异步大模型裁判；`classification_rewards.py` 用于中文四分类正确性与严格短格式；`cot_classification_rewards.py` 进一步奖励分类 CoT 的证据覆盖和结论一致性。
+本目录存放 ms-swift 可动态加载的自定义奖励和环境。`gsm8k_rewards.py` 同时提供数学答案、严格显式 CoT、可执行计算代理和异步大模型裁判；`classification_rewards.py` 用于中文四分类正确性与严格短格式；`cot_classification_rewards.py` 进一步奖励分类 CoT 的证据覆盖和结论一致性；`agent_r1_news.py` 注册新闻规则 GYM 环境、多轮调度器和五个分层奖励。
 
 ## 数据格式与参数传递
 
@@ -102,6 +102,16 @@ orms["course_custom_reward"] = 自定义奖励
 ```
 
 对应数据要有顶层 `reference`。然后把 `course_custom_reward` 加入训练脚本的 `--reward_funcs`。
+
+## Agent-R1 新闻环境
+
+`agent_r1_news.py` 同时注册：
+
+- `course_agent_r1_news`：把纯 Python 规则状态机适配为 ms-swift `Env`。
+- `course_agent_r1_news_scheduler`：每轮调用环境，并把完整轨迹和阶段指标写入 `rollout_infos`。
+- `course_agent_news_retrieval`、`composition`、`decision`、`protocol`、`reflection`：按顶层 `task` 分流的多任务奖励。
+
+训练时 `--use_gym_env true` 会把 `rollout_infos.total_reward` 再追加为一路奖励，因此五个插件奖励对应六个 `reward_weights`。不适用于当前任务的奖励返回 `None`，不能返回 0。完整环境配置和通用数据格式见 [第 25 课](../25_agent_r1_news/README.md)。
 
 ## 注意事项
 

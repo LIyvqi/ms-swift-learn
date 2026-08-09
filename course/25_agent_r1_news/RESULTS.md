@@ -1,0 +1,121 @@
+# 实测结果记录
+
+本页只记录真实执行过的结果，并明确区分确定性流水线、冒烟训练和正式训练。`outputs/` 不提交 Git，因此这里是可持久化、可上传的摘要。
+
+## 确定性流水线
+
+全部 320 条验证新闻、51 条物理规则：
+
+| 方法 | Recall@5 | Recall@10 | MRR |
+|---|---:|---:|---:|
+| BM25 | 0.433 | 0.578 | 0.558 |
+| 哈希稠密基线 | 0.105 | 0.140 | 0.160 |
+| Hybrid | 0.313 | 0.398 | 0.485 |
+| Hybrid + Rerank | **0.498** | **0.597** | **0.632** |
+
+决策准确率：无知识关键词基线 0.784，全量知识关键词基线 0.831，RAG Top-1 0.856，未经选择的 Top-8 加机械 Composer 0.788。结果说明重排有效，但把候选全部组合会引入噪声。
+
+SFT 聊天模板长度审计：三个任务最大长度分别为 retrieve 2435、compose 2916、decision 2832 token，全部低于 4608，没有静默删除超长样本。
+
+## 冒烟训练
+
+### SFT 三步
+
+- 训练 loss：1.422。
+- 验证 loss：1.116。
+- 验证 token accuracy：0.801。
+- 峰值 HBM：55.6 GiB。
+- 结论：训练和保存链路通过；真实三任务各一条的轨迹评测仍失败，不能视为有效模型。
+
+### 早期 GRPO 两步
+
+- 两个步骤均完成多轮 vLLM rollout、六路奖励、反向传播和保存。
+- 单步约 22 秒，峰值 HBM 161.7 GiB。
+- 第二步 reward 均值 -0.139、reward std 0.413，说明组内已有非零训练信号。
+- 负奖励来自仅三步 SFT 的策略经常违反工具顺序或输出无效 JSON，符合预期。
+
+### GRPO 显存与吞吐探索
+
+| 配置 | 最大轮数 | 结果 | 观察 |
+|---|---|---:|---:|
+| batch 8、G=2、无梯度检查点 | 4 | 2/2 成功 | 每步 4 条独立 prompt，但 G=2 零方差偏多 |
+| batch 10 或 12、G=2 | 4 | 首次 backward OOM | rollout 空闲显存不能代表 backward 安全 |
+| batch 8、G=2、无梯度检查点 | 6 | 第二次 backward OOM | 恢复轮次使随机轨迹变长，原边界不再安全 |
+| batch 6、G=3、无梯度检查点 | 6 | 偶发第三次 backward OOM | 降低 vLLM 比例仍不能消除训练激活峰值 |
+| batch 6、G=3、梯度检查点、生成批次 12 | 6 | 8/8 成功 | 峰值逻辑显存 161.2 GiB，总运行 93 秒 |
+
+最终配置一次 rollout 生成 12 条轨迹，供两个训练 step 复用。日志中有完整 reward 的 rollout step 平均约 19.4 秒，但把中间复用 step 一起计入后，端到端平均为 11.6 秒/step。8 步的平均 reward std 为 0.152，零方差组占比 0.438，说明 G=3 保留了可用但仍不充足的比较信号。五个自定义奖励与 gym 过程奖励均实际参与计算。
+
+## 旧版共享提示词 SFT：失败对照
+
+使用 2880 条全量专家轨迹、batch 8、LoRA rank 32 训练 3 轮，共 1080 step：
+
+| 轮次 | checkpoint | eval loss | eval token accuracy |
+|---:|---:|---:|---:|
+| 1 | 360 | 0.02349 | 0.99222 |
+| 2 | 720 | **0.02207** | 0.99396 |
+| 3 | 1080 | 0.02366 | **0.99457** |
+
+- 总运行时间：64 分 25 秒。
+- 峰值 HBM：190.23 GiB，设备物理容量为 191.69 GiB。
+- 第三轮 token accuracy 继续上升，但 eval loss 反弹，已出现轻微过拟合迹象。
+
+### 旧版 120 条真实动态轨迹
+
+每个任务 40 条，使用同一验证子集与确定性生成：
+
+| checkpoint | retrieve F1 | compose F1 | decision 组合 F1 | decision accuracy | evidence coverage |
+|---:|---:|---:|---:|---:|---:|
+| 360 | 0.295 | 0.505 | **0.351** | **0.750** | **0.725** |
+| 720 | 0.295 | **0.533** | 0.340 | 0.375 | 0.113 |
+
+`checkpoint-720` 的静态 loss 更低，但 decision 经常误用 compose 任务的 `canonical_rules` finish 格式，导致最终决策大幅变差。这说明多任务 Agent 不能只用 teacher-forcing loss 选轮次，也不能在 system prompt 中同时展示多个任务的结束格式。
+
+## 修正版正式 SFT
+
+修正版为三个任务分别构造 system prompt，只展示当前任务唯一合法的 finish schema；训练仍使用全部 2880 条轨迹。考虑到旧版第 3 轮已经出现验证 loss 反弹，本次训练 2 轮，共 720 step：
+
+| 轮次 | checkpoint | eval loss | eval token accuracy |
+|---:|---:|---:|---:|
+| 1 | 360 | 0.02270 | 0.99237 |
+| 2 | 720 | **0.01923** | **0.99421** |
+
+- 总运行时间：42 分 8 秒。
+- 峰值 HBM：190.01 GiB。
+- 第二轮静态验证与动态验证都优于第一轮，因此修正版 GRPO 使用 `checkpoint-720`。
+
+### 修正版 120 条真实动态轨迹
+
+每个任务 40 条，`checkpoint-720` 使用最多 6 轮：专家最短路径仍是 retrieve/compose 3 轮、decision 4 轮，额外两轮只用于从一次错误动作恢复。
+
+| 任务 | 关键阶段指标 | 协议分 | task schema | 反思成功率 |
+|---|---:|---:|---:|---:|
+| retrieve | 检索 F1 0.519 | 1.000 | 0.875 | 0.250 |
+| compose | 组合 F1 **0.818** | 1.000 | 1.000 | **0.850** |
+| decision | accuracy **0.950**；组合 F1 0.780；证据覆盖 0.717 | 0.996 | 0.975 | 0.575 |
+
+旧版最大 4 轮时，第二轮 SFT 的 decision accuracy 只有 0.10。轨迹显示模型常在第一步错误调用 `reflect`，随后虽然能完成 search、reflect、compose，却没有剩余轮次 finish。把上限增到 6 并没有改变最短专家路径，而是把“任务能力”和“一次动作失误后的可恢复性”分开评测；相同 checkpoint 的 accuracy 随之恢复到 0.95。
+
+## 正式 GRPO
+
+### 第一版多任务运行的失败诊断
+
+旧版首次满数据运行在 146/1440 step 主动停止，而不是隐藏失败继续耗时。前 100 步 reward 均值约 2.13、decision reward 约 0.84，但 121～140 步的 composition reward 已降到 0。轨迹审计发现：
+
+- compose 任务开始输出 decision 的 `decision/matched_rules/evidence` 结束格式。
+- 旧 system prompt 同时展示三种 finish schema，放大了多任务串线。
+- 旧协议奖励只检查 JSON 外壳，错任务 schema 仍可得高分。
+- G=2 时两个错误输出完全相同会产生零优势，无法自我修复。
+
+修正版只在 system prompt 中展示当前任务唯一合法的 finish schema，环境新增 `invalid_finish_schema` 和 `task_schema_score`，协议奖励也显式计入 schema 正确性。
+
+### 修正版正式运行
+
+已使用 2880 条全量三任务数据启动 2 轮训练，共 2880 step；参数为 batch 6、G=3、generation batch 12、temperature 0.8、每轮最多 160 token、最多 6 轮，并开启梯度检查点。每 240 step 保存一次带优化器状态的可恢复检查点，训练后将把同一 120 条动态验证结果补到这里。
+
+## 复核命令
+
+```bash
+python course/25_agent_r1_news/evaluate_pipeline.py
+python course/25_agent_r1_news/summarize_training.py outputs/25_agent_r1_news/某次运行/logging.jsonl
+```

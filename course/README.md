@@ -1,6 +1,6 @@
 # Qwen3.5-0.8B 训练与蒸馏课程
 
-本目录使用同一个 `Qwen3.5-0.8B-Base`，按从监督学习到在线/离线蒸馏、人类偏好对齐和 Agent 持续学习的顺序组织。第 00 至 07 节使用固定 1000 条 GSM8K 数据；第 08 至 09 节演示 Direct-RLOO 与 CoT-RLOO；第 10 至 22 节使用统一新闻偏好数据和 1～5 分评分数据，系统比较 SFT/DFT、DPO、RM/PPO、KTO、CPO、SimPO、ORPO、GRPO/DAPO/GSPO、GKD/OPD-RL/OPSD 以及两个同名 REAL；第 23 节用 JitRL 演示不更新模型参数的推理期持续学习，第 24 节进一步研究知识支持库、历史案例库和规则库协同修正 logits。
+本目录使用同一个 `Qwen3.5-0.8B-Base`，按从监督学习到在线/离线蒸馏、人类偏好对齐和 Agent 持续学习的顺序组织。第 00 至 07 节使用固定 1000 条 GSM8K 数据；第 08 至 09 节演示 Direct-RLOO 与 CoT-RLOO；第 10 至 22 节使用统一新闻偏好数据和 1～5 分评分数据，系统比较 SFT/DFT、DPO、RM/PPO、KTO、CPO、SimPO、ORPO、GRPO/DAPO/GSPO、GKD/OPD-RL/OPSD 以及两个同名 REAL；第 23 节用 JitRL 演示不更新模型参数的推理期持续学习，第 24 节进一步研究知识支持库、历史案例库和规则库协同修正 logits，第 25 节实现可训练的检索、反思、规则组合和执行多轮智能体。
 
 所有实验已经进一步完成 100 步实测，定量结果、稳定性问题和调参建议见 [RESULTS_100_STEPS.md](RESULTS_100_STEPS.md)。多轮、学习率、散度参数、batch 与统一生成评测的最终对照见 [TUNING_RESULTS.md](TUNING_RESULTS.md)。
 
@@ -35,6 +35,7 @@
 | `22_real_regression` | [Regression-Aware REAL 核心复现](22_real_regression/README.md) |
 | `23_jitrl` | [JitRL 推理期持续强化学习](23_jitrl/README.md) |
 | `24_kcr_jitrl` | [KCR-JitRL 知识、案例与规则协同](24_kcr_jitrl/README.md) |
+| `25_agent_r1_news` | [Agent-R1 风格的新闻规则智能体](25_agent_r1_news/README.md) |
 | `plugins` | [奖励插件与自定义奖励](plugins/README.md) |
 | `tools` | [数据生成与资产校验](tools/README.md) |
 
@@ -199,6 +200,17 @@ bash course/24_kcr_jitrl/run.sh
 
 第 24 节是对 JitRL 的实验性扩展：把支持文档、历史案例、人工规则和案例浓缩规则分别转换成可审计的 logits 贡献，并用来源置信度抑制低可信错误资料。100 局、5 随机种子实测中，本地完整方案总成功率为 89.6%，阿里云 `qwen-plus` 为 90.0%；两者都明显高于仅案例的 73.0%。数据格式、消融设置、规则删除方法和完整边界见 [KCR-JitRL 教程](24_kcr_jitrl/README.md)。
 
+### 13. Agent-R1 风格的多轮规则智能体
+
+```bash
+python course/25_agent_r1_news/prepare_data.py
+SMOKE=1 bash course/25_agent_r1_news/train_sft.sh
+SMOKE=1 bash course/25_agent_r1_news/train_grpo.sh
+bash course/25_agent_r1_news/run_full.sh
+```
+
+第 25 节把新闻分类改造成 `Retrieve → Rerank → Reflect → Compose → Execute` 的动态环境。模型首轮看不到规则库，通过结构化动作调用检索、反思和规则组合工具；SFT 学习完整专家轨迹，GYM-GRPO 再用检索、组合、决策、协议、反思和环境过程奖励优化策略。课程使用全部 2880 条三任务训练轨迹，数据格式、显存边界、失败实验和动态评测见 [Agent-R1 风格课程](25_agent_r1_news/README.md)。
+
 ## 先跑完整冒烟测试链路
 
 ```bash
@@ -215,11 +227,13 @@ SMOKE=1 STYLE=direct bash course/06_offline_gkd/train.sh
 SMOKE=1 bash course/05_mopd/run.sh
 SMOKE=1 bash course/08_rloo_classification/train_rloo.sh
 SMOKE=1 bash course/09_rloo_cot_classification/train_rloo.sh
+SMOKE=1 bash course/25_agent_r1_news/train_sft.sh
+SMOKE=1 bash course/25_agent_r1_news/train_grpo.sh
 ```
 
 冒烟测试输出带 `_smoke` 后缀，不会被正式实验误用。正式实验不设置 `SMOKE`，脚本会自动寻找同一模式下最近的前置检查点。
 
-本项目已经实际完成上述十条冒烟测试命令；它们验证的是环境、两种输出风格、教师路由、反向传播与保存链路，不是训练质量结论。具体指标见 [SMOKE_RESULTS.md](SMOKE_RESULTS.md)。
+本项目已经实际执行上述冒烟链路；它验证的是环境、两种输出风格、教师路由、动态工具调用、反向传播与保存链路，不是训练质量结论。旧课程指标见 [SMOKE_RESULTS.md](SMOKE_RESULTS.md)，第 25 节结果单独记录在 [Agent-R1 实测结果](25_agent_r1_news/RESULTS.md)。
 
 ## 固定步数实验
 
@@ -246,6 +260,7 @@ find outputs -name logging.jsonl -print
 - OPD/MOPD：`teacher_kl`、completion length、是否正确结束。
 - GKD：distillation loss、SFT loss、CoT/direct 两种风格的格式保持率。
 - JitRL：总体/前 10 局/后 10 局成功率、经验邻居数、参数不变量。
+- Agent-R1：Recall@K、组合 F1、决策 macro-F1、证据覆盖、无效动作率和平均轮数。
 
 ## 参数实验顺序
 

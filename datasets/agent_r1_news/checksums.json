@@ -1,0 +1,41 @@
+{
+  "source": {
+    "train": "datasets/fudan_news_4class/rl_train.jsonl",
+    "val": "datasets/fudan_news_4class/val.jsonl"
+  },
+  "seed": 20260809,
+  "maximum_article_chars": 2400,
+  "tasks": [
+    "retrieve",
+    "compose",
+    "decision"
+  ],
+  "labels": [
+    "政治",
+    "财经",
+    "体育",
+    "计算机"
+  ],
+  "counts": {
+    "rl_train.jsonl": 2880,
+    "rl_val.jsonl": 960,
+    "rl_smoke.jsonl": 12,
+    "sft_train.jsonl": 2880,
+    "sft_val.jsonl": 960,
+    "sft_smoke.jsonl": 12
+  },
+  "task_counts": {
+    "retrieve": 960,
+    "compose": 960,
+    "decision": 960
+  },
+  "sha256": {
+    "knowledge_rules.jsonl": "fc5e609ec72edd640055d7ae81f02038b7d1ce00801013f2d15310aed5a4cb1d",
+    "rl_train.jsonl": "49be2ac74d5b017aceb5bbf7f094b0a25c39bed6466b8f55996b48eab167c616",
+    "rl_val.jsonl": "ece7bbda232ebd46d8d5e09fa0ed922e8e6f3857c2b2330c2babd6292df4421b",
+    "rl_smoke.jsonl": "565ac9b906bda88fc1cabe377dd18c759ceed08049153ed793e7e89ce201902a",
+    "sft_train.jsonl": "16776c77f26eb380ff5809ca633c8e55d01c360abf9617dd365976647ec36d05",
+    "sft_val.jsonl": "2b3ccd8cbe053b18d03bc8b59c8d8ca4e76a5e533fbb25895c8fad1cf6e05960",
+    "sft_smoke.jsonl": "e8454e41e50875f21694e57ee3dc189f12725bc62d13e54268d4540964d92381"
+  }
+}

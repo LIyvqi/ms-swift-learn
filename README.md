@@ -1,6 +1,6 @@
 # ms-swift-learn
 
-这是一个围绕 `Qwen3.5-0.8B-Base` 和 ms-swift 4.4.3 源码环境编写的大模型训练学习仓库。项目使用固定的 GSM8K 与复旦新闻教学数据，覆盖 LoRA/全参 SFT、DFT、DPO、RM/PPO、KTO、CPO、SimPO、ORPO、GRPO/RLOO/DAPO/GSPO、自定义奖励、GKD、OPD/MOPD/OPSD、Regression-Aware REAL，以及无需梯度更新的 JitRL Agent 持续学习核心复现和 KCR-JitRL 三库协同扩展。所有新增课程、脚本注释和笔记都使用中文。
+这是一个围绕 `Qwen3.5-0.8B-Base` 和 ms-swift 4.4.3 源码环境编写的大模型训练学习仓库。项目使用固定的 GSM8K 与复旦新闻教学数据，覆盖 LoRA/全参 SFT、DFT、DPO、RM/PPO、KTO、CPO、SimPO、ORPO、GRPO/RLOO/DAPO/GSPO、自定义奖励、GKD、OPD/MOPD/OPSD、Regression-Aware REAL，以及无需梯度更新的 JitRL Agent 持续学习、KCR-JitRL 三库协同和 Agent-R1 风格多轮规则智能体。所有新增课程、脚本注释和笔记都使用中文。
 
 ## 已完成实验
 
@@ -34,6 +34,7 @@ ms-swift-learn/
 ├── datasets/fudan_news_cot_50/ # 50 条人工证据 CoT 分类子集
 ├── datasets/alignment_news/   # SFT、成对偏好、KTO、prompt 与 OPSD 视图
 ├── datasets/real_judge_1to5/ # 1～5 分回归感知评分数据
+├── datasets/agent_r1_news/   # 检索、组合、决策三任务多轮轨迹与规则库
 ├── results/evaluations/       # 33 组逐题生成评测
 ├── results/figures/           # 精选训练曲线
 ├── results/jitrl/             # JitRL 精选实验摘要
@@ -89,6 +90,7 @@ bash course/00_setup/verify.sh
 10. 完成 [Regression-Aware REAL](course/22_real_regression/README.md)，理解 RAIL 期望分数、RLOO、CoT exploration 与 prediction refinement。
 11. 完成 [JitRL 推理期持续学习](course/23_jitrl/README.md)，理解非参数价值估计、经验检索和无需反向传播的 logits 修正。
 12. 完成 [KCR-JitRL 三库协同](course/24_kcr_jitrl/README.md)，学习支持库、案例库、规则库、置信度门控和案例规则浓缩。
+13. 完成 [Agent-R1 风格新闻规则智能体](course/25_agent_r1_news/README.md)，学习检索、反思、规则组合、GYM 多轮环境和多任务 GRPO。
 
 ## 复现命令
 
@@ -138,6 +140,10 @@ bash course/23_jitrl/run.sh
 
 # KCR-JitRL 知识、案例与规则协同
 bash course/24_kcr_jitrl/run.sh
+
+# Agent-R1 风格的多轮规则智能体
+python course/25_agent_r1_news/prepare_data.py
+bash course/25_agent_r1_news/run_full.sh
 ```
 
 训练产物、JitRL 和 KCR-JitRL 完整经验记忆默认写入被 Git 忽略的 `outputs/`。项目不会自动上传模型或检查点。
