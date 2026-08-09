@@ -175,13 +175,21 @@ for split, expected_count in real_split_sizes.items():
 # JitRL 不需要训练数据集，但核心公式、环境、实验入口和中文教程必须同时存在。
 for name in (
     "README.md",
+    "API_DEPLOYMENT.md",
     "EXPERIMENT_RESULTS.md",
+    "api_policy.py",
+    "experiment_common.py",
     "jitrl_core.py",
     "protocol_env.py",
+    "run_api_experiment.py",
+    "run_api.sh",
     "run_experiment.py",
+    "serve_api.sh",
+    "test_api_policy.py",
     "test_closed_form.py",
     "run.sh",
 ):
     assert JITRL_COURSE.joinpath(name).stat().st_size > 0, name
 assert ROOT.joinpath("results/jitrl/summary_100ep.json").exists()
+assert ROOT.joinpath("results/jitrl/summary_api_100ep.json").exists()
 print("ASSET_CHECK=PASS")

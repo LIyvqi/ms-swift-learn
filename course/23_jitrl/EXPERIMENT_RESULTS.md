@@ -82,3 +82,26 @@ outputs/23_jitrl/run_20260809T035726Z/result.json
 ```
 
 本报告中的稳定实验摘要另存为 `results/jitrl/summary_100ep.json`，用于 Git 留档。
+
+## OpenAI 兼容 API 实测
+
+在同一台机器上用 ms-swift v4.4.3 标签源码（上游运行时版本字符串为 `4.5.0.dev0`）和 vLLM 0.26.0 部署当前 Qwen3.5-0.8B-Base，然后使用 `constrained_logprobs` 模式通过真实 HTTP 请求取得候选动作分数。服务端共处理 96 个不同状态，每个请求生成 1 个动作编号并返回 3 个合法编号的 logprobs。
+
+设置仍为 100 局、5 个随机种子、`lambda=0.05`：
+
+| API 策略 | 100 局成功率 | 前 10 局成功率 | 后 10 局成功率 |
+|---|---:|---:|---:|
+| API 静态冻结策略 | 0.8% | 2.0% | 0.0% |
+| API JitRL，beta=2 | 46.6% | 24.0% | 48.0% |
+| API JitRL，beta=4 | 69.4% | 32.0% | **84.0%** |
+| API JitRL，beta=8 | **74.2%** | **46.0%** | 78.0% |
+
+API 客户端从健康检查、96 次并发打分到全部模拟完成，程序内计时约 6.46 秒。它只调用 Chat Completions，不创建优化器、不调用 backward；远程参数是否固定无法由客户端读取，必须由部署端保证。
+
+完整原始结果位于：
+
+```text
+outputs/23_jitrl_api/run_20260809T041522Z/result.json
+```
+
+Git 留档摘要为 `results/jitrl/summary_api_100ep.json`，接入方法见 [API_DEPLOYMENT.md](API_DEPLOYMENT.md)。

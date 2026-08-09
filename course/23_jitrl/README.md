@@ -7,6 +7,7 @@
 - 本地实验模型：`models/Qwen3.5-0.8B-Base`
 - 模型加载：`swift.get_model_processor`
 - 实测报告：[EXPERIMENT_RESULTS.md](EXPERIMENT_RESULTS.md)
+- 已部署模型 API 接入：[API_DEPLOYMENT.md](API_DEPLOYMENT.md)
 
 ## 本课复现了什么
 
@@ -122,6 +123,18 @@ python course/23_jitrl/run_experiment.py \
   --batch-size 96
 ```
 
+若模型已经部署为 OpenAI 兼容 API，无需把权重加载进 Agent 进程。先阅读 [API 部署与接入教程](API_DEPLOYMENT.md)，本课提供 `constrained_logprobs`、`top_logprobs` 和 `verbalized` 三种兼容模式。当前 ms-swift/vLLM 服务已完成真实 HTTP 实测：
+
+```bash
+# 终端一
+PORT=8000 bash course/23_jitrl/serve_api.sh
+
+# 终端二
+bash course/23_jitrl/run_api.sh \
+  --base-url http://127.0.0.1:8000/v1 \
+  --api-model Qwen3.5-0.8B-Base
+```
+
 高探索对照：
 
 ```bash
@@ -179,6 +192,12 @@ python course/23_jitrl/run_experiment.py \
 | `jitrl_core.py` | 经验 JSONL、Jaccard 检索、回报、价值、优势与闭式修正 |
 | `protocol_env.py` | 四阶段文本 Agent 环境和模型提示 |
 | `run_experiment.py` | ms-swift 模型加载、真实 logits、对照实验和零参数更新验证 |
+| `experiment_common.py` | 本地权重与 API 共用的 Agent 交互循环 |
+| `api_policy.py` | OpenAI 兼容 API 的三种候选动作打分方式 |
+| `run_api_experiment.py` | 已部署模型 API 的多种子对照实验 |
+| `serve_api.sh` / `run_api.sh` | 启动 ms-swift 服务与运行 API 实验 |
+| `API_DEPLOYMENT.md` | API 能力分级、部署命令、密钥和生产注意事项 |
 | `test_closed_form.py` | 闭式公式、检索、折扣回报与持久化单元测试 |
+| `test_api_policy.py` | API logprobs、缺项报错与文本置信度单元测试 |
 | `run.sh` | 激活持久化环境并依次运行测试和实验 |
 | `EXPERIMENT_RESULTS.md` | 100 局、5 随机种子的实测报告 |

@@ -9,4 +9,5 @@ source ./activate.sh
 
 # 先验证与模型无关的闭式解，再运行真实 Qwen 基础 logits 实验。
 python course/23_jitrl/test_closed_form.py
+python course/23_jitrl/test_api_policy.py
 python course/23_jitrl/run_experiment.py "$@"

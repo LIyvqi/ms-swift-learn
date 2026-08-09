@@ -188,7 +188,7 @@ bash course/22_real_regression/train_real.sh
 bash course/23_jitrl/run.sh
 ```
 
-第 23 节直接读取冻结 Qwen 模型对离散候选动作的原始 logits，用历史状态—动作—回报记忆估计非参数优势，再执行 `z'=z+beta*A_norm`。100 局、5 随机种子实测中，静态策略后 10 局成功率为 0%，JitRL `beta=8` 达到 80%，且参数指纹与 PyTorch 版本号前后完全一致。详细数据格式、公式、环境替换方法和边界见 [JitRL 教程](23_jitrl/README.md)。
+第 23 节直接读取冻结 Qwen 模型对离散候选动作的原始 logits，用历史状态—动作—回报记忆估计非参数优势，再执行 `z'=z+beta*A_norm`。100 局、5 随机种子实测中，静态策略后 10 局成功率为 0%，JitRL `beta=8` 达到 80%，且参数指纹与 PyTorch 版本号前后完全一致。课程也提供已部署模型的 OpenAI 兼容 API 适配器，真实 API 实测后 10 局最高达到 84%。详细数据格式、公式、API 接入、环境替换方法和边界见 [JitRL 教程](23_jitrl/README.md)。
 
 ## 先跑完整冒烟测试链路
 

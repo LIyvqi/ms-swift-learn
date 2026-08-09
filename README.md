@@ -15,7 +15,7 @@
 | CoT-OPD | 单教师在线蒸馏 | **58%** |
 | MOPD | CoT/Direct 双教师路由 | 28% |
 | CoT-GKD | 离线知识蒸馏 | 57% |
-| JitRL | 推理期经验修正 logits | 后 10 局 **80%** |
+| JitRL | 本地权重或 API 推理期修正 logits | 后 10 局 **84%**（API） |
 
 这里的正确率来自固定 100 条验证题、温度为 0 的实际生成。完整参数、轮次、格式率和长度对照见 [多轮调参报告](course/TUNING_RESULTS.md)。
 

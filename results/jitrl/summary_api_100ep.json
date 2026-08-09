@@ -1,0 +1,26 @@
+{
+  "experiment": "JitRL OpenAI 兼容 API 核心复现",
+  "model": "Qwen3.5-0.8B-Base",
+  "swift_source_tag": "v4.4.3",
+  "swift_runtime_version": "4.5.0.dev0",
+  "server": "swift deploy + vLLM 0.26.0",
+  "score_mode": "constrained_logprobs",
+  "episodes": 100,
+  "seeds": [11, 22, 33, 44, 55],
+  "gamma": 0.5,
+  "top_k": 10,
+  "similarity_threshold": 0.95,
+  "temperature": 0.8,
+  "unseen_probability": 0.05,
+  "optimism_alpha": 5.0,
+  "num_api_requests": 96,
+  "client_creates_optimizer": false,
+  "client_calls_backward": false,
+  "elapsed_seconds": 6.459138085999257,
+  "results": [
+    {"beta": 0.0, "success_rate": 0.008, "first_10_success_rate": 0.02, "last_10_success_rate": 0.0, "mean_reward": -0.708},
+    {"beta": 2.0, "success_rate": 0.466, "first_10_success_rate": 0.24, "last_10_success_rate": 0.48, "mean_reward": 1.423},
+    {"beta": 4.0, "success_rate": 0.694, "first_10_success_rate": 0.32, "last_10_success_rate": 0.84, "mean_reward": 2.328},
+    {"beta": 8.0, "success_rate": 0.742, "first_10_success_rate": 0.46, "last_10_success_rate": 0.78, "mean_reward": 2.511}
+  ]
+}
