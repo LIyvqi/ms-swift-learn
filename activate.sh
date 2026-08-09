@@ -18,8 +18,15 @@ export TORCH_EXTENSIONS_DIR="${_MS_SWIFT_ROOT}/.cache/torch_extensions"
 export TRITON_CACHE_DIR="${_MS_SWIFT_ROOT}/.cache/triton"
 export XDG_CACHE_HOME="${_MS_SWIFT_ROOT}/.cache/xdg"
 
-# 这台机器可直接访问 ModelScope，下载时不需要代理。
-unset HTTP_PROXY HTTPS_PROXY ALL_PROXY http_proxy https_proxy all_proxy
+# ModelScope 与阿里云模型仓库直接下载；保留平台代理供 GitHub 等站点使用。
+_MS_SWIFT_NO_PROXY="${NO_PROXY:-${no_proxy:-}}"
+for _MS_SWIFT_DIRECT_HOST in modelscope.cn .modelscope.cn .aliyuncs.com; do
+  if [[ ",${_MS_SWIFT_NO_PROXY}," != *",${_MS_SWIFT_DIRECT_HOST},"* ]]; then
+    _MS_SWIFT_NO_PROXY="${_MS_SWIFT_NO_PROXY:+${_MS_SWIFT_NO_PROXY},}${_MS_SWIFT_DIRECT_HOST}"
+  fi
+done
+export NO_PROXY="${_MS_SWIFT_NO_PROXY}"
+export no_proxy="${_MS_SWIFT_NO_PROXY}"
 export PIP_INDEX_URL="https://pypi.org/simple"
 export PYTHONNOUSERSITE=1
 
@@ -40,4 +47,4 @@ chmod 700 "${GH_CONFIG_DIR}" "$(dirname -- "${GIT_CONFIG_GLOBAL}")"
 # 保存在当前持久化项目目录中，避免普通 CUDA 软件包覆盖平台定制环境。
 source "${_MS_SWIFT_ROOT}/.venv/bin/activate"
 
-unset _MS_SWIFT_ROOT _MS_SWIFT_PERSIST_ROOT
+unset _MS_SWIFT_ROOT _MS_SWIFT_PERSIST_ROOT _MS_SWIFT_NO_PROXY _MS_SWIFT_DIRECT_HOST
