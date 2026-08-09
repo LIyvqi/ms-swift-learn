@@ -16,6 +16,7 @@ CLASSIFICATION_DATA = ROOT / "datasets" / "fudan_news_4class"
 COT_CLASSIFICATION_DATA = ROOT / "datasets" / "fudan_news_cot_50"
 ALIGNMENT_DATA = ROOT / "datasets" / "alignment_news"
 REAL_JUDGE_DATA = ROOT / "datasets" / "real_judge_1to5"
+JITRL_COURSE = ROOT / "course" / "23_jitrl"
 
 
 def read_rows(path: Path) -> list[dict]:
@@ -170,4 +171,17 @@ for split, expected_count in real_split_sizes.items():
             assert all(row["messages"][-1]["role"] == "assistant" for row in rows)
         else:
             assert all(all(message["role"] != "assistant" for message in row["messages"]) for row in rows)
+
+# JitRL 不需要训练数据集，但核心公式、环境、实验入口和中文教程必须同时存在。
+for name in (
+    "README.md",
+    "EXPERIMENT_RESULTS.md",
+    "jitrl_core.py",
+    "protocol_env.py",
+    "run_experiment.py",
+    "test_closed_form.py",
+    "run.sh",
+):
+    assert JITRL_COURSE.joinpath(name).stat().st_size > 0, name
+assert ROOT.joinpath("results/jitrl/summary_100ep.json").exists()
 print("ASSET_CHECK=PASS")

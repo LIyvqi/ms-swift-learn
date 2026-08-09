@@ -1,0 +1,20 @@
+{
+  "experiment": "JitRL 核心复现",
+  "model": "Qwen3.5-0.8B-Base",
+  "episodes": 100,
+  "seeds": [11, 22, 33, 44, 55],
+  "gamma": 0.5,
+  "top_k": 10,
+  "similarity_threshold": 0.95,
+  "temperature": 0.8,
+  "unseen_probability": 0.05,
+  "optimism_alpha": 5.0,
+  "parameter_unchanged": true,
+  "peak_gpu_memory_gib": 2.2553634643554688,
+  "results": [
+    {"beta": 0.0, "success_rate": 0.01, "first_10_success_rate": 0.0, "last_10_success_rate": 0.0, "mean_reward": -0.706},
+    {"beta": 2.0, "success_rate": 0.46, "first_10_success_rate": 0.20, "last_10_success_rate": 0.50, "mean_reward": 1.395},
+    {"beta": 4.0, "success_rate": 0.686, "first_10_success_rate": 0.30, "last_10_success_rate": 0.74, "mean_reward": 2.303},
+    {"beta": 8.0, "success_rate": 0.734, "first_10_success_rate": 0.40, "last_10_success_rate": 0.80, "mean_reward": 2.485}
+  ]
+}

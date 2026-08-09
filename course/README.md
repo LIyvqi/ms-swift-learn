@@ -1,6 +1,6 @@
 # Qwen3.5-0.8B 训练与蒸馏课程
 
-本目录使用同一个 `Qwen3.5-0.8B-Base`，按从监督学习到在线/离线蒸馏和人类偏好对齐的顺序组织。第 00 至 07 节使用固定 1000 条 GSM8K 数据；第 08 至 09 节演示 Direct-RLOO 与 CoT-RLOO；第 10 至 22 节使用统一新闻偏好数据和 1～5 分评分数据，系统比较 SFT/DFT、DPO、RM/PPO、KTO、CPO、SimPO、ORPO、GRPO/DAPO/GSPO、GKD/OPD-RL/OPSD 以及两个同名 REAL。
+本目录使用同一个 `Qwen3.5-0.8B-Base`，按从监督学习到在线/离线蒸馏、人类偏好对齐和 Agent 持续学习的顺序组织。第 00 至 07 节使用固定 1000 条 GSM8K 数据；第 08 至 09 节演示 Direct-RLOO 与 CoT-RLOO；第 10 至 22 节使用统一新闻偏好数据和 1～5 分评分数据，系统比较 SFT/DFT、DPO、RM/PPO、KTO、CPO、SimPO、ORPO、GRPO/DAPO/GSPO、GKD/OPD-RL/OPSD 以及两个同名 REAL；第 23 节用 JitRL 演示不更新模型参数的推理期持续学习。
 
 所有实验已经进一步完成 100 步实测，定量结果、稳定性问题和调参建议见 [RESULTS_100_STEPS.md](RESULTS_100_STEPS.md)。多轮、学习率、散度参数、batch 与统一生成评测的最终对照见 [TUNING_RESULTS.md](TUNING_RESULTS.md)。
 
@@ -33,6 +33,7 @@
 | `20_gkd_opd_opsd` | [GKD、OPD-RL 与 OPSD](20_gkd_opd_opsd/README.md) |
 | `21_real_rewards_as_labels` | [ms-swift 原生 Rewards-as-Labels REAL](21_real_rewards_as_labels/README.md) |
 | `22_real_regression` | [Regression-Aware REAL 核心复现](22_real_regression/README.md) |
+| `23_jitrl` | [JitRL 推理期持续强化学习](23_jitrl/README.md) |
 | `plugins` | [奖励插件与自定义奖励](plugins/README.md) |
 | `tools` | [数据生成与资产校验](tools/README.md) |
 
@@ -181,6 +182,14 @@ bash course/22_real_regression/train_real.sh
 
 第 22 节是用户指定的 LLM-as-a-Judge 回归感知 REAL；第 21 节是 ms-swift 原生的另一篇同名 REAL。两者的目标函数、数据和评测都不同，不能混用。
 
+### 11. JitRL：不反向传播的 Agent 持续学习
+
+```bash
+bash course/23_jitrl/run.sh
+```
+
+第 23 节直接读取冻结 Qwen 模型对离散候选动作的原始 logits，用历史状态—动作—回报记忆估计非参数优势，再执行 `z'=z+beta*A_norm`。100 局、5 随机种子实测中，静态策略后 10 局成功率为 0%，JitRL `beta=8` 达到 80%，且参数指纹与 PyTorch 版本号前后完全一致。详细数据格式、公式、环境替换方法和边界见 [JitRL 教程](23_jitrl/README.md)。
+
 ## 先跑完整冒烟测试链路
 
 ```bash
@@ -226,6 +235,7 @@ find outputs -name logging.jsonl -print
 - GRPO：每个 reward 的均值、reward std、completion length。
 - OPD/MOPD：`teacher_kl`、completion length、是否正确结束。
 - GKD：distillation loss、SFT loss、CoT/direct 两种风格的格式保持率。
+- JitRL：总体/前 10 局/后 10 局成功率、经验邻居数、参数不变量。
 
 ## 参数实验顺序
 
