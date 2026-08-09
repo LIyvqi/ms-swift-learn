@@ -135,6 +135,8 @@ bash course/23_jitrl/run_api.sh \
   --api-model Qwen3.5-0.8B-Base
 ```
 
+购买阿里云百炼等第三方推理 API 也可以使用。第三方服务建议先加 `--probe-only` 只发一个请求检查能力；阿里云稳定版模型优先从 `verbalized` 开始，具体模型明确支持 token 概率后再使用 `top_logprobs`。完整命令和地域密钥注意事项见 [阿里云百炼 API 小节](API_DEPLOYMENT.md#阿里云百炼-api)。
+
 高探索对照：
 
 ```bash

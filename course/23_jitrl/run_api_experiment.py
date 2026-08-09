@@ -27,6 +27,8 @@ def 解析参数() -> argparse.Namespace:
     parser.add_argument("--top-logprobs", type=int, default=20)
     parser.add_argument("--concurrency", type=int, default=8)
     parser.add_argument("--request-timeout", type=float, default=120.0)
+    parser.add_argument("--skip-model-check", action="store_true")
+    parser.add_argument("--probe-only", action="store_true")
     parser.add_argument("--episodes", type=int, default=60)
     parser.add_argument("--seeds", default="11,22,33,44,55")
     parser.add_argument("--betas", default="2,4,8")
@@ -62,12 +64,16 @@ def main() -> None:
         top_logprobs=args.top_logprobs,
         timeout=args.request_timeout,
     )
-    available_models = policy.检查服务()
+    available_models = [] if args.skip_model_check else policy.检查服务()
     if available_models and args.api_model not in available_models:
         raise RuntimeError(f"API 模型 {args.api_model!r} 不在服务列表中：{available_models}")
 
     started = time.perf_counter()
     all_states = 所有决策状态()
+    if args.probe_only:
+        scores = policy.打分(all_states[0])
+        print(f"API_PROBE=PASS，候选对数分数={scores}")
+        return
     print(
         f"通过 API 并发计算 {len(all_states)} 个状态，模式={args.score_mode}，"
         f"并发数={args.concurrency}……",

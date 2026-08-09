@@ -140,6 +140,85 @@ python course/23_jitrl/run_api_experiment.py \
 
 密钥只从 `JITRL_API_KEY` 环境变量读取，不写入结果 JSON，也不要提交到 Git。可以通过 `--api-key-env 其他环境变量名` 更换变量名。
 
+## 阿里云百炼 API
+
+可以直接使用购买的阿里云百炼 API，不需要下载模型，也不需要在本机部署 vLLM。JitRL 的记忆、优势计算和最终动作采样仍在你的 Agent 客户端完成，阿里云只负责返回基础动作分数。
+
+北京地域的共享 OpenAI 兼容地址：
+
+```text
+https://dashscope.aliyuncs.com/compatible-mode/v1
+```
+
+新业务空间也可以使用控制台提供的专属地域地址，例如：
+
+```text
+https://{WorkspaceId}.cn-beijing.maas.aliyuncs.com/compatible-mode/v1
+https://{WorkspaceId}.ap-southeast-1.maas.aliyuncs.com/compatible-mode/v1
+```
+
+不同地域的 API Key 不通用，地址和密钥必须来自同一地域。密钥只放环境变量：
+
+```bash
+export DASHSCOPE_API_KEY='你的百炼 API Key'
+```
+
+### 先做一次付费前探测
+
+部分第三方 OpenAI 兼容服务不实现 `/v1/models`，所以阿里云示例加 `--skip-model-check`。`--probe-only` 只发送一个状态请求，不会直接执行完整的 96 状态实验：
+
+```bash
+python course/23_jitrl/run_api_experiment.py \
+  --base-url https://dashscope.aliyuncs.com/compatible-mode/v1 \
+  --api-key-env DASHSCOPE_API_KEY \
+  --api-model qwen-plus \
+  --score-mode verbalized \
+  --skip-model-check \
+  --probe-only
+```
+
+探测输出 `API_PROBE=PASS` 后再运行完整实验：
+
+```bash
+python course/23_jitrl/run_api_experiment.py \
+  --base-url https://dashscope.aliyuncs.com/compatible-mode/v1 \
+  --api-key-env DASHSCOPE_API_KEY \
+  --api-model qwen-plus \
+  --score-mode verbalized \
+  --skip-model-check \
+  --concurrency 2 \
+  --episodes 60
+```
+
+`verbalized` 只要求普通文本生成，因此兼容范围最广。它让模型返回三个动作的 JSON 相对置信度，属于官方 JitRL 也采用的近似方案。
+
+### 阿里云 logprobs 模式
+
+阿里云 Chat Completions 文档当前规定：
+
+- `top_logprobs` 范围是 0～5；
+- 只有部分模型支持 logprobs；
+- 支持列表包括 qwen-plus/qwen-turbo 的部分快照版、部分 Qwen3 开源模型和部分视觉模型；
+- 稳定版模型不能仅凭系列名假定支持，购买前要核对具体模型 ID 的参数表；
+- 思考阶段内容不返回 logprobs。
+
+具体模型明确支持时，先探测：
+
+```bash
+python course/23_jitrl/run_api_experiment.py \
+  --base-url https://dashscope.aliyuncs.com/compatible-mode/v1 \
+  --api-key-env DASHSCOPE_API_KEY \
+  --api-model 你购买的具体模型ID \
+  --score-mode top_logprobs \
+  --top-logprobs 5 \
+  --skip-model-check \
+  --probe-only
+```
+
+阿里云托管 API 不接受本地 vLLM 专用的 `structured_outputs_regex`，因此不要使用默认的 `constrained_logprobs`。即使设置 top-5，也不能保证三个编号一定全部出现；本课发现缺项会停止并提示切换到 `verbalized`，不会用错误默认值继续运行。
+
+购买的阿里云模型通常不是本课本地的 Qwen3.5-0.8B-Base。算法仍然适用，但这属于新的基础策略，成功率、基础 logprob 跨度和最佳 beta 都可能变化，应重新跑静态基线与 `beta=2/4/8`，不要直接引用本课 74.2% 的 API 结果。
+
 ## 已部署服务需要满足的检查表
 
 - `/v1/models` 能返回 `--api-model` 指定的模型名；
