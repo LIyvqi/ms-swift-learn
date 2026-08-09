@@ -105,3 +105,18 @@ outputs/23_jitrl_api/run_20260809T041522Z/result.json
 ```
 
 Git 留档摘要为 `results/jitrl/summary_api_100ep.json`，接入方法见 [API_DEPLOYMENT.md](API_DEPLOYMENT.md)。
+
+## 阿里云百炼 qwen-plus 实测
+
+进一步使用阿里云北京共享 OpenAI 兼容地址真实调用 `qwen-plus`。由于该稳定模型没有在官方文档的 logprobs 支持范围中，本实验使用官方 JitRL 同类的 `verbalized` 文本置信度模式。96 个状态请求全部成功，API 客户端计时 43.75 秒。
+
+| 百炼策略 | 100 局成功率 | 前 10 局成功率 | 后 10 局成功率 | 平均奖励 |
+|---|---:|---:|---:|---:|
+| 静态 qwen-plus | 0.8% | 0.0% | 2.0% | -0.702 |
+| JitRL，beta=2 | 39.8% | 12.0% | 50.0% | 1.164 |
+| JitRL，beta=4 | 65.2% | 34.0% | 68.0% | 2.174 |
+| **JitRL，beta=8** | **73.2%** | **34.0%** | **84.0%** | **2.474** |
+
+`beta=8` 五个种子的总体成功率分别为 71%、71%、72%、75%、77%，后 10 局成功率分别为 80%、90%、80%、90%、80%。提升覆盖全部随机种子。
+
+完整结果位于 `outputs/23_jitrl_aliyun/run_20260809T051419Z/result.json`，精简摘要见 `results/jitrl/summary_aliyun_100ep.json`。结果不含 API Key、Authorization 或密钥环境变量名。

@@ -192,4 +192,5 @@ for name in (
     assert JITRL_COURSE.joinpath(name).stat().st_size > 0, name
 assert ROOT.joinpath("results/jitrl/summary_100ep.json").exists()
 assert ROOT.joinpath("results/jitrl/summary_api_100ep.json").exists()
+assert ROOT.joinpath("results/jitrl/summary_aliyun_100ep.json").exists()
 print("ASSET_CHECK=PASS")

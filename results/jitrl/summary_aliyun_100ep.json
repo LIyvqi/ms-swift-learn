@@ -1,0 +1,33 @@
+{
+  "experiment": "JitRL 阿里云百炼真实 API 复现",
+  "provider": "阿里云百炼",
+  "base_url_region": "华北2（北京）",
+  "model": "qwen-plus",
+  "score_mode": "verbalized",
+  "episodes": 100,
+  "seeds": [11, 22, 33, 44, 55],
+  "gamma": 0.5,
+  "top_k": 10,
+  "similarity_threshold": 0.95,
+  "temperature": 0.8,
+  "unseen_probability": 0.05,
+  "optimism_alpha": 5.0,
+  "num_api_requests": 96,
+  "api_failures": 0,
+  "client_creates_optimizer": false,
+  "client_calls_backward": false,
+  "elapsed_seconds": 43.74814087199957,
+  "results": [
+    {"beta": 0.0, "success_rate": 0.008, "first_10_success_rate": 0.0, "last_10_success_rate": 0.02, "mean_reward": -0.702},
+    {"beta": 2.0, "success_rate": 0.398, "first_10_success_rate": 0.12, "last_10_success_rate": 0.50, "mean_reward": 1.164},
+    {"beta": 4.0, "success_rate": 0.652, "first_10_success_rate": 0.34, "last_10_success_rate": 0.68, "mean_reward": 2.174},
+    {"beta": 8.0, "success_rate": 0.732, "first_10_success_rate": 0.34, "last_10_success_rate": 0.84, "mean_reward": 2.474}
+  ],
+  "beta8_per_seed": [
+    {"seed": 11, "success_rate": 0.71, "last_10_success_rate": 0.8},
+    {"seed": 22, "success_rate": 0.71, "last_10_success_rate": 0.9},
+    {"seed": 33, "success_rate": 0.72, "last_10_success_rate": 0.8},
+    {"seed": 44, "success_rate": 0.75, "last_10_success_rate": 0.9},
+    {"seed": 55, "success_rate": 0.77, "last_10_success_rate": 0.8}
+  ]
+}
