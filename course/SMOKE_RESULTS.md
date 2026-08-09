@@ -11,7 +11,7 @@
 | CoT LoRA SFT | train loss 1.1099；eval loss 1.1329 | 2.86 GiB | `outputs/01_lora_cot_smoke/.../checkpoint-1` |
 | Direct LoRA SFT | train loss 1.5215；eval loss 1.2467 | 2.06 GiB | `outputs/01_lora_direct_smoke/.../checkpoint-1` |
 | Mixed 全参 SFT | train loss 1.5215；eval loss 1.2807 | 6.14 GiB | `outputs/02_full_sft_mixed_smoke/.../checkpoint-1` |
-| GRPO CoT | reward 1.5；accuracy 0.5；format 1.0 | 59.26 GiB | `outputs/03_grpo_cot_smoke/.../checkpoint-1` |
+| GRPO 历史“CoT”答案型 | reward 1.5；accuracy 0.5；format 1.0 | 59.26 GiB | `outputs/03_grpo_cot_smoke/.../checkpoint-1` |
 | GRPO Direct | reward 1.5；accuracy 0.5；format 1.0 | 69.19 GiB | `outputs/03_grpo_direct_smoke/.../checkpoint-1` |
 | OPD CoT | rollout、教师 logprob、反向传播、保存均通过 | 61.35 GiB | `outputs/04_opd_cot_smoke/.../checkpoint-1` |
 | OPD Direct | rollout、教师 logprob、反向传播、保存均通过 | 72.11 GiB | `outputs/04_opd_direct_smoke/.../checkpoint-1` |
@@ -20,6 +20,8 @@
 | 离线 GKD Direct | loss 0.18380 | 4.16 GiB | `outputs/06_offline_gkd_direct_smoke/.../checkpoint-1` |
 
 每次运行的精确参数保存在对应目录的 `args.json`，逐步指标在 `logging.jsonl`，曲线可用 TensorBoard 查看。正式训练不设置 `SMOKE`，脚本会使用 900 条训练、100 条验证数据。
+
+勘误：表中的历史“GRPO CoT”后来检查发现 100% 是空 `<think></think>`，只应作为答案型 GRPO 链路记录。真正的显式 CoT 入口是 `course/03_grpo/train_cot_rules.sh`；2048-token 新冒烟的非空思考率为 93.75%，详细记录见第 03 课 README。
 
 ## 两个需要正确解读的现象
 
@@ -46,6 +48,7 @@ SMOKE=1 bash course/01_lora_sft/train_direct.sh
 SMOKE=1 bash course/02_full_sft/train.sh
 SMOKE=1 STYLE=cot bash course/03_grpo/train.sh
 SMOKE=1 STYLE=direct bash course/03_grpo/train.sh
+SMOKE=1 bash course/03_grpo/train_cot_rules.sh
 SMOKE=1 STYLE=cot bash course/04_opd/train.sh
 SMOKE=1 STYLE=direct bash course/04_opd/train.sh
 SMOKE=1 STYLE=cot bash course/06_offline_gkd/train.sh

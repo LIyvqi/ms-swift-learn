@@ -1,6 +1,6 @@
 # 奖励插件说明
 
-本目录存放 ms-swift 可动态加载的自定义奖励。`gsm8k_rewards.py` 用于数学答案与 `\boxed{}` 格式；`classification_rewards.py` 用于中文四分类正确性与严格短格式；`cot_classification_rewards.py` 进一步奖励分类 CoT 的证据覆盖和结论一致性。
+本目录存放 ms-swift 可动态加载的自定义奖励。`gsm8k_rewards.py` 同时提供数学答案、严格显式 CoT、可执行计算代理和异步大模型裁判；`classification_rewards.py` 用于中文四分类正确性与严格短格式；`cot_classification_rewards.py` 进一步奖励分类 CoT 的证据覆盖和结论一致性。
 
 ## 数据格式与参数传递
 
@@ -32,6 +32,18 @@ def __call__(self, completions, solution, **kwargs):
 ### `course_gsm8k_format`
 
 回答中只要出现非空 `\boxed{...}` 就记 1 分，否则记 0 分。它不检查盒子里的答案是否正确。
+
+### 显式数学 CoT 奖励
+
+| 注册名 | 信号 | 额外顶层字段 |
+|---|---|---|
+| `course_gsm8k_cot_structure` | 唯一、非空、长度适中的 `<think>...</think>` 及框选答案 | 无 |
+| `course_gsm8k_cot_calculation` | 安全执行四则等式并检查与题目和答案的相关性 | `question`、`final_answer` |
+| `course_gsm8k_cot_grounding` | 思考块对题目数值条件的覆盖比例 | `question` |
+| `course_gsm8k_cot_consistency` | 最终答案是否也出现在思考块 | 无 |
+| `course_gsm8k_cot_llm_judge` | OpenAI 兼容 API 对过程正确性与完整性的异步评分 | `question`、`solution` |
+
+大模型裁判只有被加入 `--reward_funcs` 时才初始化，且要求从环境变量读取地址、密钥和模型名。默认规则训练不会联网。完整公式、安全执行边界、权重和投机分析见 [显式 CoT-GRPO 奖励设计](../03_grpo/REWARD_DESIGN.md)。
 
 训练脚本通过以下参数加载：
 

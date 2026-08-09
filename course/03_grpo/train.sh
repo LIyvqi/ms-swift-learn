@@ -11,6 +11,10 @@ fi
 STUDENT="${STUDENT:-$(latest_checkpoint "$(output_path 02_full_sft_mixed)")}"
 mapfile -t SPAN < <(training_span_args)
 
+if [[ "${STYLE}" == "cot" ]]; then
+  echo "说明：历史 STYLE=cot 仅保留逐步提示，但本脚本显式关闭 thinking；真正的显式 CoT 请运行 train_cot_rules.sh。" >&2
+fi
+
 swift rlhf \
   --rlhf_type grpo \
   --model "${STUDENT}" \
@@ -22,6 +26,7 @@ swift rlhf \
   --lora_alpha 32 \
   --torch_dtype bfloat16 \
   --attn_impl eager \
+  --enable_thinking false \
   --use_vllm true \
   --vllm_mode colocate \
   --vllm_gpu_memory_utilization 0.35 \

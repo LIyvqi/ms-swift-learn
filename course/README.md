@@ -80,14 +80,14 @@ bash course/02_full_sft/train.sh
 
 这一步使用 50% CoT + 50% direct 数据更新文本模型全部参数，并产出后续实验共同的学生起点。ms-swift 官方 on-policy distillation 示例特别提醒：Base 与 instruct teacher 的结束符分布不同，直接做 reverse KL 容易导致长度爆炸，所以应先 SFT 学会 instruct 格式和正确终止。
 
-### 3. GRPO：只有任务奖励，没有教师
+### 3. GRPO：答案型基线与显式 CoT
 
 ```bash
-STYLE=cot bash course/03_grpo/train.sh
 STYLE=direct bash course/03_grpo/train.sh
+bash course/03_grpo/train_cot_rules.sh
 ```
 
-每个题目采样 2 个回答，`course/plugins/gsm8k_rewards.py` 给出两种奖励：数值答案正确性和 `\boxed{}` 格式。GRPO 使用组内相对 advantage 更新策略。这是后面 OPD 的对照组。
+历史 `STYLE=cot bash course/03_grpo/train.sh` 实际生成的是空 `<think></think>` 加短答案，不能视为显式 CoT。本课现已增加真正的 thinking rollout，以及答案正确、严格结构、可执行算式、数值条件覆盖、过程答案一致和可选大模型裁判奖励。GRPO 使用组内相对 advantage 更新策略；三种显式奖励配方和旧实验勘误见 [第 03 课](03_grpo/README.md)。
 
 ### 4. OPD-RL：SFT 学生 + 单教师在线蒸馏
 
@@ -207,6 +207,7 @@ SMOKE=1 bash course/01_lora_sft/train_direct.sh
 SMOKE=1 bash course/02_full_sft/train.sh
 SMOKE=1 STYLE=cot bash course/03_grpo/train.sh
 SMOKE=1 STYLE=direct bash course/03_grpo/train.sh
+SMOKE=1 bash course/03_grpo/train_cot_rules.sh
 SMOKE=1 STYLE=cot bash course/04_opd/train.sh
 SMOKE=1 STYLE=direct bash course/04_opd/train.sh
 SMOKE=1 STYLE=cot bash course/06_offline_gkd/train.sh
