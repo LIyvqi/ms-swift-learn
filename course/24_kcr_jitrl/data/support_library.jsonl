@@ -1,0 +1,2 @@
+{"entry_id":"support_entry_check","state":"任务 物流恢复 阶段 入口校验 进度 0","action":"琥珀协议","score":1.0,"confidence":0.95,"text":"操作手册说明：入口校验阶段优先使用琥珀协议。","enabled":true}
+{"entry_id":"support_scan_unverified","state":"任务 物流恢复 阶段 货物扫描 进度 2","action":"琥珀协议","score":1.0,"confidence":0.10,"text":"未验证的口述记录声称货物扫描使用琥珀协议；该信息只用于低置信度噪声实验。","enabled":true}

@@ -1,6 +1,6 @@
 # ms-swift-learn
 
-这是一个围绕 `Qwen3.5-0.8B-Base` 和 ms-swift 4.4.3 源码环境编写的大模型训练学习仓库。项目使用固定的 GSM8K 与复旦新闻教学数据，覆盖 LoRA/全参 SFT、DFT、DPO、RM/PPO、KTO、CPO、SimPO、ORPO、GRPO/RLOO/DAPO/GSPO、自定义奖励、GKD、OPD/MOPD/OPSD、Regression-Aware REAL，以及无需梯度更新的 JitRL Agent 持续学习核心复现。所有新增课程、脚本注释和笔记都使用中文。
+这是一个围绕 `Qwen3.5-0.8B-Base` 和 ms-swift 4.4.3 源码环境编写的大模型训练学习仓库。项目使用固定的 GSM8K 与复旦新闻教学数据，覆盖 LoRA/全参 SFT、DFT、DPO、RM/PPO、KTO、CPO、SimPO、ORPO、GRPO/RLOO/DAPO/GSPO、自定义奖励、GKD、OPD/MOPD/OPSD、Regression-Aware REAL，以及无需梯度更新的 JitRL Agent 持续学习核心复现和 KCR-JitRL 三库协同扩展。所有新增课程、脚本注释和笔记都使用中文。
 
 ## 已完成实验
 
@@ -16,6 +16,7 @@
 | MOPD | CoT/Direct 双教师路由 | 28% |
 | CoT-GKD | 离线知识蒸馏 | 57% |
 | JitRL | 本地权重或 API 推理期修正 logits | 后 10 局 **84%**（API） |
+| KCR-JitRL | 知识、案例与规则协同修正 logits | 总成功率 **90%**（API） |
 
 这里的正确率来自固定 100 条验证题、温度为 0 的实际生成。完整参数、轮次、格式率和长度对照见 [多轮调参报告](course/TUNING_RESULTS.md)。
 
@@ -36,6 +37,7 @@ ms-swift-learn/
 ├── results/evaluations/       # 33 组逐题生成评测
 ├── results/figures/           # 精选训练曲线
 ├── results/jitrl/             # JitRL 精选实验摘要
+├── results/kcr_jitrl/         # KCR-JitRL 本地与 API 消融摘要
 ├── scripts/                   # 环境重建脚本
 ├── tools/                     # 数据准备工具
 ├── activate.sh                # 激活持久化环境并设置缓存路径
@@ -86,6 +88,7 @@ bash course/00_setup/verify.sh
 9. 从 [统一对齐数据](course/10_alignment_data/README.md) 开始，对比 DPO、RM/PPO、KTO、CPO、SimPO、ORPO 与 GRPO 变体。
 10. 完成 [Regression-Aware REAL](course/22_real_regression/README.md)，理解 RAIL 期望分数、RLOO、CoT exploration 与 prediction refinement。
 11. 完成 [JitRL 推理期持续学习](course/23_jitrl/README.md)，理解非参数价值估计、经验检索和无需反向传播的 logits 修正。
+12. 完成 [KCR-JitRL 三库协同](course/24_kcr_jitrl/README.md)，学习支持库、案例库、规则库、置信度门控和案例规则浓缩。
 
 ## 复现命令
 
@@ -132,9 +135,12 @@ bash course/22_real_regression/train_real.sh
 
 # JitRL 推理期持续强化学习
 bash course/23_jitrl/run.sh
+
+# KCR-JitRL 知识、案例与规则协同
+bash course/24_kcr_jitrl/run.sh
 ```
 
-训练产物和 JitRL 完整经验记忆默认写入被 Git 忽略的 `outputs/`。项目不会自动上传模型或检查点。
+训练产物、JitRL 和 KCR-JitRL 完整经验记忆默认写入被 Git 忽略的 `outputs/`。项目不会自动上传模型或检查点。
 
 ## 第三方内容
 

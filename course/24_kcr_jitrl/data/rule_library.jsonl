@@ -1,0 +1,2 @@
+{"rule_id":"manual_lift_indigo","state":"任务 物流恢复 阶段 升降平台 进度 1","action":"靛蓝协议","effect":"recommend","strength":1.0,"confidence":0.95,"enabled":true,"hard":false,"source":"人工规则","evidence_count":0}
+{"rule_id":"manual_entry_forbid_silver","state":"任务 物流恢复 阶段 入口校验 进度 0","action":"白银协议","effect":"forbid","strength":1.0,"confidence":1.0,"enabled":true,"hard":true,"source":"人工规则","evidence_count":0}

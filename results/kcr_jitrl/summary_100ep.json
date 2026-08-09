@@ -1,0 +1,59 @@
+{
+  "experiment": "KCR-JitRL 知识、案例与规则协同消融",
+  "episodes": 100,
+  "seeds": [11, 22, 33, 44, 55],
+  "settings": {
+    "beta_case": 8.0,
+    "beta_support": 3.0,
+    "beta_rule": 3.0,
+    "confidence_gate_samples": 4,
+    "condense_min_evidence": 6,
+    "condense_margin": 0.5
+  },
+  "local_qwen3_5_0_8b_base": {
+    "optimizer_created": false,
+    "backward_called": false,
+    "parameter_unchanged": true,
+    "elapsed_seconds": 20.537899511999967,
+    "results": [
+      {"setting": "static", "success_rate": 0.010, "first_10_success_rate": 0.00, "last_10_success_rate": 0.00},
+      {"setting": "case_only", "success_rate": 0.730, "first_10_success_rate": 0.30, "last_10_success_rate": 0.86},
+      {"setting": "case_support", "success_rate": 0.766, "first_10_success_rate": 0.54, "last_10_success_rate": 0.76},
+      {"setting": "case_rule", "success_rate": 0.804, "first_10_success_rate": 0.66, "last_10_success_rate": 0.80},
+      {"setting": "kcr_no_condense", "success_rate": 0.812, "first_10_success_rate": 0.64, "last_10_success_rate": 0.82},
+      {"setting": "kcr_no_gate", "success_rate": 0.888, "first_10_success_rate": 0.62, "last_10_success_rate": 0.88},
+      {"setting": "kcr_full", "success_rate": 0.896, "first_10_success_rate": 0.64, "last_10_success_rate": 0.92}
+    ],
+    "kcr_full_per_seed": [
+      {"seed": 11, "success_rate": 0.91, "last_10_success_rate": 0.90, "condensed_rules": 4},
+      {"seed": 22, "success_rate": 0.88, "last_10_success_rate": 0.90, "condensed_rules": 4},
+      {"seed": 33, "success_rate": 0.89, "last_10_success_rate": 0.90, "condensed_rules": 4},
+      {"seed": 44, "success_rate": 0.89, "last_10_success_rate": 0.90, "condensed_rules": 4},
+      {"seed": 55, "success_rate": 0.91, "last_10_success_rate": 1.00, "condensed_rules": 4}
+    ]
+  },
+  "aliyun_qwen_plus": {
+    "score_mode": "verbalized",
+    "api_scored_states": 96,
+    "api_failures": 0,
+    "client_creates_optimizer": false,
+    "client_calls_backward": false,
+    "elapsed_seconds": 51.69803557599994,
+    "results": [
+      {"setting": "static", "success_rate": 0.008, "first_10_success_rate": 0.00, "last_10_success_rate": 0.00},
+      {"setting": "case_only", "success_rate": 0.730, "first_10_success_rate": 0.28, "last_10_success_rate": 0.80},
+      {"setting": "case_support", "success_rate": 0.750, "first_10_success_rate": 0.36, "last_10_success_rate": 0.74},
+      {"setting": "case_rule", "success_rate": 0.794, "first_10_success_rate": 0.42, "last_10_success_rate": 0.78},
+      {"setting": "kcr_no_condense", "success_rate": 0.812, "first_10_success_rate": 0.66, "last_10_success_rate": 0.80},
+      {"setting": "kcr_no_gate", "success_rate": 0.874, "first_10_success_rate": 0.62, "last_10_success_rate": 0.88},
+      {"setting": "kcr_full", "success_rate": 0.900, "first_10_success_rate": 0.66, "last_10_success_rate": 0.94}
+    ],
+    "kcr_full_per_seed": [
+      {"seed": 11, "success_rate": 0.88, "last_10_success_rate": 0.90, "condensed_rules": 4},
+      {"seed": 22, "success_rate": 0.91, "last_10_success_rate": 0.90, "condensed_rules": 4},
+      {"seed": 33, "success_rate": 0.87, "last_10_success_rate": 0.90, "condensed_rules": 4},
+      {"seed": 44, "success_rate": 0.89, "last_10_success_rate": 1.00, "condensed_rules": 4},
+      {"seed": 55, "success_rate": 0.95, "last_10_success_rate": 1.00, "condensed_rules": 3}
+    ]
+  }
+}

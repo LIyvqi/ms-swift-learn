@@ -8,7 +8,6 @@ import json
 from collections import Counter
 from pathlib import Path
 
-
 ROOT = Path(__file__).resolve().parents[2]
 DATA = ROOT / "datasets" / "gsm8k_1k"
 MODEL = ROOT / "models" / "Qwen3.5-0.8B-Base"
@@ -17,6 +16,7 @@ COT_CLASSIFICATION_DATA = ROOT / "datasets" / "fudan_news_cot_50"
 ALIGNMENT_DATA = ROOT / "datasets" / "alignment_news"
 REAL_JUDGE_DATA = ROOT / "datasets" / "real_judge_1to5"
 JITRL_COURSE = ROOT / "course" / "23_jitrl"
+KCR_JITRL_COURSE = ROOT / "course" / "24_kcr_jitrl"
 
 
 def read_rows(path: Path) -> list[dict]:
@@ -193,4 +193,21 @@ for name in (
 assert ROOT.joinpath("results/jitrl/summary_100ep.json").exists()
 assert ROOT.joinpath("results/jitrl/summary_api_100ep.json").exists()
 assert ROOT.joinpath("results/jitrl/summary_aliyun_100ep.json").exists()
+
+# KCR-JitRL 必须同时提供三库样例、本地/API 入口、单元测试和中文实测报告。
+for name in (
+    "README.md",
+    "EXPERIMENT_RESULTS.md",
+    "kcr_core.py",
+    "experiment_common.py",
+    "run_experiment.py",
+    "run_api_experiment.py",
+    "run.sh",
+    "run_api.sh",
+    "test_kcr_core.py",
+    "data/support_library.jsonl",
+    "data/rule_library.jsonl",
+):
+    assert KCR_JITRL_COURSE.joinpath(name).stat().st_size > 0, name
+assert ROOT.joinpath("results/kcr_jitrl/summary_100ep.json").exists()
 print("ASSET_CHECK=PASS")
