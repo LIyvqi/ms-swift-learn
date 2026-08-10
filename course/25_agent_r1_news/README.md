@@ -278,7 +278,7 @@ python course/25_agent_r1_news/analyze_failures.py \
 GRPO_RUN_DIR=outputs/25_agent_r1_news/grpo_2epoch/最终运行 \
 SFT_EVAL_RESULT=outputs/25_agent_r1_news/sft_checkpoint_720_evaluation.json \
 EARLY_CHECKPOINT=outputs/25_agent_r1_news/grpo_2epoch/早期运行/checkpoint-480 \
-GRPO_EVAL_STEPS="720 1440 2160 2880" \
+GRPO_EVAL_STEPS="720 960 1200 1440 2160 2880" \
 GRPO_SEGMENTS="第一次/logging.jsonl:1:240 第二次/logging.jsonl:241:480 最终运行/logging.jsonl:481:2880" \
 bash course/25_agent_r1_news/evaluate_formal_run.sh
 ```
@@ -302,7 +302,7 @@ python course/25_agent_r1_news/summarize_resumed_grpo.py \
   --bucket-rollouts 60
 ```
 
-这里统计的是最终 checkpoint 的真实祖先轨迹；失败恢复、checkpoint 之后未保存的 step 和重新计算的重复 step 都不应写进正式曲线。`--bucket-rollouts 60` 会把连续 60 个 rollout（当前配置约等于 120 个训练 step）汇总成一个阶段，便于观察奖励和 KL 从哪一段开始变化。
+这里统计的是最终 checkpoint 的真实祖先轨迹；失败恢复、checkpoint 之后未保存的 step 和重新计算的重复 step 都不应写进正式曲线。`--bucket-rollouts 60` 会把连续 60 个 rollout（当前配置约等于 120 个训练 step）汇总成一个阶段，便于观察奖励和 KL 从哪一段开始变化。正式评测额外保留 960 和 1200，是因为训练奖励可能在一轮以内先达到峰值再回落；用稀疏节点只比较 720、1440 和最终步，可能错过泛化最好的策略。
 
 ## 主要训练参数
 
