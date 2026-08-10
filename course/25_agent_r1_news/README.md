@@ -88,7 +88,7 @@
 | `source` | 建议 | 规则来源或版本号，便于审计 |
 | `status` | 建议 | `active` 才会进入索引；删除规则也可直接删除该行 |
 
-课程库有 51 条物理规则，其中有 24 条带多项条件和例外的细分规则，以及四条旧版重复规则。用当前 Qwen tokenizer 实测，完整 JSON 规则库为 21524 个字符、9122 token，已经超过本课 5120-token 的在线上下文预算，因此模型只能检索 Top-K，不能把全库塞进提示词。组合器按 `canonical_id` 去重，并保留同组中优先级最高的版本。
+课程库有 51 条物理规则，其中有 24 条带多项条件和例外的细分规则，以及四条旧版重复规则。把所有规则的公开字段格式化成 JSON 后，用当前 Qwen tokenizer 实测为 21076 个字符、9351 token，已经超过本课 5120-token 的在线上下文预算，因此模型只能检索 Top-K，不能把全库塞进提示词。组合器按 `canonical_id` 去重，并保留同组中优先级最高的版本。
 
 ## RL 数据通用格式
 
@@ -200,7 +200,8 @@ python course/25_agent_r1_news/simulate_oracle.py
 python course/25_agent_r1_news/evaluate_pipeline.py
 python course/25_agent_r1_news/audit_lengths.py \
   datasets/agent_r1_news/sft_train.jsonl \
-  --model models/Qwen3.5-0.8B-Base
+  --model models/Qwen3.5-0.8B-Base \
+  --knowledge datasets/agent_r1_news/knowledge_rules.jsonl
 ```
 
 先做真实冒烟：

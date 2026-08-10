@@ -19,6 +19,8 @@ def main() -> None:
     parser.add_argument("dataset", type=Path)
     parser.add_argument("--model", type=Path, required=True)
     parser.add_argument("--limit", type=int, default=4608)
+    parser.add_argument("--knowledge", type=Path, help="可选的规则库 JSONL")
+    parser.add_argument("--online-limit", type=int, default=5120)
     args = parser.parse_args()
 
     from transformers import AutoProcessor
@@ -56,9 +58,34 @@ def main() -> None:
             "maximum": max(lengths),
             "over_limit": sum(length > args.limit for length in lengths),
         }
-    print(
-        json.dumps({"limit": args.limit, "tasks": result}, ensure_ascii=False, indent=2)
-    )
+    output = {"limit": args.limit, "tasks": result}
+    if args.knowledge:
+        公开字段 = (
+            "rule_id",
+            "canonical_id",
+            "title",
+            "text",
+            "category",
+            "conditions",
+            "exceptions",
+            "priority",
+            "source",
+        )
+        with args.knowledge.open(encoding="utf-8") as handle:
+            rules = [json.loads(line) for line in handle if line.strip()]
+        public_rules = [
+            {key: rule[key] for key in 公开字段 if key in rule} for rule in rules
+        ]
+        rendered = json.dumps(public_rules, ensure_ascii=False, indent=2)
+        rule_tokens = tokenizer.encode(rendered)
+        output["knowledge"] = {
+            "physical_rules": len(rules),
+            "public_json_characters": len(rendered),
+            "public_json_tokens": len(rule_tokens),
+            "online_limit": args.online_limit,
+            "over_online_limit": max(0, len(rule_tokens) - args.online_limit),
+        }
+    print(json.dumps(output, ensure_ascii=False, indent=2))
 
 
 if __name__ == "__main__":
