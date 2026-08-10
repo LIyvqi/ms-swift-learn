@@ -254,6 +254,18 @@ python course/25_agent_r1_news/summarize_grpo.py \
   --window 100
 ```
 
+如果一次正式训练跨越多个恢复运行，不要直接把多个日志整体相加，因为被中断的运行可能在最后一个可恢复 checkpoint 之后留下重复 step。应明确声明每份日志真正进入最终模型轨迹的闭区间；工具会检查区间内部及相邻区间是否连续：
+
+```bash
+python course/25_agent_r1_news/summarize_resumed_grpo.py \
+  --segment outputs/25_agent_r1_news/grpo_2epoch/第一次/logging.jsonl:1:240 \
+  --segment outputs/25_agent_r1_news/grpo_2epoch/第二次/logging.jsonl:241:480 \
+  --segment outputs/25_agent_r1_news/grpo_2epoch/第三次/logging.jsonl:481:2880 \
+  --window 100
+```
+
+这里统计的是最终 checkpoint 的真实祖先轨迹；失败恢复、checkpoint 之后未保存的 step 和重新计算的重复 step 都不应写进正式曲线。
+
 ## 主要训练参数
 
 | 参数 | 默认值 | 作用与注意点 |
