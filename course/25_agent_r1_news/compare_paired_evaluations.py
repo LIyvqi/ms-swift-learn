@@ -20,6 +20,30 @@ from typing import Any
 }
 
 
+def 校验评测协议(baseline_data: dict[str, Any], candidate_data: dict[str, Any]) -> bool:
+    """两边都有新版元数据时必须完全同协议；旧结果都缺失时标记为未验证。"""
+
+    baseline = baseline_data.get("evaluation_config")
+    candidate = candidate_data.get("evaluation_config")
+    if bool(baseline) != bool(candidate):
+        raise ValueError("只有一份结果包含 evaluation_config，不能做可信的配对比较")
+    if not baseline and not candidate:
+        return False
+    keys = (
+        "sample_offset",
+        "maximum_samples",
+        "max_new_tokens",
+        "temperature",
+        "dataset_sha256",
+        "knowledge_sha256",
+        "sample_sequence_sha256",
+    )
+    mismatched = [key for key in keys if baseline.get(key) != candidate.get(key)]
+    if mismatched:
+        raise ValueError(f"两份结果的评测协议不一致：{mismatched}")
+    return True
+
+
 def 轨迹指标(data: dict[str, Any]) -> dict[str, dict[str, float]]:
     """把三条任务轨迹合并成以新闻 record_id 为单位的指标。"""
 
@@ -114,6 +138,7 @@ def 配对比较(
 ) -> dict[str, Any]:
     """按新闻配对重采样，计算候选模型减基线模型的差值区间。"""
 
+    protocol_verified = 校验评测协议(baseline_data, candidate_data)
     baseline = 轨迹指标(baseline_data)
     candidate = 轨迹指标(candidate_data)
     if set(baseline) != set(candidate):
@@ -172,6 +197,7 @@ def 配对比较(
         "paired_news": len(record_ids),
         "bootstrap_samples": bootstrap_samples,
         "seed": seed,
+        "evaluation_protocol_verified": protocol_verified,
         "difference_direction": "candidate_minus_baseline",
         "metrics": metrics,
         "decision_mcnemar": 精确_mcnemar(
@@ -189,6 +215,7 @@ def 渲染_markdown(report: dict[str, Any]) -> str:
         "# SFT 与最佳 GRPO 的留出集配对比较",
         "",
         f"配对新闻数：{report['paired_news']}；bootstrap 次数：{report['bootstrap_samples']}；差值方向：候选 GRPO − SFT。",
+        f"评测协议指纹校验：{'通过' if report['evaluation_protocol_verified'] else '旧结果缺少元数据，未验证'}。",
         "",
         "| 指标 | SFT | 最佳 GRPO | 配对差值 | 95% bootstrap CI |",
         "|---|---:|---:|---:|---:|",

@@ -479,6 +479,25 @@ class AgentR1新闻测试(unittest.TestCase):
         )
         self.assertEqual(report["decision_mcnemar"]["improvements"], 1)
         self.assertEqual(report["decision_mcnemar"]["regressions"], 0)
+        self.assertFalse(report["evaluation_protocol_verified"])
+
+    def test_留出配对统计拒绝不同评测协议(self):
+        baseline = {
+            "evaluation_config": {
+                "sample_offset": 120,
+                "maximum_samples": 840,
+                "max_new_tokens": 256,
+                "temperature": 0.0,
+                "dataset_sha256": "same-data",
+                "knowledge_sha256": "same-rules",
+                "sample_sequence_sha256": "same-sequence",
+            }
+        }
+        candidate = {
+            "evaluation_config": baseline["evaluation_config"] | {"temperature": 0.8}
+        }
+        with self.assertRaisesRegex(ValueError, "评测协议不一致"):
+            配对模块.配对比较(baseline, candidate, bootstrap_samples=10)
 
 
 if __name__ == "__main__":

@@ -296,7 +296,7 @@ GRPO_EVAL_STEPS="720 960 1200 1440 2160 2880" \
 bash course/25_agent_r1_news/evaluate_selection_and_heldout.sh
 ```
 
-完整入口最后会生成 `*_heldout_paired.md` 和对应 JSON。置信区间以新闻为重采样单位，同一次抽样会同时带上该新闻的 retrieve、compose、decision 三条轨迹；这种配对方式比把 840 条轨迹当作互相独立更符合数据结构。决策准确率另外报告双侧精确 McNemar 检验，但这里仍是课程内留出集，不应包装成外部 benchmark 结论。
+完整入口最后会生成 `*_heldout_paired.md` 和对应 JSON。置信区间以新闻为重采样单位，同一次抽样会同时带上该新闻的 retrieve、compose、decision 三条轨迹；这种配对方式比把 840 条轨迹当作互相独立更符合数据结构。脚本还会核对数据、知识库、样本序列、偏移、温度和生成上限的指纹，不同协议会直接拒绝比较。决策准确率另外报告双侧精确 McNemar 检验，但这里仍是课程内留出集，不应包装成外部 benchmark 结论。
 
 单份动态评测的失败归因：
 
