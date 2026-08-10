@@ -29,6 +29,7 @@ for checkpoint in "${CHECKPOINTS[@]}"; do
     --adapter "${checkpoint}" \
     --dataset "${EVAL_DATASET:-${ROOT}/datasets/agent_r1_news/rl_smoke.jsonl}" \
     --maximum-samples "${EVAL_SAMPLES:-12}" \
+    --sample-offset "${EVAL_OFFSET:-0}" \
     --batch-size "${EVAL_BATCH_SIZE:-12}" \
     --output "${OUTPUT_ROOT}/${EVAL_PREFIX:-sft}_checkpoint_${step}_evaluation.json"
 done

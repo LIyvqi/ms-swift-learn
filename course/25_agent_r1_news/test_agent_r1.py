@@ -14,6 +14,8 @@ if str(项目根目录) not in sys.path:
 知识模块 = import_module("course.25_agent_r1_news.knowledge_pipeline")
 环境模块 = import_module("course.25_agent_r1_news.agent_system")
 奖励模块 = import_module("course.plugins.agent_r1_news")
+选择模块 = import_module("course.25_agent_r1_news.select_best_evaluation")
+评测模块 = import_module("course.25_agent_r1_news.evaluate_agent")
 RuleKnowledgeBase = 知识模块.RuleKnowledgeBase
 NewsPolicyEnvironment = 环境模块.NewsPolicyEnvironment
 导入动作 = 环境模块.导入动作
@@ -381,6 +383,61 @@ class AgentR1新闻测试(unittest.TestCase):
             ],
         )
         self.assertAlmostEqual(values[0], 0.7 * 0.4 + 0.3)
+
+    def test_检查点选择同时覆盖三个任务(self):
+        data = {
+            "summary": {
+                "retrieve": {"retrieval_f1": 0.6},
+                "compose": {"composition_f1": 0.9},
+                "decision": {
+                    "decision_accuracy": 0.8,
+                    "composition_f1": 0.7,
+                    "evidence_coverage": 0.6,
+                },
+            }
+        }
+        score, metrics = 选择模块.计算选择分数(data)
+        self.assertAlmostEqual(metrics["decision_subscore"], 0.7)
+        self.assertAlmostEqual(score, (0.6 + 0.9 + 0.7) / 3)
+
+    def test_检查点选择同分时偏好较早节点(self):
+        common = {
+            "summary": {
+                "retrieve": {"retrieval_f1": 1.0},
+                "compose": {"composition_f1": 1.0},
+                "decision": {
+                    "decision_accuracy": 1.0,
+                    "composition_f1": 1.0,
+                    "evidence_coverage": 1.0,
+                },
+            },
+            "agent_summary": {
+                "completion_rate": 1.0,
+                "invalid_action_rate": 0.0,
+            },
+        }
+        later = common | {"adapter": "run/checkpoint-1200"}
+        earlier = common | {"adapter": "run/checkpoint-960"}
+        selected = 选择模块.选择最佳结果([later, earlier])
+        self.assertEqual(selected["best"]["step"], 960)
+
+    def test_检查点选择集与最终留出集互不重叠(self):
+        path = 项目根目录 / "datasets/agent_r1_news/rl_val.jsonl"
+        selection = 评测模块.读取_jsonl(path, 120, 0)
+        heldout = 评测模块.读取_jsonl(path, 840, 120)
+        self.assertEqual(len(selection), 120)
+        self.assertEqual(len(heldout), 840)
+        self.assertEqual(
+            {row["task"] for row in selection}, {"retrieve", "compose", "decision"}
+        )
+        self.assertEqual(
+            {row["task"] for row in heldout}, {"retrieve", "compose", "decision"}
+        )
+        selection_ids = {row["record_id"] for row in selection}
+        heldout_ids = {row["record_id"] for row in heldout}
+        self.assertEqual(len(selection_ids), 40)
+        self.assertEqual(len(heldout_ids), 280)
+        self.assertFalse(selection_ids & heldout_ids)
 
 
 if __name__ == "__main__":

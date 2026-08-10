@@ -136,7 +136,9 @@ SFT 聊天模板长度审计：三个任务最大长度分别为 retrieve 2435�
 
 ### 修正版正式运行
 
-已使用 2880 条全量三任务数据启动 2 轮训练，共 2880 step；参数为 batch 6、G=3、generation batch 12、temperature 0.8、每轮最多 160 token、最多 6 轮，并开启梯度检查点。平台执行会话在一次长跑中发出过外部 `SIGTERM`，因此训练迁入持久 `tmux` 会话，保存间隔由 240 缩短为 120 step，最多保留 24 个带优化器状态的可恢复检查点。首次恢复还发现 Transformers 会从旧 `trainer_state.json` 沿用 240-step 间隔；脚本现已在恢复副本中同步该字段，不修改原检查点。480-step 完整优化器在同一 ROCm 节点恢复时，Accelerate 仍把 Adam 动量重映射成 FP32，随后 BF16 梯度导致第一次 `optimizer.step()` 报 dtype 不一致；使用 `RESUME_RESET_OPTIMIZER=true` 保留模型、步数、随机状态和数据位置，只重建动量与调度器后已成功继续。训练后将把同一 120 条动态验证结果补到这里。
+已使用 2880 条全量三任务数据启动 2 轮训练，共 2880 step；参数为 batch 6、G=3、generation batch 12、temperature 0.8、每轮最多 160 token、最多 6 轮，并开启梯度检查点。平台执行会话在一次长跑中发出过外部 `SIGTERM`，因此训练迁入持久 `tmux` 会话，保存间隔由 240 缩短为 120 step，最多保留 24 个带优化器状态的可恢复检查点。首次恢复还发现 Transformers 会从旧 `trainer_state.json` 沿用 240-step 间隔；脚本现已在恢复副本中同步该字段，不修改原检查点。480-step 完整优化器在同一 ROCm 节点恢复时，Accelerate 仍把 Adam 动量重映射成 FP32，随后 BF16 梯度导致第一次 `optimizer.step()` 报 dtype 不一致；使用 `RESUME_RESET_OPTIMIZER=true` 保留模型、步数、随机状态和数据位置，只重建动量与调度器后已成功继续。
+
+训练后的动态评测预先固定两级协议：前 120 条验证轨迹（40 篇新闻、每篇三个任务）只负责在各 checkpoint 中选模型；剩余 840 条轨迹（另外 280 篇新闻）只在选择完成后比较 SFT 与最佳 GRPO。选择分数对 retrieve、compose、decision 三个任务等权，decision 子分数再平均类别正确率、规则 F1 和证据覆盖率。这能避免既按同一小批验证样本挑 checkpoint，又把它当作最终泛化结果汇报。
 
 720-step 里程碑已生成完整适配器、优化器、调度器、随机状态和 trainer state。下面按连续 60 个 rollout（当前生成复用配置约对应 120 个训练 step）统计训练内信号；step 区间只显示实际执行 rollout 的奇数 step：
 

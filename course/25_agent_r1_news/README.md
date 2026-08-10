@@ -42,6 +42,7 @@
 | `summarize_resumed_grpo.py` | 按连续 step 区间拼接恢复日志，排除失败运行与重复 step |
 | `evaluate_checkpoints.sh` | 用同一动态验证子集比较指定运行中的多个 checkpoint |
 | `compare_evaluations.py` | 把多份动态评测 JSON 汇总成统一的 Markdown 对比表 |
+| `select_best_evaluation.py` | 用预先固定的三任务等权公式选最佳 checkpoint，避免看到留出集结果后人工挑模型 |
 | `analyze_failures.py` | 从动态轨迹区分检索、组合、反思、协议、决策和证据失败 |
 | `evaluate_formal_run.sh` | 串联阶段评测、恢复日志汇总和最终 Markdown 报告 |
 | `simulate_oracle.py` | 用确定性专家验证环境闭环 |
@@ -236,6 +237,20 @@ python course/25_agent_r1_news/evaluate_agent.py \
 
 `--batch-size` 只把多个独立环境的同一轮推理合并成批处理，不会共享或跳过任何一条轨迹的状态。
 
+正式实验不把“选模型”和“报最终结果”混在同一批样本上。`rl_val.jsonl` 的顺序是确定的，每篇新闻连续展开为 retrieve、compose、decision 三条轨迹：前 120 条对应 40 篇新闻，用于比较检查点；后 840 条对应另外 280 篇新闻，只在选定最佳检查点后评测一次。`evaluate_agent.py` 会把数据、知识库和样本序列的 SHA256，以及偏移、解码温度、输出上限写入结果 JSON。
+
+```bash
+# 检查点选择集：前 120 条。
+python course/25_agent_r1_news/evaluate_agent.py \
+  --adapter 某个检查点 --dataset datasets/agent_r1_news/rl_val.jsonl \
+  --sample-offset 0 --maximum-samples 120 --output 选择集结果.json
+
+# 最终留出集：其余 840 条；只对 SFT 与选定的最佳 GRPO 执行。
+python course/25_agent_r1_news/evaluate_agent.py \
+  --adapter 最佳检查点 --dataset datasets/agent_r1_news/rl_val.jsonl \
+  --sample-offset 120 --maximum-samples 840 --output 留出集结果.json
+```
+
 自动比较每个 SFT epoch：
 
 ```bash
@@ -260,6 +275,14 @@ python course/25_agent_r1_news/compare_evaluations.py \
   outputs/25_agent_r1_news/grpo_checkpoint_2880_evaluation.json \
   --labels SFT GRPO-1轮 GRPO-2轮 \
   --output outputs/25_agent_r1_news/checkpoint_comparison.md
+```
+
+检查点选择公式在评测前固定为三个任务等权：retrieve F1、compose F1，以及 decision accuracy、decision rule F1、evidence coverage 三者的均值。若总分相同，再依次选择完成率更高、无效动作率更低、step 更早的节点：
+
+```bash
+python course/25_agent_r1_news/select_best_evaluation.py \
+  outputs/25_agent_r1_news/grpo_checkpoint_*_evaluation.json \
+  --output outputs/25_agent_r1_news/grpo_selection.json
 ```
 
 单份动态评测的失败归因：

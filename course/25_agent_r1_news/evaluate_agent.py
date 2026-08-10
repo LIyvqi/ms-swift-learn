@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import sys
 from collections import defaultdict
@@ -46,15 +47,34 @@ def 计算宏平均_f1(真实标签: list[str], 预测标签: list[str]) -> floa
     return mean(各类_f1)
 
 
-def 读取_jsonl(path: Path, maximum_samples: int) -> list[dict[str, Any]]:
+def 读取_jsonl(
+    path: Path, maximum_samples: int, sample_offset: int = 0
+) -> list[dict[str, Any]]:
+    """按固定偏移读取连续样本，便于把检查点选择集与最终留出集隔离。"""
+
     rows = []
+    seen = 0
     with path.open(encoding="utf-8") as handle:
         for line in handle:
-            if line.strip():
-                rows.append(json.loads(line))
+            if not line.strip():
+                continue
+            if seen < sample_offset:
+                seen += 1
+                continue
+            rows.append(json.loads(line))
             if maximum_samples > 0 and len(rows) >= maximum_samples:
                 break
     return rows
+
+
+def 文件_sha256(path: Path) -> str:
+    """记录评测输入的内容摘要，防止同名数据被静默替换。"""
+
+    digest = hashlib.sha256()
+    with path.open("rb") as handle:
+        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
 
 
 def main() -> None:
@@ -71,6 +91,12 @@ def main() -> None:
         default=项目根目录 / "datasets/agent_r1_news/rl_smoke.jsonl",
     )
     parser.add_argument("--maximum-samples", type=int, default=12)
+    parser.add_argument(
+        "--sample-offset",
+        type=int,
+        default=0,
+        help="跳过数据集开头的非空记录数，用于构造独立留出集",
+    )
     parser.add_argument("--batch-size", type=int, default=12)
     parser.add_argument("--max-new-tokens", type=int, default=256)
     parser.add_argument(
@@ -79,6 +105,10 @@ def main() -> None:
         default=项目根目录 / "outputs/25_agent_r1_news/model_evaluation.json",
     )
     args = parser.parse_args()
+    if args.maximum_samples < 0:
+        parser.error("--maximum-samples 不能小于 0；0 表示读取偏移后的全部样本")
+    if args.sample_offset < 0:
+        parser.error("--sample-offset 不能小于 0")
 
     import torch
     from swift import InferRequest, RequestConfig, TransformersEngine
@@ -96,7 +126,7 @@ def main() -> None:
         项目根目录 / "datasets/agent_r1_news/knowledge_rules.jsonl"
     )
 
-    rows = 读取_jsonl(args.dataset, args.maximum_samples)
+    rows = 读取_jsonl(args.dataset, args.maximum_samples, args.sample_offset)
     states = []
     for row in rows:
         env = NewsPolicyEnvironment(knowledge, row["env_config"])
@@ -187,8 +217,25 @@ def main() -> None:
     }
     result = {
         "adapter": str(args.adapter),
+        "model": str(args.model),
         "dataset": str(args.dataset),
         "samples": len(traces),
+        "evaluation_config": {
+            "sample_offset": args.sample_offset,
+            "maximum_samples": args.maximum_samples,
+            "batch_size": args.batch_size,
+            "max_new_tokens": args.max_new_tokens,
+            "temperature": 0.0,
+            "dataset_sha256": 文件_sha256(args.dataset),
+            "knowledge_sha256": 文件_sha256(
+                项目根目录 / "datasets/agent_r1_news/knowledge_rules.jsonl"
+            ),
+            "sample_sequence_sha256": hashlib.sha256(
+                "\n".join(f"{row['record_id']}\t{row['task']}" for row in rows).encode(
+                    "utf-8"
+                )
+            ).hexdigest(),
+        },
         "summary": summary,
         "agent_summary": agent_summary,
         "traces": traces,

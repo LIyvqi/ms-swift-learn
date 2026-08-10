@@ -15,6 +15,7 @@ OUTPUT_ROOT="${EVAL_OUTPUT_ROOT:-${ROOT}/outputs/25_agent_r1_news}"
 # 这样即使训练奖励并非单调变化，也不会漏掉 960/1200 一带的最佳检查点。
 EVAL_STEPS="${GRPO_EVAL_STEPS:-720 960 1200 1440 2160 2880}"
 EVAL_SAMPLES="${EVAL_SAMPLES:-120}"
+EVAL_OFFSET="${EVAL_OFFSET:-0}"
 EVAL_BATCH_SIZE="${EVAL_BATCH_SIZE:-12}"
 EVAL_PREFIX="${EVAL_PREFIX:-grpo_formal}"
 DATASET="${EVAL_DATASET:-${ROOT}/datasets/agent_r1_news/rl_val.jsonl}"
@@ -39,6 +40,7 @@ if [[ -n "${EARLY_CHECKPOINT:-}" ]]; then
     --adapter "${EARLY_CHECKPOINT}" \
     --dataset "${DATASET}" \
     --maximum-samples "${EVAL_SAMPLES}" \
+    --sample-offset "${EVAL_OFFSET}" \
     --batch-size "${EVAL_BATCH_SIZE}" \
     --output "${EARLY_RESULT}"
   COMPARE_FILES+=("${EARLY_RESULT}")
@@ -50,6 +52,7 @@ EVAL_STEPS="${EVAL_STEPS}" \
 EVAL_PREFIX="${EVAL_PREFIX}" \
 EVAL_DATASET="${DATASET}" \
 EVAL_SAMPLES="${EVAL_SAMPLES}" \
+EVAL_OFFSET="${EVAL_OFFSET}" \
 EVAL_BATCH_SIZE="${EVAL_BATCH_SIZE}" \
 EVAL_OUTPUT_ROOT="${OUTPUT_ROOT}" \
 bash "${ROOT}/course/25_agent_r1_news/evaluate_checkpoints.sh"
