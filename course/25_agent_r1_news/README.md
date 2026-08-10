@@ -38,8 +38,8 @@
 | `prepare_data.py` | 从复旦新闻数据生成知识库、SFT 轨迹和 GRPO prompt |
 | `evaluate_pipeline.py` | 无模型的检索、组合、决策消融 |
 | `evaluate_agent.py` | 让真实 LoRA 模型逐轮操作环境，保存轨迹并统计 macro-F1、分标签准确率、完成率、无效动作率和平均轮数 |
-| `summarize_grpo.py` | 汇总 GRPO 全程与最近窗口的奖励、方差、KL、步时和显存 |
-| `summarize_resumed_grpo.py` | 按连续 step 区间拼接恢复日志，排除失败运行与重复 step |
+| `summarize_grpo.py` | 汇总 GRPO 奖励、KL、步时、显存，并定位最大 loss/梯度与非有限值 |
+| `summarize_resumed_grpo.py` | 按连续 step 区间拼接恢复日志，排除失败运行与重复 step，同时保留分段健康诊断 |
 | `evaluate_checkpoints.sh` | 用同一动态验证子集比较指定运行中的多个 checkpoint |
 | `compare_evaluations.py` | 把多份动态评测 JSON 汇总成统一的 Markdown 对比表 |
 | `compare_paired_evaluations.py` | 在同一篇留出新闻上计算 SFT→GRPO 的配对差值、bootstrap 置信区间和精确 McNemar 检验 |
@@ -339,6 +339,8 @@ python course/25_agent_r1_news/summarize_resumed_grpo.py \
 ```
 
 这里统计的是最终 checkpoint 的真实祖先轨迹；失败恢复、checkpoint 之后未保存的 step 和重新计算的重复 step 都不应写进正式曲线。`--bucket-rollouts 60` 会把连续 60 个 rollout（当前配置约等于 120 个训练 step）汇总成一个阶段，便于观察奖励和 KL 从哪一段开始变化。正式评测额外保留 960 和 1200，是因为训练奖励可能在一轮以内先达到峰值再回落；用稀疏节点只比较 720、1440 和最终步，可能错过泛化最好的策略。
+
+汇总中的“最大 loss/grad_norm”会给出对应全局 step，并分别统计 `loss>1`、`grad_norm>1000` 和非有限值次数。`grad_norm` 是裁剪前值，孤立尖峰后若立即恢复且 checkpoint 参数仍全部有限，可以记录后继续观察；若尖峰连续出现、总 loss/KL 变成非有限值或权重检查失败，应停止训练并回退到上一个完整 checkpoint。
 
 ## 主要训练参数
 

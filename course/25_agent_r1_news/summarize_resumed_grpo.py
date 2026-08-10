@@ -9,7 +9,7 @@ from itertools import pairwise
 from pathlib import Path
 from typing import Any
 
-from summarize_grpo import 有限平均, 汇总, 读取日志
+from summarize_grpo import 有限平均, 汇总, 训练健康, 读取日志
 
 
 @dataclass(frozen=True)
@@ -116,6 +116,7 @@ def main() -> None:
                 "步区间": f"{segment.起始步}～{segment.结束步}",
                 "训练_step_数": len(training_rows),
                 "rollout_批次数": len(reward_rows),
+                "训练健康": 训练健康(training_rows),
                 "rollout_汇总": 汇总(reward_rows),
             }
         )
@@ -126,6 +127,7 @@ def main() -> None:
         "训练_step_数": len(all_training),
         "rollout_批次数": len(all_rewards),
         "端到端平均步时_秒": 有限平均(all_training, "step_time"),
+        "训练健康": 训练健康(all_training),
         "全部_rollout": 汇总(all_rewards),
         f"最近_{min(window, len(all_rewards))}_个_rollout": 汇总(all_rewards[-window:]),
         "分段": segment_summaries,

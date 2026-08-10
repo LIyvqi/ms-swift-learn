@@ -37,6 +37,36 @@ def 有限平均(rows: list[dict[str, Any]], key: str) -> float | None:
     return mean(values) if values else None
 
 
+def 训练健康(rows: list[dict[str, Any]]) -> dict[str, Any]:
+    """汇总裁剪前 loss/梯度尖峰，并把最大值关联到具体全局 step。"""
+
+    result: dict[str, Any] = {}
+    for key, display_name, threshold in (
+        ("loss", "loss", 1.0),
+        ("grad_norm", "grad_norm", 1000.0),
+    ):
+        finite = []
+        nonfinite = 0
+        for row in rows:
+            value = row.get(key)
+            if not isinstance(value, int | float):
+                continue
+            numeric = float(value)
+            if math.isfinite(numeric):
+                finite.append((numeric, str(row.get("global_step/max_steps", ""))))
+            else:
+                nonfinite += 1
+        maximum = max(finite, default=None, key=lambda item: item[0])
+        result[f"最大_{display_name}"] = (
+            {"value": maximum[0], "global_step": maximum[1]} if maximum else None
+        )
+        result[f"{display_name}_非有限_step数"] = nonfinite
+        result[f"{display_name}_大于_{threshold:g}_step数"] = sum(
+            value > threshold for value, _ in finite
+        )
+    return result
+
+
 def 汇总(rows: list[dict[str, Any]]) -> dict[str, Any]:
     if not rows:
         return {}
@@ -85,10 +115,9 @@ def main() -> None:
         "训练_step_数": len(训练记录),
         "rollout_批次数": len(奖励记录),
         "端到端平均步时_秒": 有限平均(训练记录, "step_time"),
+        "训练健康": 训练健康(训练记录),
         "全部_rollout": 汇总(奖励记录),
-        f"最近_{min(window, len(奖励记录))}_个_rollout": 汇总(
-            奖励记录[-window:]
-        ),
+        f"最近_{min(window, len(奖励记录))}_个_rollout": 汇总(奖励记录[-window:]),
         "最新奖励记录": 奖励记录[-1],
     }
     print(json.dumps(result, ensure_ascii=False, indent=2))

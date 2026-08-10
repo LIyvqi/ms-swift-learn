@@ -17,6 +17,7 @@ if str(项目根目录) not in sys.path:
 选择模块 = import_module("course.25_agent_r1_news.select_best_evaluation")
 评测模块 = import_module("course.25_agent_r1_news.evaluate_agent")
 配对模块 = import_module("course.25_agent_r1_news.compare_paired_evaluations")
+汇总模块 = import_module("course.25_agent_r1_news.summarize_grpo")
 RuleKnowledgeBase = 知识模块.RuleKnowledgeBase
 NewsPolicyEnvironment = 环境模块.NewsPolicyEnvironment
 导入动作 = 环境模块.导入动作
@@ -498,6 +499,32 @@ class AgentR1新闻测试(unittest.TestCase):
         }
         with self.assertRaisesRegex(ValueError, "评测协议不一致"):
             配对模块.配对比较(baseline, candidate, bootstrap_samples=10)
+
+    def test_训练健康定位有限尖峰和非有限值(self):
+        rows = [
+            {
+                "global_step/max_steps": "1/3",
+                "loss": 0.1,
+                "grad_norm": 2.0,
+            },
+            {
+                "global_step/max_steps": "2/3",
+                "loss": float("inf"),
+                "grad_norm": float("nan"),
+            },
+            {
+                "global_step/max_steps": "3/3",
+                "loss": 2.0,
+                "grad_norm": 2000.0,
+            },
+        ]
+        health = 汇总模块.训练健康(rows)
+        self.assertEqual(health["最大_loss"], {"value": 2.0, "global_step": "3/3"})
+        self.assertEqual(health["最大_grad_norm"]["value"], 2000.0)
+        self.assertEqual(health["loss_非有限_step数"], 1)
+        self.assertEqual(health["grad_norm_非有限_step数"], 1)
+        self.assertEqual(health["loss_大于_1_step数"], 1)
+        self.assertEqual(health["grad_norm_大于_1000_step数"], 1)
 
 
 if __name__ == "__main__":
