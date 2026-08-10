@@ -86,6 +86,12 @@ def main() -> None:
         help="可重复传入，格式为 日志路径:起始步:结束步",
     )
     parser.add_argument("--window", type=int, default=100, help="最近 rollout 窗口")
+    parser.add_argument(
+        "--bucket-rollouts",
+        type=int,
+        default=0,
+        help="按固定 rollout 数输出连续窗口，0 表示关闭",
+    )
     args = parser.parse_args()
 
     segments = sorted(args.segment, key=lambda item: item.起始步)
@@ -124,6 +130,19 @@ def main() -> None:
         f"最近_{min(window, len(all_rewards))}_个_rollout": 汇总(all_rewards[-window:]),
         "分段": segment_summaries,
     }
+    bucket_size = max(0, args.bucket_rollouts)
+    if bucket_size:
+        buckets = []
+        for start in range(0, len(all_rewards), bucket_size):
+            rows = all_rewards[start : start + bucket_size]
+            buckets.append(
+                {
+                    "步区间": f"{解析全局步(rows[0])}～{解析全局步(rows[-1])}",
+                    "rollout_批次数": len(rows),
+                    "指标": 汇总(rows),
+                }
+            )
+        result[f"连续窗口_每{bucket_size}个rollout"] = buckets
     print(json.dumps(result, ensure_ascii=False, indent=2))
 
 

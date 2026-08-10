@@ -77,6 +77,7 @@ if [[ -n "${GRPO_SEGMENTS:-}" ]]; then
   python "${ROOT}/course/25_agent_r1_news/summarize_resumed_grpo.py" \
     "${summary_args[@]}" \
     --window "${GRPO_SUMMARY_WINDOW:-100}" \
+    --bucket-rollouts "${GRPO_BUCKET_ROLLOUTS:-60}" \
     > "${OUTPUT_ROOT}/${EVAL_PREFIX}_training_summary.json"
 fi
 

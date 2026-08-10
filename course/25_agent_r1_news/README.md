@@ -287,10 +287,11 @@ python course/25_agent_r1_news/summarize_resumed_grpo.py \
   --segment outputs/25_agent_r1_news/grpo_2epoch/第一次/logging.jsonl:1:240 \
   --segment outputs/25_agent_r1_news/grpo_2epoch/第二次/logging.jsonl:241:480 \
   --segment outputs/25_agent_r1_news/grpo_2epoch/第三次/logging.jsonl:481:2880 \
-  --window 100
+  --window 100 \
+  --bucket-rollouts 60
 ```
 
-这里统计的是最终 checkpoint 的真实祖先轨迹；失败恢复、checkpoint 之后未保存的 step 和重新计算的重复 step 都不应写进正式曲线。
+这里统计的是最终 checkpoint 的真实祖先轨迹；失败恢复、checkpoint 之后未保存的 step 和重新计算的重复 step 都不应写进正式曲线。`--bucket-rollouts 60` 会把连续 60 个 rollout（当前配置约等于 120 个训练 step）汇总成一个阶段，便于观察奖励和 KL 从哪一段开始变化。
 
 ## 主要训练参数
 
