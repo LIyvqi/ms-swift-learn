@@ -20,6 +20,7 @@ if [[ "${#CHECKPOINTS[@]}" -eq 0 ]]; then
 fi
 
 # 对每个 epoch checkpoint 使用同一批动态环境样本，便于选择轮次。
+declare -A EVALUATED_STEPS=()
 for checkpoint in "${CHECKPOINTS[@]}"; do
   step="${checkpoint##*-}"
   if [[ -n "${EVAL_STEPS:-}" && " ${EVAL_STEPS} " != *" ${step} "* ]]; then
@@ -32,4 +33,15 @@ for checkpoint in "${CHECKPOINTS[@]}"; do
     --sample-offset "${EVAL_OFFSET:-0}" \
     --batch-size "${EVAL_BATCH_SIZE:-12}" \
     --output "${OUTPUT_ROOT}/${EVAL_PREFIX:-sft}_checkpoint_${step}_evaluation.json"
+  EVALUATED_STEPS["${step}"]=1
 done
+
+# 明确指定的节点必须在本次运行中真实完成，不能误用目录里遗留的同名 JSON。
+if [[ -n "${EVAL_STEPS:-}" ]]; then
+  for requested_step in ${EVAL_STEPS}; do
+    if [[ -z "${EVALUATED_STEPS[${requested_step}]:-}" ]]; then
+      echo "当前运行目录缺少指定 checkpoint-${requested_step}：${RUN_DIR}" >&2
+      exit 1
+    fi
+  done
+fi

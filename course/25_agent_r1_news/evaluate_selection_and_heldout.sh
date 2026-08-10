@@ -28,6 +28,33 @@ HELDOUT_SAMPLES="${HELDOUT_SAMPLES:-840}"
 BATCH_SIZE="${EVAL_BATCH_SIZE:-12}"
 mkdir -p "${OUTPUT_ROOT}"
 
+for name in SELECTION_OFFSET SELECTION_SAMPLES HELDOUT_OFFSET HELDOUT_SAMPLES; do
+  value="${!name}"
+  if [[ ! "${value}" =~ ^[0-9]+$ ]]; then
+    echo "${name} 必须是非负整数，实际为：${value}" >&2
+    exit 1
+  fi
+done
+if ((SELECTION_SAMPLES == 0 || HELDOUT_SAMPLES == 0)); then
+  echo "选择集和留出集样本数必须大于 0" >&2
+  exit 1
+fi
+selection_end=$((SELECTION_OFFSET + SELECTION_SAMPLES))
+heldout_end=$((HELDOUT_OFFSET + HELDOUT_SAMPLES))
+if ! ((selection_end <= HELDOUT_OFFSET || heldout_end <= SELECTION_OFFSET)); then
+  echo "选择集与留出集发生重叠，拒绝继续评测" >&2
+  exit 1
+fi
+if [[ ! -f "${DATASET}" ]]; then
+  echo "找不到评测数据集：${DATASET}" >&2
+  exit 1
+fi
+total_samples="$(awk 'NF {count++} END {print count + 0}' "${DATASET}")"
+if ((selection_end > total_samples || heldout_end > total_samples)); then
+  echo "评测切分越过数据集边界：总计 ${total_samples} 条" >&2
+  exit 1
+fi
+
 SFT_SELECTION="${OUTPUT_ROOT}/${PREFIX}_sft_selection_evaluation.json"
 python "${ROOT}/course/25_agent_r1_news/evaluate_agent.py" \
   --adapter "${SFT_ADAPTER_PATH}" \

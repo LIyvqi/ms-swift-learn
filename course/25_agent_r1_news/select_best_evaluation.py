@@ -107,9 +107,10 @@ def main() -> None:
         data = json.loads(path.read_text(encoding="utf-8"))
         config = data.get("evaluation_config", {})
         fingerprint = (
-            data.get("dataset"),
             data.get("samples"),
             config.get("sample_offset"),
+            config.get("dataset_sha256"),
+            config.get("knowledge_sha256"),
             config.get("sample_sequence_sha256"),
             config.get("temperature"),
             config.get("max_new_tokens"),
