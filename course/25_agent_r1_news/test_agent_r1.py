@@ -161,6 +161,29 @@ class AgentR1新闻测试(unittest.TestCase):
         self.assertGreater(info["metrics"]["reflection_gain"], 0)
         self.assertEqual(info["metrics"]["reflection_success"], 1.0)
 
+    def test_单字证据不会让专家反复非法反思(self):
+        for task in ("retrieve", "compose", "decision"):
+            with self.subTest(task=task):
+                config = {
+                    "task": task,
+                    "article": "两国执政党代表举行会谈并开展友好访问。",
+                    "label": "政治",
+                    "gold_rule_ids": ["POL-ROOT"],
+                    "gold_evidence": ["党"],
+                    "record_id": f"unit-single-character-{task}",
+                    "max_steps": 6 if task == "decision" else 4,
+                }
+                env = NewsPolicyEnvironment(self.knowledge, config)
+                env.reset()
+                info = {}
+                while not env.done:
+                    _, _, _, info = env.step(env.expert_action())
+                events = [step["event"] for step in info["trace"]]
+                self.assertEqual(events[-1], "finish")
+                self.assertFalse(
+                    any(event.startswith("invalid") for event in events), events
+                )
+
     def test_错误_top_k_不会让环境崩溃(self):
         config = {
             "task": "retrieve",

@@ -34,7 +34,7 @@
     "rl_train.jsonl": "49be2ac74d5b017aceb5bbf7f094b0a25c39bed6466b8f55996b48eab167c616",
     "rl_val.jsonl": "ece7bbda232ebd46d8d5e09fa0ed922e8e6f3857c2b2330c2babd6292df4421b",
     "rl_smoke.jsonl": "565ac9b906bda88fc1cabe377dd18c759ceed08049153ed793e7e89ce201902a",
-    "sft_train.jsonl": "16776c77f26eb380ff5809ca633c8e55d01c360abf9617dd365976647ec36d05",
+    "sft_train.jsonl": "9310cb5fb2604872059caf14f9f3e60e932518ca88583ad4763e8e0963cc6c50",
     "sft_val.jsonl": "2b3ccd8cbe053b18d03bc8b59c8d8ca4e76a5e533fbb25895c8fad1cf6e05960",
     "sft_smoke.jsonl": "e8454e41e50875f21694e57ee3dc189f12725bc62d13e54268d4540964d92381"
   }

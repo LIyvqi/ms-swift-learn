@@ -467,9 +467,16 @@ class NewsPolicyEnvironment:
         """根据当前环境状态生成下一条确定性专家动作。"""
 
         query_terms = self.gold_evidence[:3]
+        root_rule = self.knowledge.by_id.get(self.gold_rule_ids[0])
         if not query_terms:
-            root_rule = self.knowledge.by_id.get(self.gold_rule_ids[0])
             query_terms = [
+                self.label,
+                *(list(root_rule.keywords[:3]) if root_rule else []),
+            ]
+        # 单字证据不满足环境的最短查询约束；补入类别和 ROOT 关键词，避免专家反复提交非法反思。
+        elif len("".join(query_terms).strip()) < 2:
+            query_terms = [
+                *query_terms,
                 self.label,
                 *(list(root_rule.keywords[:3]) if root_rule else []),
             ]
