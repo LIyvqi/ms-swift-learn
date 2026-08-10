@@ -35,6 +35,7 @@ def 校验评测协议(baseline_data: dict[str, Any], candidate_data: dict[str, 
     keys = (
         "sample_offset",
         "maximum_samples",
+        "batch_size",
         "max_new_tokens",
         "temperature",
         "enable_thinking",

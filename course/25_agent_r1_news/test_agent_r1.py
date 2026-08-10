@@ -570,6 +570,7 @@ class AgentR1新闻测试(unittest.TestCase):
             "evaluation_config": {
                 "sample_offset": 120,
                 "maximum_samples": 840,
+                "batch_size": 12,
                 "max_new_tokens": 256,
                 "temperature": 0.0,
                 "dataset_sha256": "same-data",
@@ -582,6 +583,11 @@ class AgentR1新闻测试(unittest.TestCase):
         }
         with self.assertRaisesRegex(ValueError, "评测协议不一致"):
             配对模块.配对比较(baseline, candidate, bootstrap_samples=10)
+        different_batch = {
+            "evaluation_config": baseline["evaluation_config"] | {"batch_size": 24}
+        }
+        with self.assertRaisesRegex(ValueError, "评测协议不一致"):
+            配对模块.配对比较(baseline, different_batch, bootstrap_samples=10)
 
     def test_训练健康定位有限尖峰和非有限值(self):
         rows = [

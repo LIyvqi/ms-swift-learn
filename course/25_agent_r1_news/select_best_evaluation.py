@@ -117,6 +117,7 @@ def main() -> None:
         fingerprint = (
             data.get("samples"),
             config.get("sample_offset"),
+            config.get("batch_size"),
             config.get("dataset_sha256"),
             config.get("knowledge_sha256"),
             config.get("sample_sequence_sha256"),

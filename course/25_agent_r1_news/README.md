@@ -322,6 +322,10 @@ bash course/25_agent_r1_news/evaluate_selection_and_heldout.sh
 
 完整入口最后会生成 `*_heldout_paired.md` 和对应 JSON。置信区间以新闻为重采样单位，同一次抽样会同时带上该新闻的 retrieve、compose、decision 三条轨迹；这种配对方式比把 840 条轨迹当作互相独立更符合数据结构。脚本还会核对数据、知识库、样本序列、偏移、温度和生成上限的指纹，不同协议会直接拒绝比较。决策准确率另外报告双侧精确 McNemar 检验，但这里仍是课程内留出集，不应包装成外部 benchmark 结论。
 
+正式入口默认 `EVAL_BATCH_SIZE=24`，用较大显存批量处理互相独立的环境；这只改变
+推理吞吐，不共享状态。显存较小时可显式改回 12。batch size 也写入评测协议指纹，
+避免不同批量设置产生的数值差异被静默混在配对比较中。
+
 单份动态评测的失败归因：
 
 ```bash
