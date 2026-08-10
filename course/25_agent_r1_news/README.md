@@ -290,6 +290,16 @@ bash course/25_agent_r1_news/train_grpo.sh
 
 SFT 默认保留每轮 checkpoint；GRPO 每 120 step 保存一次带优化器状态的可恢复检查点，默认最多保留 24 个，完整两轮训练约占 4 GiB。这个间隔既能覆盖可能存在的短执行会话时限，也能保留半轮、一轮、两轮等阶段用于比较。中断后可设置 `RESUME_FROM_CHECKPOINT=检查点路径` 继续。若检查点跨执行节点恢复时出现 fused Adam 的 dtype/device 不一致，再加 `RESUME_RESET_OPTIMIZER=true`：脚本会保留模型、全局步数和随机状态，复制检查点并重建非 fused AdamW，不修改原检查点。确认最佳阶段并写入结果后再删其余 checkpoint，不要只依据最后一步。
 
+交互终端或自动化执行会话可能被平台定时回收，数小时训练建议放进 `tmux`。进入会话后运行上面的训练命令，按 `Ctrl-b`、再按 `d` 即可脱离；训练不会随当前终端关闭而退出：
+
+```bash
+tmux new -s agent_r1_grpo
+# 在 tmux 中运行 train_grpo.sh，按 Ctrl-b d 脱离
+tmux attach -t agent_r1_grpo
+```
+
+`tmux` 只能抵御终端或执行会话中断，不能抵御整台训练实例关机，所以可恢复 checkpoint 仍然必须写在 `/mnt/workspace`。
+
 ## 已完成的基础结果
 
 全部 320 条验证新闻的确定性离线消融：
