@@ -3,6 +3,8 @@
 set -euo pipefail
 ROOT="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/../.." && pwd)"
 source "${ROOT}/activate.sh"
+OUTPUT_ROOT="${EVAL_OUTPUT_ROOT:-${ROOT}/outputs/25_agent_r1_news}"
+mkdir -p "${OUTPUT_ROOT}"
 
 SFT_ROOT="${SFT_OUTPUT:-${ROOT}/outputs/25_agent_r1_news/sft_2epoch}"
 RUN_DIR="${RUN_DIR:-$({ find "${SFT_ROOT}" -mindepth 1 -maxdepth 1 -type d -printf '%T@ %p\n' 2>/dev/null || true; } | sort -nr | head -n 1 | cut -d' ' -f2-)}"
@@ -27,5 +29,5 @@ for checkpoint in "${CHECKPOINTS[@]}"; do
     --adapter "${checkpoint}" \
     --dataset "${EVAL_DATASET:-${ROOT}/datasets/agent_r1_news/rl_smoke.jsonl}" \
     --maximum-samples "${EVAL_SAMPLES:-12}" \
-    --output "${ROOT}/outputs/25_agent_r1_news/${EVAL_PREFIX:-sft}_checkpoint_${step}_evaluation.json"
+    --output "${OUTPUT_ROOT}/${EVAL_PREFIX:-sft}_checkpoint_${step}_evaluation.json"
 done

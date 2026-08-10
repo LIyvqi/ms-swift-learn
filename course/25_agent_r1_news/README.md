@@ -42,6 +42,7 @@
 | `summarize_resumed_grpo.py` | 按连续 step 区间拼接恢复日志，排除失败运行与重复 step |
 | `evaluate_checkpoints.sh` | 用同一动态验证子集比较指定运行中的多个 checkpoint |
 | `compare_evaluations.py` | 把多份动态评测 JSON 汇总成统一的 Markdown 对比表 |
+| `evaluate_formal_run.sh` | 串联阶段评测、恢复日志汇总和最终 Markdown 报告 |
 | `simulate_oracle.py` | 用确定性专家验证环境闭环 |
 | `audit_lengths.py` | 用真实聊天模板审计各任务 token 长度与截断风险 |
 | `summarize_training.py` | 从 ms-swift 日志提取首尾与最佳验证指标 |
@@ -257,6 +258,17 @@ python course/25_agent_r1_news/compare_evaluations.py \
   outputs/25_agent_r1_news/grpo_checkpoint_2880_evaluation.json \
   --labels SFT GRPO-1轮 GRPO-2轮 \
   --output outputs/25_agent_r1_news/checkpoint_comparison.md
+```
+
+跨多个恢复运行的正式实验可一次完成阶段评测、对比表和训练曲线汇总。`GRPO_SEGMENTS` 只列最终 checkpoint 的真实祖先区间，不要列失败恢复或重复计算的 step：
+
+```bash
+GRPO_RUN_DIR=outputs/25_agent_r1_news/grpo_2epoch/最终运行 \
+SFT_EVAL_RESULT=outputs/25_agent_r1_news/sft_checkpoint_720_evaluation.json \
+EARLY_CHECKPOINT=outputs/25_agent_r1_news/grpo_2epoch/早期运行/checkpoint-480 \
+GRPO_EVAL_STEPS="720 1440 2160 2880" \
+GRPO_SEGMENTS="第一次/logging.jsonl:1:240 第二次/logging.jsonl:241:480 最终运行/logging.jsonl:481:2880" \
+bash course/25_agent_r1_news/evaluate_formal_run.sh
 ```
 
 GRPO 训练中查看整体与最近 100 步趋势：
