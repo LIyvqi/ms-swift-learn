@@ -35,19 +35,19 @@ if [[ "${SMOKE:-0}" == "1" ]]; then
   SAVE_ONLY="${SAVE_ONLY_MODEL:-true}"
   EXTRA_ARGS+=(--max_steps "${SMOKE_STEPS:-2}" --save_steps "${SMOKE_STEPS:-2}")
 else
-  SAVE_LIMIT="${GRPO_SAVE_LIMIT:-12}"
+  SAVE_LIMIT="${GRPO_SAVE_LIMIT:-24}"
   SAVE_ONLY="${SAVE_ONLY_MODEL:-false}"
   if [[ "${GRPO_MAX_STEPS}" -gt 0 ]]; then
     EXTRA_ARGS+=(
       --max_steps "${GRPO_MAX_STEPS}"
       --save_strategy steps
-      --save_steps "${GRPO_SAVE_STEPS:-240}"
+      --save_steps "${GRPO_SAVE_STEPS:-120}"
     )
   else
     EXTRA_ARGS+=(
       --num_train_epochs "${GRPO_EPOCHS}"
       --save_strategy "${GRPO_SAVE_STRATEGY:-steps}"
-      --save_steps "${GRPO_SAVE_STEPS:-240}"
+      --save_steps "${GRPO_SAVE_STEPS:-120}"
     )
   fi
 fi

@@ -288,7 +288,7 @@ bash course/25_agent_r1_news/train_grpo.sh
 
 真实聊天模板的长度审计显示：retrieve、compose、decision 的 P95 分别为 2262、2689、2557 token，最大值分别为 2435、2916、2832；没有样本超过 3584。vLLM 侧仍保留 5120 token，供在线交互追加模型动作和环境观察。
 
-SFT 默认保留每轮 checkpoint；GRPO 每 240 step 保存一次带优化器状态的可恢复检查点，默认最多保留 12 个。中断后可设置 `RESUME_FROM_CHECKPOINT=检查点路径` 继续。若检查点跨执行节点恢复时出现 fused Adam 的 dtype/device 不一致，再加 `RESUME_RESET_OPTIMIZER=true`：脚本会保留模型、全局步数和随机状态，复制检查点并重建非 fused AdamW，不修改原检查点。确认最佳阶段并写入结果后再删其余 checkpoint，不要只依据最后一步。
+SFT 默认保留每轮 checkpoint；GRPO 每 120 step 保存一次带优化器状态的可恢复检查点，默认最多保留 24 个，完整两轮训练约占 4 GiB。这个间隔既能覆盖可能存在的短执行会话时限，也能保留半轮、一轮、两轮等阶段用于比较。中断后可设置 `RESUME_FROM_CHECKPOINT=检查点路径` 继续。若检查点跨执行节点恢复时出现 fused Adam 的 dtype/device 不一致，再加 `RESUME_RESET_OPTIMIZER=true`：脚本会保留模型、全局步数和随机状态，复制检查点并重建非 fused AdamW，不修改原检查点。确认最佳阶段并写入结果后再删其余 checkpoint，不要只依据最后一步。
 
 ## 已完成的基础结果
 
