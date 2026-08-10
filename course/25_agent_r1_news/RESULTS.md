@@ -131,6 +131,12 @@ SFT 聊天模板长度审计：三个任务最大长度分别为 retrieve 2435�
 可比较的真实覆盖率。若覆盖率仍明显不足，应把它作为可复现的协议退化，而不是用动作
 正确率掩盖。
 
+进一步用 `audit_supervision.py` 把每个任务前 4 条、共 12 条真实 SFT 轨迹送入
+ms-swift 的 Qwen3.5 训练模板：retrieve、compose、decision 分别有 12、12、16 个
+assistant 目标，原始数据和编码后 loss mask 中的非空 `<think>` 数完全一致，失败记录为
+0；监督 token 占完整输入的比例分别为 9.29%、6.17%、11.51%。因此“思考出现在 JSON”
+和“思考真正参与 SFT 损失”两层都已有独立证据。
+
 旧版最大 4 轮时，第二轮 SFT 的 decision accuracy 只有 0.10。轨迹显示模型常在第一步错误调用 `reflect`，随后虽然能完成 search、reflect、compose，却没有剩余轮次 finish。把上限增到 6 并没有改变最短专家路径，而是把“任务能力”和“一次动作失误后的可恢复性”分开评测；相同 checkpoint 的 accuracy 随之恢复到 0.95。
 
 ## 正式 GRPO

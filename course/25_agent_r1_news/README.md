@@ -49,6 +49,7 @@
 | `evaluate_selection_and_heldout.sh` | 一键完成 SFT 基线、GRPO 检查点选择、840 条留出轨迹评测和失败分析 |
 | `simulate_oracle.py` | 用确定性专家验证环境闭环 |
 | `audit_lengths.py` | 用真实聊天模板审计各任务 token 长度与截断风险 |
+| `audit_supervision.py` | 用 ms-swift 训练模板核对显式思考 token 是否进入 SFT loss mask |
 | `summarize_training.py` | 从 ms-swift 日志提取首尾与最佳验证指标 |
 | `train_sft.sh` | 多任务、多轮轨迹监督预热 |
 | `train_grpo.sh` | 多任务、多轮 GYM-GRPO |
@@ -222,6 +223,9 @@ python course/25_agent_r1_news/audit_lengths.py \
   datasets/agent_r1_news/sft_train.jsonl \
   --model models/Qwen3.5-0.8B-Base \
   --knowledge datasets/agent_r1_news/knowledge_rules.jsonl
+python course/25_agent_r1_news/audit_supervision.py \
+  datasets/agent_r1_news/sft_train.jsonl \
+  --model models/Qwen3.5-0.8B-Base
 ```
 
 测试命令建议始终写成 `python -m unittest` 或 `python -m pytest`。部分机器的 `pytest`
