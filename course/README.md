@@ -1,6 +1,6 @@
 # Qwen3.5-0.8B 训练与蒸馏课程
 
-本目录使用同一个 `Qwen3.5-0.8B-Base`，按从监督学习到在线/离线蒸馏、人类偏好对齐和 Agent 持续学习的顺序组织。第 00 至 07 节使用固定 1000 条 GSM8K 数据；第 08 至 09 节演示 Direct-RLOO 与 CoT-RLOO；第 10 至 22 节使用统一新闻偏好数据和 1～5 分评分数据，系统比较 SFT/DFT、DPO、RM/PPO、KTO、CPO、SimPO、ORPO、GRPO/DAPO/GSPO、GKD/OPD-RL/OPSD 以及两个同名 REAL；第 23 节用 JitRL 演示不更新模型参数的推理期持续学习，第 24 节进一步研究知识支持库、历史案例库和规则库协同修正 logits，第 25 节实现可训练的检索、反思、规则组合和执行多轮智能体。
+本目录使用同一个 `Qwen3.5-0.8B-Base`，按从监督学习到在线/离线蒸馏、人类偏好对齐和 Agent 持续学习的顺序组织。第 01 至 04 节还增加了 200 条混合模态补充线，覆盖纯文本、纯图像、图文输入以及 Direct/显式 CoT；原始文本课程仍保留。第 08 至 09 节演示 Direct-RLOO 与 CoT-RLOO；第 10 至 22 节使用统一新闻偏好数据和 1～5 分评分数据，系统比较 SFT/DFT、DPO、RM/PPO、KTO、CPO、SimPO、ORPO、GRPO/DAPO/GSPO、GKD/OPD-RL/OPSD 以及两个同名 REAL；第 23 节用 JitRL 演示不更新模型参数的推理期持续学习，第 24 节进一步研究知识支持库、历史案例库和规则库协同修正 logits，第 25 节实现可训练的检索、反思、规则组合和执行多轮智能体。
 
 所有实验已经进一步完成 100 步实测，定量结果、稳定性问题和调参建议见 [RESULTS_100_STEPS.md](RESULTS_100_STEPS.md)。多轮、学习率、散度参数、batch 与统一生成评测的最终对照见 [TUNING_RESULTS.md](TUNING_RESULTS.md)。
 
@@ -11,10 +11,10 @@
 | 目录 | 详细教程 |
 |---|---|
 | `00_setup` | [环境、模型与数据资产检查](00_setup/README.md) |
-| `01_lora_sft` | [CoT/Direct LoRA 监督微调](01_lora_sft/README.md) |
-| `02_full_sft` | [全参数混合 SFT 学生](02_full_sft/README.md) |
-| `03_grpo` | [GRPO 奖励强化学习](03_grpo/README.md) |
-| `04_opd` | [单教师 OPD 在线蒸馏](04_opd/README.md) |
+| `01_lora_sft` | [CoT/Direct LoRA 监督微调](01_lora_sft/README.md)；[多模态补充](01_lora_sft/MULTIMODAL.md) |
+| `02_full_sft` | [全参数混合 SFT 学生](02_full_sft/README.md)；[多模态补充](02_full_sft/MULTIMODAL.md) |
+| `03_grpo` | [GRPO 奖励强化学习](03_grpo/README.md)；[多模态补充](03_grpo/MULTIMODAL.md) |
+| `04_opd` | [单教师 OPD 在线蒸馏](04_opd/README.md)；[多模态补充](04_opd/MULTIMODAL.md) |
 | `05_mopd` | [多教师 MOPD 路由蒸馏](05_mopd/README.md) |
 | `06_offline_gkd` | [离线 GKD 知识蒸馏](06_offline_gkd/README.md) |
 | `07_tuning` | [参数矩阵与统一生成评测](07_tuning/README.md) |
@@ -61,6 +61,8 @@ bash course/00_setup/verify.sh
 | `prompts_multi_*` | 两种 prompt 交替，并带 `teacher_tag` | MOPD 双教师路由 |
 
 这里的“思维链”是 GSM8K 数据中公开的监督解题步骤，不是任何模型的隐藏内部推理。
+
+多模态补充数据位于 `datasets/multimodal_200/`，包含 60 条纯文本、60 条纯图像和 80 条图文混合源样本。Direct 与 CoT 是同一批 200 个源样本的成对视图；完整字段、划分和扩展方法见 [多模态数据说明](../datasets/multimodal_200/README.md)。
 
 ## 推荐学习顺序
 

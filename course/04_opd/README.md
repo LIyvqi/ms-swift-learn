@@ -1,5 +1,7 @@
 # 04：单教师 OPD 在线蒸馏
 
+多模态补充实验见 [多模态 Direct/CoT-OPD 教程](MULTIMODAL.md)，它让教师与学生读取同一张图片，并分别蒸馏直接回答或显式过程分布。
+
 本目录让当前学生在线生成回答，再由对应 LoRA 教师为这些回答提供 token 级分布信号。脚本仍使用 `rlhf_type=grpo`，但配置 `teacher_model` 与 `teacher_adapters` 后，ms-swift 4.4.3 会启用 OPD-RL 路径。本实验没有任务奖励，优化信号只来自教师。
 
 ## 前置条件与执行方式

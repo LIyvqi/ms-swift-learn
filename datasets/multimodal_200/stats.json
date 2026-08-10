@@ -1,0 +1,23 @@
+{
+  "unique_samples": 200,
+  "train": 160,
+  "val": 40,
+  "modality": {
+    "image_only": 60,
+    "image_text": 80,
+    "text_only": 60
+  },
+  "source": {
+    "CMMU": 140,
+    "GSM8K": 60
+  },
+  "cmmu_subject": {
+    "math": 20,
+    "biology": 20,
+    "physics": 20,
+    "chemistry": 20,
+    "geography": 20,
+    "politics": 20,
+    "history": 20
+  }
+}

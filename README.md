@@ -1,6 +1,6 @@
 # ms-swift-learn
 
-这是一个围绕 `Qwen3.5-0.8B-Base` 和 ms-swift 4.4.3 源码环境编写的大模型训练学习仓库。项目使用固定的 GSM8K 与复旦新闻教学数据，覆盖 LoRA/全参 SFT、DFT、DPO、RM/PPO、KTO、CPO、SimPO、ORPO、GRPO/RLOO/DAPO/GSPO、自定义奖励、GKD、OPD/MOPD/OPSD、Regression-Aware REAL，以及无需梯度更新的 JitRL Agent 持续学习、KCR-JitRL 三库协同和 Agent-R1 风格多轮规则智能体。所有新增课程、脚本注释和笔记都使用中文。
+这是一个围绕 `Qwen3.5-0.8B-Base` 和 ms-swift 4.4.3 源码环境编写的大模型训练学习仓库。项目使用固定的 GSM8K、CMMU 多模态子集与复旦新闻教学数据，覆盖 LoRA/全参 SFT、DFT、DPO、RM/PPO、KTO、CPO、SimPO、ORPO、GRPO/RLOO/DAPO/GSPO、自定义奖励、GKD、OPD/MOPD/OPSD、Regression-Aware REAL，以及无需梯度更新的 JitRL Agent 持续学习、KCR-JitRL 三库协同和 Agent-R1 风格多轮规则智能体。第 01～04 课同时提供纯文本、纯图像、图文混合以及 Direct/显式 CoT 训练链路。所有新增课程、脚本注释和笔记都使用中文。
 
 ## 已完成实验
 
@@ -30,6 +30,7 @@
 ms-swift-learn/
 ├── course/                     # 按学习顺序组织的训练课程与中文笔记
 ├── datasets/gsm8k_1k/         # 固定 1000 条教学数据和 SHA-256 校验值
+├── datasets/multimodal_200/   # 固定 200 条文本/图片/图文混合教学数据
 ├── datasets/fudan_news_4class/ # 固定 1600 条四分类数据和校验值
 ├── datasets/fudan_news_cot_50/ # 50 条人工证据 CoT 分类子集
 ├── datasets/alignment_news/   # SFT、成对偏好、KTO、prompt 与 OPSD 视图
@@ -73,6 +74,7 @@ modelscope download \
 
 ```bash
 python tools/prepare_gsm8k.py
+python tools/validate_multimodal_200.py
 bash course/00_setup/verify.sh
 ```
 
@@ -81,6 +83,7 @@ bash course/00_setup/verify.sh
 1. 阅读 [环境记录](TRAINING_ENVIRONMENT.md)，了解 ROCm、持久化缓存和版本约束。
 2. 按 [课程入口](course/README.md) 完成 LoRA 和全参 SFT。
 3. 对比 GRPO、OPD 和 MOPD，理解任务奖励与教师分布信号的区别。
+   第 01～04 课的多模态入口统一命名为 `train_multimodal.sh`，详细格式见 [多模态数据说明](datasets/multimodal_200/README.md)。
 4. 运行 GKD，比较 forward KL 与 JSD，以及 batch、轮次和速度的权衡。
 5. 阅读 [100 步结果](course/RESULTS_100_STEPS.md) 和 [完整调参结果](course/TUNING_RESULTS.md)。
 6. 完成 [RLOO 自定义奖励分类教程](course/08_rloo_classification/README.md)，比较 SFT 与在线强化学习。
@@ -99,6 +102,11 @@ source ./activate.sh
 
 # 环境验证
 bash course/00_setup/verify.sh
+
+# 第 01～04 课多模态链路，先逐项做单步冒烟
+SMOKE=1 STYLE=direct bash course/01_lora_sft/train_multimodal.sh
+SMOKE=1 STYLE=cot bash course/01_lora_sft/train_multimodal.sh
+SMOKE=1 STYLE=mixed bash course/02_full_sft/train_multimodal.sh
 
 # 监督训练参数网格
 bash course/07_tuning/run_sft_grid.sh

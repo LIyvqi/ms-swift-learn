@@ -10,6 +10,7 @@ outputs/
 third_party/
 downloads/
 .cache/
+datasets/_sources/
 checkpoint-*/
 *.safetensors
 *.pt

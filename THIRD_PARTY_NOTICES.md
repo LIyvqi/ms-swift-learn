@@ -8,6 +8,8 @@
 | ms-swift v4.4.3 | <https://github.com/modelscope/ms-swift/tree/v4.4.3> | SFT、GRPO、OPD、MOPD 与 GKD |
 | ModelScope | <https://modelscope.cn/> | 模型和数据下载 |
 | GSM8K | <https://modelscope.cn/datasets/modelscope/gsm8k> | 数学推理教学数据 |
+| CMMU | <https://modelscope.cn/datasets/evalscope/CMMU> | 第 01～04 课的中文视觉选择题；源页面标注 Apache-2.0 |
+| Noto Sans CJK | <https://github.com/notofonts/noto-cjk> | 生成纯图像题面时使用；字体文件不提交到仓库 |
 | 复旦新闻分类数据 | <https://modelscope.cn/datasets/damo/zh_cls_fudan-news> | 四分类 SFT、RLOO 与验证数据，页面标注 Apache-2.0 |
 | JitRL 论文与官方实现 | <https://github.com/liushiliushi/JitRL> | 第 23 节算法公式和实验设计参考；官方源码未提交到本仓库 |
 | Agent-R1 论文与官方实现 | <https://github.com/AgentR1/Agent-R1> | 第 25 节的逐步状态、环境反馈和多轮策略训练设计参考；官方源码未提交到本仓库 |
