@@ -80,7 +80,7 @@ from pathlib import Path
 PY
   fi
   if [[ "${RESUME_RESET_OPTIMIZER:-false}" == "true" ]]; then
-    # 跨执行节点时 fused Adam 状态可能出现 dtype/device 不一致；复制后只重建优化器和调度器。
+    # ROCm/BF16 或跨节点恢复可能让 Adam 状态与当前参数 dtype/device 不一致；只重建优化器和调度器。
     [[ ! -f "${RESUME_COPY}/optimizer.pt" ]] || mv -f \
       "${RESUME_COPY}/optimizer.pt" "${RESUME_COPY}/optimizer.pt.disabled"
     [[ ! -f "${RESUME_COPY}/scheduler.pt" ]] || mv -f \
