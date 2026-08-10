@@ -122,6 +122,7 @@ def main() -> None:
             config.get("sample_sequence_sha256"),
             config.get("temperature"),
             config.get("max_new_tokens"),
+            config.get("enable_thinking"),
         )
         if expected_fingerprint is None:
             expected_fingerprint = fingerprint

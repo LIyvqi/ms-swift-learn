@@ -100,6 +100,12 @@ def main() -> None:
     parser.add_argument("--batch-size", type=int, default=12)
     parser.add_argument("--max-new-tokens", type=int, default=256)
     parser.add_argument(
+        "--enable-thinking",
+        action=argparse.BooleanOptionalAction,
+        default=True,
+        help="是否让 Qwen3.5 从真实思考前缀开始生成；本课程默认开启",
+    )
+    parser.add_argument(
         "--output",
         type=Path,
         default=项目根目录 / "outputs/25_agent_r1_news/model_evaluation.json",
@@ -149,7 +155,13 @@ def main() -> None:
     while active:
         for start in range(0, len(active), args.batch_size):
             current = active[start : start + args.batch_size]
-            requests = [InferRequest(messages=state["messages"]) for state in current]
+            requests = [
+                InferRequest(
+                    messages=state["messages"],
+                    chat_template_kwargs={"enable_thinking": args.enable_thinking},
+                )
+                for state in current
+            ]
             responses = engine.infer(requests, request_config=generation)
             for state, response in zip(current, responses):
                 completion = response.choices[0].message.content or ""
@@ -229,6 +241,7 @@ def main() -> None:
             "batch_size": args.batch_size,
             "max_new_tokens": args.max_new_tokens,
             "temperature": 0.0,
+            "enable_thinking": args.enable_thinking,
             "dataset_sha256": 文件_sha256(args.dataset),
             "knowledge_sha256": 文件_sha256(
                 项目根目录 / "datasets/agent_r1_news/knowledge_rules.jsonl"

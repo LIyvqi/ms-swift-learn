@@ -179,6 +179,11 @@ SFT 采用标准 `messages` 交替格式，每个 assistant 动作都参与监�
 当前协议要求标签内至少有一个非空字符；纯空白 `<think>\n\n</think>` 的工具动作仍会执行，
 但 `thinking_score=0` 且只能得到半协议分，避免因为一次格式缺失就丢弃整条可学习轨迹。
 动态评测同时报告逐动作“显式思考覆盖率”，模型选择在主任务分数完全相同时也优先该指标更高的节点。
+Qwen3.5 是混合思考模板；如果不显式开启，模板会在生成前预填
+`<think>\n\n</think>`，模型只能从动作正文开始续写。训练脚本固定使用
+`--enable_thinking true`，`evaluate_agent.py` 也默认向每个 `InferRequest` 传入
+`chat_template_kwargs={"enable_thinking": true}`，并把该开关写入评测协议指纹。
+因此不能把思考开启与关闭的两份结果放在同一张模型选择或配对检验表里。
 
 ## 多任务奖励
 
