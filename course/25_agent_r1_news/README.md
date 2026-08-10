@@ -42,6 +42,7 @@
 | `summarize_resumed_grpo.py` | 按连续 step 区间拼接恢复日志，排除失败运行与重复 step |
 | `evaluate_checkpoints.sh` | 用同一动态验证子集比较指定运行中的多个 checkpoint |
 | `compare_evaluations.py` | 把多份动态评测 JSON 汇总成统一的 Markdown 对比表 |
+| `compare_paired_evaluations.py` | 在同一篇留出新闻上计算 SFT→GRPO 的配对差值、bootstrap 置信区间和精确 McNemar 检验 |
 | `select_best_evaluation.py` | 用预先固定的三任务等权公式选最佳 checkpoint，避免看到留出集结果后人工挑模型 |
 | `analyze_failures.py` | 从动态轨迹区分检索、组合、反思、协议、决策和证据失败 |
 | `evaluate_formal_run.sh` | 串联阶段评测、恢复日志汇总和最终 Markdown 报告 |
@@ -294,6 +295,8 @@ GRPO_RUN_DIR=outputs/25_agent_r1_news/grpo_2epoch/某次运行 \
 GRPO_EVAL_STEPS="720 960 1200 1440 2160 2880" \
 bash course/25_agent_r1_news/evaluate_selection_and_heldout.sh
 ```
+
+完整入口最后会生成 `*_heldout_paired.md` 和对应 JSON。置信区间以新闻为重采样单位，同一次抽样会同时带上该新闻的 retrieve、compose、decision 三条轨迹；这种配对方式比把 840 条轨迹当作互相独立更符合数据结构。决策准确率另外报告双侧精确 McNemar 检验，但这里仍是课程内留出集，不应包装成外部 benchmark 结论。
 
 单份动态评测的失败归因：
 

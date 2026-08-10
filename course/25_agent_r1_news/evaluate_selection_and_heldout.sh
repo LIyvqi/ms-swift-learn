@@ -123,6 +123,10 @@ python "${ROOT}/course/25_agent_r1_news/compare_evaluations.py" \
   "${SFT_HELDOUT}" "${BEST_HELDOUT}" \
   --labels SFT 最佳GRPO \
   --output "${OUTPUT_ROOT}/${PREFIX}_heldout_comparison.md"
+python "${ROOT}/course/25_agent_r1_news/compare_paired_evaluations.py" \
+  "${SFT_HELDOUT}" "${BEST_HELDOUT}" \
+  --output-json "${OUTPUT_ROOT}/${PREFIX}_heldout_paired.json" \
+  --output-md "${OUTPUT_ROOT}/${PREFIX}_heldout_paired.md"
 python "${ROOT}/course/25_agent_r1_news/analyze_failures.py" \
   "${SFT_HELDOUT}" \
   --output "${OUTPUT_ROOT}/${PREFIX}_sft_heldout_failures.json" > /dev/null

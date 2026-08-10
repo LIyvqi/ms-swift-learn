@@ -16,6 +16,7 @@ if str(项目根目录) not in sys.path:
 奖励模块 = import_module("course.plugins.agent_r1_news")
 选择模块 = import_module("course.25_agent_r1_news.select_best_evaluation")
 评测模块 = import_module("course.25_agent_r1_news.evaluate_agent")
+配对模块 = import_module("course.25_agent_r1_news.compare_paired_evaluations")
 RuleKnowledgeBase = 知识模块.RuleKnowledgeBase
 NewsPolicyEnvironment = 环境模块.NewsPolicyEnvironment
 导入动作 = 环境模块.导入动作
@@ -438,6 +439,46 @@ class AgentR1新闻测试(unittest.TestCase):
         self.assertEqual(len(selection_ids), 40)
         self.assertEqual(len(heldout_ids), 280)
         self.assertFalse(selection_ids & heldout_ids)
+
+    def test_留出评测按新闻做配对统计(self):
+        def 构造结果(adapter, decision_a, retrieval):
+            traces = []
+            for record_id, decision in (("a", decision_a), ("b", 1.0)):
+                traces.extend(
+                    [
+                        {
+                            "record_id": record_id,
+                            "task": "retrieve",
+                            "metrics": {"retrieval_f1": retrieval},
+                        },
+                        {
+                            "record_id": record_id,
+                            "task": "compose",
+                            "metrics": {"composition_f1": 0.8},
+                        },
+                        {
+                            "record_id": record_id,
+                            "task": "decision",
+                            "metrics": {
+                                "decision_accuracy": decision,
+                                "composition_f1": 0.7,
+                                "evidence_coverage": 0.6,
+                            },
+                        },
+                    ]
+                )
+            return {"adapter": adapter, "traces": traces}
+
+        baseline = 构造结果("sft", 0.0, 0.5)
+        candidate = 构造结果("grpo", 1.0, 0.7)
+        report = 配对模块.配对比较(baseline, candidate, bootstrap_samples=200, seed=7)
+        self.assertEqual(report["paired_news"], 2)
+        self.assertAlmostEqual(report["metrics"]["retrieval_f1"]["difference"], 0.2)
+        self.assertAlmostEqual(
+            report["metrics"]["decision_accuracy"]["difference"], 0.5
+        )
+        self.assertEqual(report["decision_mcnemar"]["improvements"], 1)
+        self.assertEqual(report["decision_mcnemar"]["regressions"], 0)
 
 
 if __name__ == "__main__":
