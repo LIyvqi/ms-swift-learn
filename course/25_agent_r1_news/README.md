@@ -316,7 +316,7 @@ python course/25_agent_r1_news/select_best_evaluation.py \
 ```bash
 SFT_ADAPTER=outputs/25_agent_r1_news/sft_2epoch/某次运行/checkpoint-720 \
 GRPO_RUN_DIR=outputs/25_agent_r1_news/grpo_2epoch/某次运行 \
-GRPO_EVAL_STEPS="720 960 1200 1440 1920 2160 2880" \
+GRPO_EVAL_STEPS="720 960 1200 1440 1920 2160 2280 2400 2520 2640 2760 2880" \
 bash course/25_agent_r1_news/evaluate_selection_and_heldout.sh
 ```
 
@@ -338,7 +338,7 @@ python course/25_agent_r1_news/analyze_failures.py \
 GRPO_RUN_DIR=outputs/25_agent_r1_news/grpo_2epoch/最终运行 \
 SFT_EVAL_RESULT=outputs/25_agent_r1_news/sft_checkpoint_720_evaluation.json \
 EARLY_CHECKPOINT=outputs/25_agent_r1_news/grpo_2epoch/早期运行/checkpoint-480 \
-GRPO_EVAL_STEPS="720 960 1200 1440 1920 2160 2880" \
+GRPO_EVAL_STEPS="720 960 1200 1440 1920 2160 2280 2400 2520 2640 2760 2880" \
 GRPO_SEGMENTS="第一次/logging.jsonl:1:240 第二次/logging.jsonl:241:480 最终运行/logging.jsonl:481:2880" \
 bash course/25_agent_r1_news/evaluate_formal_run.sh
 ```
@@ -362,7 +362,7 @@ python course/25_agent_r1_news/summarize_resumed_grpo.py \
   --bucket-rollouts 60
 ```
 
-这里统计的是最终 checkpoint 的真实祖先轨迹；失败恢复、checkpoint 之后未保存的 step 和重新计算的重复 step 都不应写进正式曲线。`--bucket-rollouts 60` 会把连续 60 个 rollout（当前配置约等于 120 个训练 step）汇总成一个阶段，便于观察奖励和 KL 从哪一段开始变化。正式评测额外保留 960 和 1200，是因为训练奖励可能在一轮以内先达到峰值再回落；用稀疏节点只比较 720、1440 和最终步，可能错过泛化最好的策略。
+这里统计的是最终 checkpoint 的真实祖先轨迹；失败恢复、checkpoint 之后未保存的 step 和重新计算的重复 step 都不应写进正式曲线。`--bucket-rollouts 60` 会把连续 60 个 rollout（当前配置约等于 120 个训练 step）汇总成一个阶段，便于观察奖励和 KL 从哪一段开始变化。正式评测保留 720、960、1200、1440、1920、2160，以及第二轮后半段每 120 step 的 2280～2880。训练奖励可能先达到峰值再回落；用稀疏节点只比较整数轮或最终步，可能错过泛化最好的策略。所有候选只使用同一 120 条选择集，增加候选不会偷看 840 条留出集。
 
 汇总中的“最大 loss/grad_norm”会给出对应全局 step，并分别统计 `loss>1`、`grad_norm>1000` 和非有限值次数。`grad_norm` 是裁剪前值，孤立尖峰后若立即恢复且 checkpoint 参数仍全部有限，可以记录后继续观察；若尖峰连续出现、总 loss/KL 变成非有限值或权重检查失败，应停止训练并回退到上一个完整 checkpoint。
 
