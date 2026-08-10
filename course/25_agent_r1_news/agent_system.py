@@ -56,8 +56,9 @@ def 构造系统提示(task: str) -> str:
 
 
 动作模式 = re.compile(r"<action>\s*(\{.*\})\s*</action>", re.DOTALL)
+思考模式 = re.compile(r"<think>\s*\S(?:.*?\S)?\s*</think>", re.DOTALL)
 严格动作模式 = re.compile(
-    r"^\s*(?:<think>\s*.+?\s*</think>\s*)?<action>\s*\{.*\}\s*</action>\s*$",
+    r"^\s*<think>\s*\S(?:.*?\S)?\s*</think>\s*<action>\s*\{.*\}\s*</action>\s*$",
     re.DOTALL,
 )
 
@@ -125,6 +126,7 @@ class NewsPolicyEnvironment:
             "rule_compliance": 0.0,
             "evidence_coverage": 0.0,
             "protocol_score": 0.0,
+            "thinking_score": 0.0,
             "task_schema_score": 0.0,
             "reflection_gain": 0.0,
             "reflection_success": 0.0,
@@ -280,10 +282,14 @@ class NewsPolicyEnvironment:
         event: str,
         reward: float,
         protocol_score: float,
+        thinking_score: float,
         detail: dict[str, Any],
     ) -> dict[str, Any]:
         self.metrics["protocol_score"] = (
             self.metrics["protocol_score"] * (self.steps - 1) + protocol_score
+        ) / self.steps
+        self.metrics["thinking_score"] = (
+            self.metrics["thinking_score"] * (self.steps - 1) + thinking_score
         ) / self.steps
         self.trace.append(
             {
@@ -291,6 +297,7 @@ class NewsPolicyEnvironment:
                 "event": event,
                 "reward": reward,
                 "protocol_score": protocol_score,
+                "thinking_score": thinking_score,
                 "detail": detail,
             }
         )
@@ -308,11 +315,14 @@ class NewsPolicyEnvironment:
         if self.done:
             raise RuntimeError("环境已经结束，不能继续 step")
         self.steps += 1
+        thinking_score = float(bool(思考模式.search(completion)))
         payload, protocol_score, error = 导入动作(completion)
         if payload is None:
             reward = -0.2
             self.done = self.steps >= self.max_steps
-            info = self._record("invalid", reward, protocol_score, {"error": error})
+            info = self._record(
+                "invalid", reward, protocol_score, thinking_score, {"error": error}
+            )
             return (
                 f"动作无效：{error}。请严格输出 <action>JSON</action>。",
                 reward,
@@ -460,7 +470,7 @@ class NewsPolicyEnvironment:
             self.done = True
             observation += "\n已达到最大步数，轨迹结束。"
             detail["stop_reason"] = "max_steps"
-        info = self._record(event, reward, protocol_score, detail)
+        info = self._record(event, reward, protocol_score, thinking_score, detail)
         return observation, reward, self.done, info
 
     def expert_action(self) -> str:

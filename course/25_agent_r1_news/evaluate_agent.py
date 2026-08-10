@@ -173,6 +173,7 @@ def main() -> None:
     总动作数 = 0
     无效动作数 = 0
     完成数 = 0
+    思考分数 = []
     for state in states:
         row = state["row"]
         last_info = state["last_info"]
@@ -184,6 +185,7 @@ def main() -> None:
         无效动作数 += sum(
             str(step.get("event", "")).startswith("invalid") for step in trace
         )
+        思考分数.extend(float(step.get("thinking_score", 0.0)) for step in trace)
         完成数 += int(bool(trace) and trace[-1].get("event") == "finish")
         if task == "decision":
             gold = str(row["label"])
@@ -209,6 +211,7 @@ def main() -> None:
     agent_summary = {
         "completion_rate": 完成数 / len(states) if states else 0.0,
         "invalid_action_rate": 无效动作数 / 总动作数 if 总动作数 else 0.0,
+        "thinking_presence_rate": mean(思考分数) if 思考分数 else 0.0,
         "mean_turns": mean(len(item["trace"]) for item in traces) if traces else 0.0,
         "decision_macro_f1": 计算宏平均_f1(真实标签, 预测标签),
         "decision_accuracy_by_label": {

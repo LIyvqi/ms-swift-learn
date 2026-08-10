@@ -64,6 +64,22 @@ class AgentR1新闻测试(unittest.TestCase):
         self.assertEqual(score, 0.0)
         self.assertTrue(error)
 
+    def test_动作协议要求非空显式思考(self):
+        empty = '<think>\n\n</think><action>{"tool":"search_rules","arguments":{}}</action>'
+        payload, score, error = 导入动作(empty)
+        self.assertIsNotNone(payload)
+        self.assertEqual(score, 0.5)
+        self.assertFalse(error)
+
+        explicit = (
+            '<think>先从新闻主题提取检索词。</think><action>'
+            '{"tool":"search_rules","arguments":{}}</action>'
+        )
+        payload, score, error = 导入动作(explicit)
+        self.assertIsNotNone(payload)
+        self.assertEqual(score, 1.0)
+        self.assertFalse(error)
+
     def test_专家完成决策轨迹(self):
         config = {
             "task": "decision",
@@ -354,6 +370,7 @@ class AgentR1新闻测试(unittest.TestCase):
                 {
                     "task_metrics": {
                         "protocol_score": 1.0,
+                        "thinking_score": 1.0,
                         "task_schema_score": 1.0,
                     },
                     "agent_trace": clean_trace,
@@ -361,6 +378,7 @@ class AgentR1新闻测试(unittest.TestCase):
                 {
                     "task_metrics": {
                         "protocol_score": 1.0,
+                        "thinking_score": 1.0,
                         "task_schema_score": 1.0,
                     },
                     "agent_trace": noisy_trace,

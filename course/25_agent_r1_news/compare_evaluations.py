@@ -30,6 +30,7 @@ def 从轨迹补充智能体指标(data: dict[str, Any]) -> dict[str, float]:
     invalid_count = 0
     completed_count = 0
     turns = []
+    thinking_scores = []
     for item in traces:
         trace = item.get("trace", []) if isinstance(item, dict) else []
         if not isinstance(trace, list):
@@ -37,6 +38,11 @@ def 从轨迹补充智能体指标(data: dict[str, Any]) -> dict[str, float]:
         action_count += len(trace)
         invalid_count += sum(
             str(step.get("event", "")).startswith("invalid")
+            for step in trace
+            if isinstance(step, dict)
+        )
+        thinking_scores.extend(
+            float(step.get("thinking_score", 0.0))
             for step in trace
             if isinstance(step, dict)
         )
@@ -49,6 +55,7 @@ def 从轨迹补充智能体指标(data: dict[str, Any]) -> dict[str, float]:
     return {
         "completion_rate": completed_count / len(traces),
         "invalid_action_rate": invalid_count / action_count if action_count else 0.0,
+        "thinking_presence_rate": mean(thinking_scores) if thinking_scores else 0.0,
         "mean_turns": mean(turns),
     }
 
@@ -79,6 +86,7 @@ def 主函数() -> None:
         "模型",
         "完成率",
         "无效动作率",
+        "显式思考覆盖率",
         "平均轮数",
         "检索 F1",
         "组合 F1",
@@ -104,6 +112,7 @@ def 主函数() -> None:
             label,
             格式化(智能体值(agent, fallback, "completion_rate")),
             格式化(智能体值(agent, fallback, "invalid_action_rate")),
+            格式化(智能体值(agent, fallback, "thinking_presence_rate")),
             格式化(智能体值(agent, fallback, "mean_turns")),
             格式化(嵌套取值(data, "summary", "retrieve", "retrieval_f1")),
             格式化(嵌套取值(data, "summary", "compose", "composition_f1")),

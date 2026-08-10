@@ -143,6 +143,7 @@ class AgentNewsProtocolReward(ORM):
         for current_task, info in zip(task, rollout_infos):
             metrics = info.get("task_metrics", {}) if isinstance(info, dict) else {}
             protocol = float(metrics.get("protocol_score", 0.0))
+            thinking = float(metrics.get("thinking_score", 0.0))
             task_schema = float(metrics.get("task_schema_score", 0.0))
             trace = info.get("agent_trace", []) if isinstance(info, dict) else []
             invalid_count = sum(
@@ -150,7 +151,12 @@ class AgentNewsProtocolReward(ORM):
             )
             extra_turns = max(len(trace) - expected_turns.get(current_task, 4), 0)
             efficiency = max(0.0, 1.0 - 0.2 * invalid_count - 0.05 * extra_turns)
-            rewards.append(0.5 * protocol + 0.2 * efficiency + 0.3 * task_schema)
+            rewards.append(
+                0.35 * protocol
+                + 0.20 * thinking
+                + 0.15 * efficiency
+                + 0.30 * task_schema
+            )
         return rewards
 
 

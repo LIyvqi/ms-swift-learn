@@ -55,6 +55,7 @@ def 选择最佳结果(results: list[dict[str, Any]]) -> dict[str, Any]:
         score, metrics = 计算选择分数(data)
         agent = data.get("agent_summary", {})
         completion = 嵌套数值({"agent": agent}, "agent", "completion_rate")
+        thinking = 嵌套数值({"agent": agent}, "agent", "thinking_presence_rate")
         invalid = 嵌套数值({"agent": agent}, "agent", "invalid_action_rate")
         step = 检查点步数(str(data.get("adapter", "")))
         candidates.append(
@@ -64,6 +65,7 @@ def 选择最佳结果(results: list[dict[str, Any]]) -> dict[str, Any]:
                 "step": step,
                 "selection_score": score,
                 "completion_rate": completion,
+                "thinking_presence_rate": thinking,
                 "invalid_action_rate": invalid,
                 "metrics": metrics,
             }
@@ -76,6 +78,7 @@ def 选择最佳结果(results: list[dict[str, Any]]) -> dict[str, Any]:
         key=lambda item: (
             -item["selection_score"],
             -item["completion_rate"],
+            -item["thinking_presence_rate"],
             item["invalid_action_rate"],
             item["step"],
         )
@@ -88,7 +91,12 @@ def 选择最佳结果(results: list[dict[str, Any]]) -> dict[str, Any]:
             "maximum_samples": first_config.get("maximum_samples"),
             "sample_sequence_sha256": first_config.get("sample_sequence_sha256"),
             "formula": "(retrieve_F1 + compose_F1 + mean(decision_accuracy, decision_rule_F1, evidence_coverage)) / 3",
-            "tie_breakers": ["完成率高", "无效动作率低", "step 较早"],
+            "tie_breakers": [
+                "完成率高",
+                "显式思考覆盖率高",
+                "无效动作率低",
+                "step 较早",
+            ],
         },
         "best": candidates[0],
         "candidates": candidates,
