@@ -292,7 +292,7 @@ python course/25_agent_r1_news/select_best_evaluation.py \
 ```bash
 SFT_ADAPTER=outputs/25_agent_r1_news/sft_2epoch/某次运行/checkpoint-720 \
 GRPO_RUN_DIR=outputs/25_agent_r1_news/grpo_2epoch/某次运行 \
-GRPO_EVAL_STEPS="720 960 1200 1440 2160 2880" \
+GRPO_EVAL_STEPS="720 960 1200 1440 1920 2160 2880" \
 bash course/25_agent_r1_news/evaluate_selection_and_heldout.sh
 ```
 
@@ -314,7 +314,7 @@ python course/25_agent_r1_news/analyze_failures.py \
 GRPO_RUN_DIR=outputs/25_agent_r1_news/grpo_2epoch/最终运行 \
 SFT_EVAL_RESULT=outputs/25_agent_r1_news/sft_checkpoint_720_evaluation.json \
 EARLY_CHECKPOINT=outputs/25_agent_r1_news/grpo_2epoch/早期运行/checkpoint-480 \
-GRPO_EVAL_STEPS="720 960 1200 1440 2160 2880" \
+GRPO_EVAL_STEPS="720 960 1200 1440 1920 2160 2880" \
 GRPO_SEGMENTS="第一次/logging.jsonl:1:240 第二次/logging.jsonl:241:480 最终运行/logging.jsonl:481:2880" \
 bash course/25_agent_r1_news/evaluate_formal_run.sh
 ```
