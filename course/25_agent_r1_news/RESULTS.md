@@ -2,6 +2,21 @@
 
 本页只记录真实执行过的结果，并明确区分确定性流水线、冒烟训练和正式训练。`outputs/` 不提交 Git，因此这里是可持久化、可上传的摘要。
 
+## 实验环境
+
+| 项目 | 本次实测环境 |
+|---|---|
+| 基础模型 | `Qwen3.5-0.8B-Base`，852,985,920 参数 |
+| ms-swift | 官方 Git 标签 `v4.4.3`，提交 `e1287928be4451b9ed5e2fb00a24ad3c8f61287b` |
+| ms-swift 运行时字符串 | `4.5.0.dev0`；官方 `v4.4.3` 标签中的 `swift/version.py` 原样如此，不是本课程改号 |
+| Python / PyTorch | Python 3.12.13；PyTorch `2.11.0+gitd0c8b1f`，HIP 7.2.53211 |
+| 训练栈 | Transformers 5.12.1、TRL 0.29.1、PEFT 0.19.1、Accelerate 1.14.0、ModelScope 1.39.0 |
+| 推理引擎 | vLLM `0.26.0+rocm723` |
+| GPU | 1 × AMD MI308X，`gfx942`，191.69 GiB HBM |
+| 系统 | Ubuntu 22.04.5 LTS，ROCm 驱动 6.10.5 |
+
+训练框架版本应以官方标签和提交为准，不能只看运行时字符串。完整的持久化环境、重建方法与 AMD 注意事项见仓库根目录的 [训练环境笔记](../../TRAINING_ENVIRONMENT.md)。
+
 ## 确定性流水线
 
 全部 320 条验证新闻、51 条物理规则：
