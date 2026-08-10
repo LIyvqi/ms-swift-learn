@@ -73,6 +73,19 @@ def 智能体值(
     return float(value) if isinstance(value, int | float) else None
 
 
+def 三任务平均(data: dict[str, Any], key: str, fallback_key: str | None = None) -> float | None:
+    """按任务等权汇总过程指标，避免样本数量差异改变权重。"""
+
+    values = []
+    for task in ("retrieve", "compose", "decision"):
+        value = 嵌套取值(data, "summary", task, key)
+        if value is None and fallback_key:
+            value = 嵌套取值(data, "summary", task, fallback_key)
+        if value is not None:
+            values.append(value)
+    return mean(values) if values else None
+
+
 def 主函数() -> None:
     parser = argparse.ArgumentParser(description="比较多个 Agent-R1 动态评测结果")
     parser.add_argument("results", nargs="+", type=Path, help="评测 JSON 文件")
@@ -89,6 +102,8 @@ def 主函数() -> None:
         "显式思考覆盖率",
         "平均轮数",
         "检索 F1",
+        "反思最佳增益",
+        "反思成功率",
         "组合 F1",
         "决策准确率",
         "决策 Macro-F1",
@@ -115,6 +130,10 @@ def 主函数() -> None:
             格式化(智能体值(agent, fallback, "thinking_presence_rate")),
             格式化(智能体值(agent, fallback, "mean_turns")),
             格式化(嵌套取值(data, "summary", "retrieve", "retrieval_f1")),
+            格式化(
+                三任务平均(data, "reflection_best_gain", "reflection_gain")
+            ),
+            格式化(三任务平均(data, "reflection_success")),
             格式化(嵌套取值(data, "summary", "compose", "composition_f1")),
             格式化(嵌套取值(data, "summary", "decision", "decision_accuracy")),
             格式化(智能体值(agent, fallback, "decision_macro_f1")),

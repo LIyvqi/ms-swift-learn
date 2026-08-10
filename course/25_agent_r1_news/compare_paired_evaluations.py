@@ -12,6 +12,8 @@ from typing import Any
 
 指标显示名 = {
     "retrieval_f1": "检索 F1",
+    "reflection_best_gain": "反思最佳增益",
+    "reflection_success": "反思成功率",
     "composition_f1": "组合 F1",
     "decision_accuracy": "决策准确率",
     "decision_rule_f1": "决策规则 F1",
@@ -70,6 +72,25 @@ def 轨迹指标(data: dict[str, Any]) -> dict[str, dict[str, float]]:
         decision = tasks["decision"].get("metrics", {})
         values = {
             "retrieval_f1": float(retrieve.get("retrieval_f1", 0.0)),
+            "reflection_best_gain": mean(
+                float(
+                    tasks[name]
+                    .get("metrics", {})
+                    .get(
+                        "reflection_best_gain",
+                        tasks[name].get("metrics", {}).get("reflection_gain", 0.0),
+                    )
+                )
+                for name in ("retrieve", "compose", "decision")
+            ),
+            "reflection_success": mean(
+                float(
+                    tasks[name]
+                    .get("metrics", {})
+                    .get("reflection_success", 0.0)
+                )
+                for name in ("retrieve", "compose", "decision")
+            ),
             "composition_f1": float(compose.get("composition_f1", 0.0)),
             "decision_accuracy": float(decision.get("decision_accuracy", 0.0)),
             "decision_rule_f1": float(decision.get("composition_f1", 0.0)),
