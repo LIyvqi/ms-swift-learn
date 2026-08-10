@@ -365,7 +365,7 @@ class AgentR1新闻测试(unittest.TestCase):
         ]
         values = reward(
             [],
-            ["retrieve", "retrieve"],
+            ["retrieve", "retrieve", "retrieve"],
             [
                 {
                     "task_metrics": {
@@ -383,10 +383,19 @@ class AgentR1新闻测试(unittest.TestCase):
                     },
                     "agent_trace": noisy_trace,
                 },
+                {
+                    "task_metrics": {
+                        "protocol_score": 1.0,
+                        "thinking_score": 0.0,
+                        "task_schema_score": 1.0,
+                    },
+                    "agent_trace": clean_trace,
+                },
             ],
         )
         self.assertEqual(values[0], 1.0)
         self.assertLess(values[1], values[0])
+        self.assertLess(values[2], values[0])
 
     def test_反思奖励使用召回增益和成功标记(self):
         reward = 奖励模块.AgentNewsReflectionReward()
