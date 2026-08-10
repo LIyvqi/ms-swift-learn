@@ -45,6 +45,7 @@
 | `select_best_evaluation.py` | 用预先固定的三任务等权公式选最佳 checkpoint，避免看到留出集结果后人工挑模型 |
 | `analyze_failures.py` | 从动态轨迹区分检索、组合、反思、协议、决策和证据失败 |
 | `evaluate_formal_run.sh` | 串联阶段评测、恢复日志汇总和最终 Markdown 报告 |
+| `evaluate_selection_and_heldout.sh` | 一键完成 SFT 基线、GRPO 检查点选择、840 条留出轨迹评测和失败分析 |
 | `simulate_oracle.py` | 用确定性专家验证环境闭环 |
 | `audit_lengths.py` | 用真实聊天模板审计各任务 token 长度与截断风险 |
 | `summarize_training.py` | 从 ms-swift 日志提取首尾与最佳验证指标 |
@@ -283,6 +284,15 @@ python course/25_agent_r1_news/compare_evaluations.py \
 python course/25_agent_r1_news/select_best_evaluation.py \
   outputs/25_agent_r1_news/grpo_checkpoint_*_evaluation.json \
   --output outputs/25_agent_r1_news/grpo_selection.json
+```
+
+正式实验推荐直接运行完整入口；其中 `GRPO_SEGMENTS` 的格式与下文相同：
+
+```bash
+SFT_ADAPTER=outputs/25_agent_r1_news/sft_2epoch/某次运行/checkpoint-720 \
+GRPO_RUN_DIR=outputs/25_agent_r1_news/grpo_2epoch/某次运行 \
+GRPO_EVAL_STEPS="720 960 1200 1440 2160 2880" \
+bash course/25_agent_r1_news/evaluate_selection_and_heldout.sh
 ```
 
 单份动态评测的失败归因：

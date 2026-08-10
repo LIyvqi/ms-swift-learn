@@ -70,6 +70,8 @@ def 选择最佳结果(results: list[dict[str, Any]]) -> dict[str, Any]:
         )
     if not candidates:
         raise ValueError("至少需要一个评测结果")
+    first = results[0]
+    first_config = first.get("evaluation_config", {})
     candidates.sort(
         key=lambda item: (
             -item["selection_score"],
@@ -80,7 +82,11 @@ def 选择最佳结果(results: list[dict[str, Any]]) -> dict[str, Any]:
     )
     return {
         "selection_protocol": {
-            "split": "rl_val.jsonl 中 sample_offset=0、maximum_samples=120 的固定选择集",
+            "dataset": first.get("dataset"),
+            "dataset_sha256": first_config.get("dataset_sha256"),
+            "sample_offset": first_config.get("sample_offset"),
+            "maximum_samples": first_config.get("maximum_samples"),
+            "sample_sequence_sha256": first_config.get("sample_sequence_sha256"),
             "formula": "(retrieve_F1 + compose_F1 + mean(decision_accuracy, decision_rule_F1, evidence_coverage)) / 3",
             "tie_breakers": ["完成率高", "无效动作率低", "step 较早"],
         },
