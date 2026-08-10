@@ -246,6 +246,17 @@ EVAL_DATASET=datasets/agent_r1_news/rl_val.jsonl EVAL_SAMPLES=120 \
 bash course/25_agent_r1_news/evaluate_checkpoints.sh
 ```
 
+多份动态评测完成后，可直接生成统一的 Markdown 对比表，减少人工复制指标的误差：
+
+```bash
+python course/25_agent_r1_news/compare_evaluations.py \
+  outputs/25_agent_r1_news/sft_checkpoint_720_evaluation.json \
+  outputs/25_agent_r1_news/grpo_checkpoint_1440_evaluation.json \
+  outputs/25_agent_r1_news/grpo_checkpoint_2880_evaluation.json \
+  --labels SFT GRPO-1轮 GRPO-2轮 \
+  --output outputs/25_agent_r1_news/checkpoint_comparison.md
+```
+
 GRPO 训练中查看整体与最近 100 步趋势：
 
 ```bash
