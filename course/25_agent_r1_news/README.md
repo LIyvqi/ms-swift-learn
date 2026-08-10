@@ -194,7 +194,7 @@ Qwen3.5 是混合思考模板；如果不显式开启，模板会在生成前预
 | `course_agent_news_composition` | compose | 去重组合后的 canonical rule 集合 F1 |
 | `course_agent_news_decision` | decision | 分类正确率 + 规则合规 + 证据覆盖 |
 | `course_agent_news_protocol` | 全部 | 动作格式、非空显式思考、任务 schema、无效调用和额外轮次 |
-| `course_agent_news_reflection` | 全部 | 查询改写后的检索 F1 增益 |
+| `course_agent_news_reflection` | 全部 | 多次查询改写中的历史最佳检索 F1 增益与是否曾成功 |
 | `gym_reward` | 全部 | 环境各步骤奖励的总和，由 `--use_gym_env true` 自动追加 |
 
 ms-swift 多任务约定要求不适用的奖励返回 `None`，而不是 0。例如 composition 奖励在 decision 样本上返回 `None`，避免把“该任务没有此指标”误当成失败样本。

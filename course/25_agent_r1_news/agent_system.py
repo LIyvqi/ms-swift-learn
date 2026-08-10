@@ -129,6 +129,7 @@ class NewsPolicyEnvironment:
             "thinking_score": 0.0,
             "task_schema_score": 0.0,
             "reflection_gain": 0.0,
+            "reflection_best_gain": 0.0,
             "reflection_success": 0.0,
         }
 
@@ -379,7 +380,12 @@ class NewsPolicyEnvironment:
                     {f"retrieval_{key}": value for key, value in new_result.items()}
                 )
                 self.metrics["reflection_gain"] = gain
-                self.metrics["reflection_success"] = float(gain > 0)
+                self.metrics["reflection_best_gain"] = max(
+                    self.metrics["reflection_best_gain"], gain
+                )
+                self.metrics["reflection_success"] = max(
+                    self.metrics["reflection_success"], float(gain > 0)
+                )
                 reward = 0.2 * max(gain, 0.0) + 0.05 * new_result["recall"]
                 observation = (
                     f"反思已执行。诊断：{diagnosis}\n"

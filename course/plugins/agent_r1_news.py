@@ -172,7 +172,9 @@ class AgentNewsReflectionReward(ORM):
                 rewards.append(None)
                 continue
             metrics = info.get("task_metrics", {}) if isinstance(info, dict) else {}
-            gain = float(metrics.get("reflection_gain", 0.0))
+            gain = float(
+                metrics.get("reflection_best_gain", metrics.get("reflection_gain", 0.0))
+            )
             success = float(metrics.get("reflection_success", 0.0))
             rewards.append(max(0.0, min(1.0, 0.7 * max(gain, 0.0) + 0.3 * success)))
         return rewards

@@ -197,7 +197,45 @@ class AgentR1新闻测试(unittest.TestCase):
         )
         self.assertGreater(info["metrics"]["retrieval_recall"], first_recall)
         self.assertGreater(info["metrics"]["reflection_gain"], 0)
+        self.assertEqual(
+            info["metrics"]["reflection_best_gain"],
+            info["metrics"]["reflection_gain"],
+        )
         self.assertEqual(info["metrics"]["reflection_success"], 1.0)
+
+    def test_多次反思保留历史最佳增益(self):
+        config = {
+            "task": "decision",
+            "article": "球队在网球比赛中获胜并夺得冠军。",
+            "label": "体育",
+            "gold_rule_ids": ["SPT-ROOT", "SPT-COMP"],
+            "gold_evidence": ["比赛", "冠军"],
+            "record_id": "unit-multi-reflection",
+            "max_steps": 6,
+        }
+        env = NewsPolicyEnvironment(self.knowledge, config)
+        env.reset()
+        env.step(
+            '<think>先测试错误方向。</think><action>{"tool":"search_rules",'
+            '"arguments":{"query":"银行 利率","top_k":5}}</action>'
+        )
+        _, _, _, first = env.step(
+            '<think>改为赛事证据。</think><action>{"tool":"reflect",'
+            '"arguments":{"diagnosis":"类别错误","new_query":"球队 比赛 冠军",'
+            '"top_k":5}}</action>'
+        )
+        best_gain = first["metrics"]["reflection_best_gain"]
+        self.assertGreater(best_gain, 0)
+
+        _, _, done, second = env.step(
+            '<think>再测试一个较差方向。</think><action>{"tool":"reflect",'
+            '"arguments":{"diagnosis":"检查其他假设","new_query":"银行 利率",'
+            '"top_k":5}}</action>'
+        )
+        self.assertFalse(done)
+        self.assertLess(second["metrics"]["reflection_gain"], 0)
+        self.assertEqual(second["metrics"]["reflection_best_gain"], best_gain)
+        self.assertEqual(second["metrics"]["reflection_success"], 1.0)
 
     def test_单字证据不会让专家反复非法反思(self):
         for task in ("retrieve", "compose", "decision"):
