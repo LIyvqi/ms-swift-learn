@@ -352,6 +352,7 @@ python course/25_agent_r1_news/summarize_resumed_grpo.py \
 | `VLLM_MEMORY` | 0.40 | colocate vLLM 预留比例；给长轨迹的 backward 留出 HBM |
 | `GRPO_LEARNING_RATE` | 1e-6 | LoRA 策略学习率；3e-6 在 600 step 后实测出现决策奖励下降和 KL 抬升 |
 | `GRPO_BETA` | 0.01 | 限制策略远离 SFT 参考策略；与 0.001 的同区间配对试验中更稳定 |
+| `max_grad_norm` | 1.0 | 对反向传播梯度做全局范数裁剪；日志中的 `grad_norm` 是裁剪前诊断值，单步很大不等于实际更新未受约束 |
 | `temperature` | 0.8 | 保留组内探索，又比 0.9 更少破坏已学会的动作协议 |
 
 若迁移到 80 GiB 或更小显存，优先把 `RL_BATCH`、`GENERATION_BATCH` 降到 4，把 `VLLM_MEMORY` 降到 0.35～0.45，再视长度溢出情况调整 `vllm_max_model_len`。不要直接照搬本机峰值配置。
