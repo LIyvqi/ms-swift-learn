@@ -22,6 +22,7 @@ PLUGIN="${ROOT}/course/plugins/agent_r1_news.py"
 SFT_EPOCHS="${SFT_EPOCHS:-2}"
 SFT_ROOT="${SFT_OUTPUT:-${ROOT}/outputs/25_agent_r1_news/sft_${SFT_EPOCHS}epoch}"
 GRPO_EPOCHS="${GRPO_EPOCHS:-2}"
+GRPO_MAX_STEPS="${GRPO_MAX_STEPS:-0}"
 OUTPUT="${GRPO_OUTPUT:-${ROOT}/outputs/25_agent_r1_news/grpo_${GRPO_EPOCHS}epoch}"
 TRAIN_DATA="${DATA}/rl_train.jsonl"
 EXTRA_ARGS=()
@@ -36,14 +37,34 @@ if [[ "${SMOKE:-0}" == "1" ]]; then
 else
   SAVE_LIMIT="${GRPO_SAVE_LIMIT:-12}"
   SAVE_ONLY="${SAVE_ONLY_MODEL:-false}"
-  EXTRA_ARGS+=(
-    --num_train_epochs "${GRPO_EPOCHS}"
-    --save_strategy "${GRPO_SAVE_STRATEGY:-steps}"
-    --save_steps "${GRPO_SAVE_STEPS:-240}"
-  )
+  if [[ "${GRPO_MAX_STEPS}" -gt 0 ]]; then
+    EXTRA_ARGS+=(
+      --max_steps "${GRPO_MAX_STEPS}"
+      --save_strategy steps
+      --save_steps "${GRPO_SAVE_STEPS:-240}"
+    )
+  else
+    EXTRA_ARGS+=(
+      --num_train_epochs "${GRPO_EPOCHS}"
+      --save_strategy "${GRPO_SAVE_STRATEGY:-steps}"
+      --save_steps "${GRPO_SAVE_STEPS:-240}"
+    )
+  fi
 fi
 if [[ -n "${RESUME_FROM_CHECKPOINT:-}" ]]; then
-  EXTRA_ARGS+=(--resume_from_checkpoint "${RESUME_FROM_CHECKPOINT}")
+  RESUME_PATH="${RESUME_FROM_CHECKPOINT}"
+  if [[ "${RESUME_RESET_OPTIMIZER:-false}" == "true" ]]; then
+    # 跨执行节点时 fused Adam 状态可能出现 dtype/device 不一致；复制后只重建优化器和调度器。
+    RESUME_COPY="${OUTPUT}/resume_${RESUME_PATH##*/}"
+    mkdir -p "${RESUME_COPY}"
+    cp -a "${RESUME_PATH}/." "${RESUME_COPY}/"
+    [[ ! -f "${RESUME_COPY}/optimizer.pt" ]] || mv -f \
+      "${RESUME_COPY}/optimizer.pt" "${RESUME_COPY}/optimizer.pt.disabled"
+    [[ ! -f "${RESUME_COPY}/scheduler.pt" ]] || mv -f \
+      "${RESUME_COPY}/scheduler.pt" "${RESUME_COPY}/scheduler.pt.disabled"
+    RESUME_PATH="${RESUME_COPY}"
+  fi
+  EXTRA_ARGS+=(--resume_from_checkpoint "${RESUME_PATH}")
 fi
 SFT_ADAPTER="${SFT_ADAPTER:-$(latest_checkpoint "${SFT_ROOT}")}"
 
@@ -86,6 +107,7 @@ swift rlhf \
   --temperature "${TEMPERATURE:-0.8}" \
   --per_device_train_batch_size "${RL_BATCH:-6}" \
   --gradient_accumulation_steps 1 \
+  --optim "${OPTIMIZER:-adamw_torch}" \
   --learning_rate "${GRPO_LEARNING_RATE:-3e-6}" \
   --beta "${GRPO_BETA:-0.001}" \
   --max_grad_norm 1.0 \

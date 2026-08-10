@@ -20,6 +20,9 @@ fi
 # 对每个 epoch checkpoint 使用同一批动态环境样本，便于选择轮次。
 for checkpoint in "${CHECKPOINTS[@]}"; do
   step="${checkpoint##*-}"
+  if [[ -n "${EVAL_STEPS:-}" && " ${EVAL_STEPS} " != *" ${step} "* ]]; then
+    continue
+  fi
   python "${ROOT}/course/25_agent_r1_news/evaluate_agent.py" \
     --adapter "${checkpoint}" \
     --dataset "${EVAL_DATASET:-${ROOT}/datasets/agent_r1_news/rl_smoke.jsonl}" \

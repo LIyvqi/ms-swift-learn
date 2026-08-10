@@ -41,7 +41,8 @@ mkdir -p \
   "${GH_CONFIG_DIR}" \
   "$(dirname -- "${GIT_CONFIG_GLOBAL}")"
 
-chmod 700 "${GH_CONFIG_DIR}" "$(dirname -- "${GIT_CONFIG_GLOBAL}")"
+# 受限执行环境可能只允许读取项目上级的持久化 Git 配置；已有目录不可改权限时继续激活训练环境。
+chmod 700 "${GH_CONFIG_DIR}" "$(dirname -- "${GIT_CONFIG_GLOBAL}")" 2>/dev/null || true
 
 # 这里复用机器镜像自带的 ROCm 版 PyTorch，同时把 ms-swift 及其兼容依赖
 # 保存在当前持久化项目目录中，避免普通 CUDA 软件包覆盖平台定制环境。

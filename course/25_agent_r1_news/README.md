@@ -237,6 +237,15 @@ python course/25_agent_r1_news/evaluate_agent.py \
 bash course/25_agent_r1_news/evaluate_checkpoints.sh
 ```
 
+同一个脚本也可只比较指定 GRPO 阶段，例如半轮、一轮和两轮：
+
+```bash
+RUN_DIR=outputs/25_agent_r1_news/grpo_2epoch/某次运行 \
+EVAL_STEPS="720 1440 2880" EVAL_PREFIX=grpo \
+EVAL_DATASET=datasets/agent_r1_news/rl_val.jsonl EVAL_SAMPLES=120 \
+bash course/25_agent_r1_news/evaluate_checkpoints.sh
+```
+
 GRPO 训练中查看整体与最近 100 步趋势：
 
 ```bash
@@ -275,11 +284,11 @@ GRPO_EPOCHS=2 \
 bash course/25_agent_r1_news/train_grpo.sh
 ```
 
-最终配置已连续完成 8 步实测，平均约 11.6 秒/step，训练器报告的峰值逻辑显存约 161.2 GiB。未开梯度检查点的 `batch=6` 会因某批随机生成的轨迹更长而在第三次 backward 偶发 OOM；因此显存验收不能只跑一步，也不能只观察 rollout 阶段。
+最终配置已连续完成 8 步实测，平均约 11.6 秒/step，训练器报告的峰值逻辑显存约 161.2 GiB。这里的 `memory(GiB)` 是训练器把 PyTorch 与 colocate vLLM 账户相加后的逻辑值，长跑中可能因共享内存被重复统计而暂时高于 191.69 GiB 物理容量，不能把它直接当作 `rocm-smi` 实际占用。未开梯度检查点的 `batch=6` 会因某批随机生成的轨迹更长而在第三次 backward 偶发 OOM；因此显存验收不能只跑一步，也不能只观察 rollout 阶段。
 
 真实聊天模板的长度审计显示：retrieve、compose、decision 的 P95 分别为 2262、2689、2557 token，最大值分别为 2435、2916、2832；没有样本超过 3584。vLLM 侧仍保留 5120 token，供在线交互追加模型动作和环境观察。
 
-SFT 默认保留每轮 checkpoint；GRPO 每 240 step 保存一次带优化器状态的可恢复检查点，默认最多保留 12 个。中断后可设置 `RESUME_FROM_CHECKPOINT=检查点路径` 继续；确认最佳阶段并写入结果后再删其余 checkpoint，不要只依据最后一步。
+SFT 默认保留每轮 checkpoint；GRPO 每 240 step 保存一次带优化器状态的可恢复检查点，默认最多保留 12 个。中断后可设置 `RESUME_FROM_CHECKPOINT=检查点路径` 继续。若检查点跨执行节点恢复时出现 fused Adam 的 dtype/device 不一致，再加 `RESUME_RESET_OPTIMIZER=true`：脚本会保留模型、全局步数和随机状态，复制检查点并重建非 fused AdamW，不修改原检查点。确认最佳阶段并写入结果后再删其余 checkpoint，不要只依据最后一步。
 
 ## 已完成的基础结果
 
