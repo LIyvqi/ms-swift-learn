@@ -130,8 +130,8 @@ swift rlhf \
   --per_device_train_batch_size "${RL_BATCH:-6}" \
   --gradient_accumulation_steps 1 \
   --optim "${OPTIMIZER:-adamw_torch}" \
-  --learning_rate "${GRPO_LEARNING_RATE:-3e-6}" \
-  --beta "${GRPO_BETA:-0.001}" \
+  --learning_rate "${GRPO_LEARNING_RATE:-1e-6}" \
+  --beta "${GRPO_BETA:-0.01}" \
   --max_grad_norm 1.0 \
   --max_length "${MAX_LENGTH:-3584}" \
   --max_completion_length "${MAX_COMPLETION_LENGTH:-160}" \

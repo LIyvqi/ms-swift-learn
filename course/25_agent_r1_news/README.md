@@ -317,7 +317,8 @@ python course/25_agent_r1_news/summarize_resumed_grpo.py \
 | `RL_BATCH` | 6 | 每步两条独立 prompt、各 3 个采样；开启梯度检查点后实测稳定 |
 | `GENERATION_BATCH` | 12 | 一次生成四组轨迹，随后复用为两个训练 step，摊薄 vLLM 开销 |
 | `VLLM_MEMORY` | 0.40 | colocate vLLM 预留比例；给长轨迹的 backward 留出 HBM |
-| `beta` | 0.001 | 限制策略远离 SFT 参考策略，过大会抑制探索 |
+| `GRPO_LEARNING_RATE` | 1e-6 | LoRA 策略学习率；3e-6 在 600 step 后实测出现决策奖励下降和 KL 抬升 |
+| `GRPO_BETA` | 0.01 | 限制策略远离 SFT 参考策略；与 0.001 的同区间配对试验中更稳定 |
 | `temperature` | 0.8 | 保留组内探索，又比 0.9 更少破坏已学会的动作协议 |
 
 若迁移到 80 GiB 或更小显存，优先把 `RL_BATCH`、`GENERATION_BATCH` 降到 4，把 `VLLM_MEMORY` 降到 0.35～0.45，再视长度溢出情况调整 `vllm_max_model_len`。不要直接照搬本机峰值配置。
@@ -330,11 +331,12 @@ RL_BATCH=6 GENERATION_BATCH=12 NUM_GENERATIONS=3 \
 VLLM_MEMORY=0.40 VLLM_MAX_MODEL_LEN=5120 \
 MAX_LENGTH=3584 MAX_COMPLETION_LENGTH=160 \
 GRADIENT_CHECKPOINTING=true TEMPERATURE=0.8 \
+GRPO_LEARNING_RATE=1e-6 GRPO_BETA=0.01 \
 GRPO_EPOCHS=2 \
 bash course/25_agent_r1_news/train_grpo.sh
 ```
 
-最终配置已连续完成 8 步实测，平均约 11.6 秒/step，训练器报告的峰值逻辑显存约 161.2 GiB。这里的 `memory(GiB)` 是训练器把 PyTorch 与 colocate vLLM 账户相加后的逻辑值，长跑中可能因共享内存被重复统计而暂时高于 191.69 GiB 物理容量，不能把它直接当作 `rocm-smi` 实际占用。未开梯度检查点的 `batch=6` 会因某批随机生成的轨迹更长而在第三次 backward 偶发 OOM；因此显存验收不能只跑一步，也不能只观察 rollout 阶段。
+稳定超参数已连续完成 120-step 配对实测，端到端平均约 9.42 秒/step，训练器报告的峰值逻辑显存约 177.9 GiB。这里的 `memory(GiB)` 是训练器把 PyTorch 与 colocate vLLM 账户相加后的逻辑值，长跑中可能因共享内存被重复统计而暂时高于 191.69 GiB 物理容量，不能把它直接当作 `rocm-smi` 实际占用。未开梯度检查点的 `batch=6` 会因某批随机生成的轨迹更长而在第三次 backward 偶发 OOM；因此显存验收不能只跑一步，也不能只观察 rollout 阶段。
 
 真实聊天模板的长度审计显示：retrieve、compose、decision 的 P95 分别为 2262、2689、2557 token，最大值分别为 2435、2916、2832；没有样本超过 3584。vLLM 侧仍保留 5120 token，供在线交互追加模型动作和环境观察。
 
