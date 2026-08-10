@@ -39,7 +39,9 @@
 | `evaluate_pipeline.py` | 无模型的检索、组合、决策消融 |
 | `evaluate_agent.py` | 让真实 LoRA 模型逐轮操作环境，保存轨迹并统计 macro-F1、分标签准确率、完成率、无效动作率和平均轮数 |
 | `summarize_grpo.py` | 汇总 GRPO 全程与最近窗口的奖励、方差、KL、步时和显存 |
+| `summarize_resumed_grpo.py` | 按连续 step 区间拼接恢复日志，排除失败运行与重复 step |
 | `evaluate_checkpoints.sh` | 用同一动态验证子集比较指定运行中的多个 checkpoint |
+| `compare_evaluations.py` | 把多份动态评测 JSON 汇总成统一的 Markdown 对比表 |
 | `simulate_oracle.py` | 用确定性专家验证环境闭环 |
 | `audit_lengths.py` | 用真实聊天模板审计各任务 token 长度与截断风险 |
 | `summarize_training.py` | 从 ms-swift 日志提取首尾与最佳验证指标 |
