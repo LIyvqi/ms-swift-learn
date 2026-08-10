@@ -33,36 +33,58 @@ if [[ "${SMOKE:-0}" == "1" ]]; then
   OUTPUT="${GRPO_OUTPUT:-${ROOT}/outputs/25_agent_r1_news/grpo_smoke}"
   SAVE_LIMIT="${GRPO_SAVE_LIMIT:-2}"
   SAVE_ONLY="${SAVE_ONLY_MODEL:-true}"
-  EXTRA_ARGS+=(--max_steps "${SMOKE_STEPS:-2}" --save_steps "${SMOKE_STEPS:-2}")
+  SAVE_STEPS="${SMOKE_STEPS:-2}"
+  EXTRA_ARGS+=(--max_steps "${SAVE_STEPS}" --save_steps "${SAVE_STEPS}")
 else
   SAVE_LIMIT="${GRPO_SAVE_LIMIT:-24}"
   SAVE_ONLY="${SAVE_ONLY_MODEL:-false}"
+  SAVE_STEPS="${GRPO_SAVE_STEPS:-120}"
   if [[ "${GRPO_MAX_STEPS}" -gt 0 ]]; then
     EXTRA_ARGS+=(
       --max_steps "${GRPO_MAX_STEPS}"
       --save_strategy steps
-      --save_steps "${GRPO_SAVE_STEPS:-120}"
+      --save_steps "${SAVE_STEPS}"
     )
   else
     EXTRA_ARGS+=(
       --num_train_epochs "${GRPO_EPOCHS}"
       --save_strategy "${GRPO_SAVE_STRATEGY:-steps}"
-      --save_steps "${GRPO_SAVE_STEPS:-120}"
+      --save_steps "${SAVE_STEPS}"
     )
   fi
 fi
 if [[ -n "${RESUME_FROM_CHECKPOINT:-}" ]]; then
-  RESUME_PATH="${RESUME_FROM_CHECKPOINT}"
-  if [[ "${RESUME_RESET_OPTIMIZER:-false}" == "true" ]]; then
-    # 跨执行节点时 fused Adam 状态可能出现 dtype/device 不一致；复制后只重建优化器和调度器。
-    RESUME_COPY="${OUTPUT}/resume_${RESUME_PATH##*/}"
+  RESUME_PATH="$(realpath "${RESUME_FROM_CHECKPOINT}")"
+  # Transformers 会从旧 trainer_state.json 恢复保存间隔；始终复制后同步为本次配置。
+  RESUME_COPY="$(realpath -m "${OUTPUT}/resume_${RESUME_PATH##*/}")"
+  if [[ "${RESUME_PATH}" != "${RESUME_COPY}" ]]; then
     mkdir -p "${RESUME_COPY}"
     cp -a "${RESUME_PATH}/." "${RESUME_COPY}/"
+  fi
+  RESUME_PATH="${RESUME_COPY}"
+  if [[ -f "${RESUME_PATH}/trainer_state.json" ]]; then
+    python - "${RESUME_PATH}/trainer_state.json" "${SAVE_STEPS}" <<'PY'
+import json
+import sys
+from pathlib import Path
+
+状态文件 = Path(sys.argv[1])
+保存间隔 = int(sys.argv[2])
+状态 = json.loads(状态文件.read_text(encoding="utf-8"))
+状态["save_steps"] = 保存间隔
+状态["eval_steps"] = float(保存间隔)
+状态文件.write_text(
+    json.dumps(状态, ensure_ascii=False, indent=2) + "\n",
+    encoding="utf-8",
+)
+PY
+  fi
+  if [[ "${RESUME_RESET_OPTIMIZER:-false}" == "true" ]]; then
+    # 跨执行节点时 fused Adam 状态可能出现 dtype/device 不一致；复制后只重建优化器和调度器。
     [[ ! -f "${RESUME_COPY}/optimizer.pt" ]] || mv -f \
       "${RESUME_COPY}/optimizer.pt" "${RESUME_COPY}/optimizer.pt.disabled"
     [[ ! -f "${RESUME_COPY}/scheduler.pt" ]] || mv -f \
       "${RESUME_COPY}/scheduler.pt" "${RESUME_COPY}/scheduler.pt.disabled"
-    RESUME_PATH="${RESUME_COPY}"
   fi
   EXTRA_ARGS+=(--resume_from_checkpoint "${RESUME_PATH}")
 fi
