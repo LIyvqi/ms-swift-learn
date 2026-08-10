@@ -208,6 +208,10 @@ python course/25_agent_r1_news/audit_lengths.py \
   --knowledge datasets/agent_r1_news/knowledge_rules.jsonl
 ```
 
+测试命令建议始终写成 `python -m unittest` 或 `python -m pytest`。部分机器的 `pytest`
+可执行文件位于系统目录，即使已经激活项目虚拟环境，直接运行它仍可能调用系统 Python，
+继而误报找不到项目内安装的 `swift`；`python -m ...` 可以保证测试和当前解释器一致。
+
 先做真实冒烟：
 
 ```bash
