@@ -78,6 +78,13 @@ def 主函数() -> None:
             metrics,
         )
         记录(
+            "显式思考缺失",
+            float(metrics.get("thinking_score", 0.0)) < 0.999,
+            raw_item,
+            events,
+            metrics,
+        )
+        记录(
             "检索失败",
             float(metrics.get("retrieval_recall", 0.0)) < 0.999,
             raw_item,
@@ -95,7 +102,12 @@ def 主函数() -> None:
         if "reflect" in events:
             记录(
                 "反思未改善",
-                float(metrics.get("reflection_gain", 0.0)) <= 0.0,
+                float(
+                    metrics.get(
+                        "reflection_best_gain", metrics.get("reflection_gain", 0.0)
+                    )
+                )
+                <= 0.0,
                 raw_item,
                 events,
                 metrics,

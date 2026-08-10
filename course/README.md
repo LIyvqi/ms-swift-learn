@@ -262,7 +262,7 @@ find outputs -name logging.jsonl -print
 - OPD/MOPD：`teacher_kl`、completion length、是否正确结束。
 - GKD：distillation loss、SFT loss、CoT/direct 两种风格的格式保持率。
 - JitRL：总体/前 10 局/后 10 局成功率、经验邻居数、参数不变量。
-- Agent-R1：Recall@K、组合 F1、决策 macro-F1、证据覆盖、无效动作率和平均轮数。
+- Agent-R1：Recall@K、反思最佳增益/成功率、组合 F1、决策 macro-F1、证据覆盖、显式思考覆盖率、无效动作率和平均轮数。
 
 ## 参数实验顺序
 

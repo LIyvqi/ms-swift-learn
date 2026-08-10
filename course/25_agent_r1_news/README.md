@@ -330,7 +330,7 @@ python course/25_agent_r1_news/analyze_failures.py \
   --output outputs/25_agent_r1_news/grpo_checkpoint_1440_failures.json
 ```
 
-“检索失败”表示 gold canonical rule 没有全部召回，“组合失败”表示最终 canonical 集合 F1 未满分；“出现无效动作”统计轨迹中真实的 `invalid*` 事件，“最终协议未满分”则读取环境结束时的协议指标，两者口径不同。它们可以与“决策失败”同时发生，不能把类别计数相加当作互斥样本数。`examples` 只保存 record ID、动作事件和指标，完整消息仍在原评测 JSON 中。
+“检索失败”表示 gold canonical rule 没有全部召回，“组合失败”表示最终 canonical 集合 F1 未满分；“出现无效动作”统计轨迹中真实的 `invalid*` 事件，“最终协议未满分”读取环境结束时的协议指标，“显式思考缺失”则检查逐动作非空思考平均分。“反思未改善”使用整条轨迹的历史最佳增益，不会因最后一次改写变差而抹掉此前成功。它们可以与“决策失败”同时发生，不能把类别计数相加当作互斥样本数。`examples` 只保存 record ID、动作事件和指标，完整消息仍在原评测 JSON 中。
 
 跨多个恢复运行的正式实验可一次完成阶段评测、对比表和训练曲线汇总。`GRPO_SEGMENTS` 只列最终 checkpoint 的真实祖先区间，不要列失败恢复或重复计算的 step：
 
