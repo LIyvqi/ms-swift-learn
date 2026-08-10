@@ -67,6 +67,16 @@ python "${ROOT}/course/25_agent_r1_news/compare_evaluations.py" \
   --labels "${COMPARE_LABELS[@]}" \
   --output "${OUTPUT_ROOT}/${EVAL_PREFIX}_checkpoint_comparison.md"
 
+# 每个阶段都保存失败类型和少量 record_id，之后可回到原始轨迹做定性复核。
+for result in "${COMPARE_FILES[@]}"; do
+  failure_output="${result%.json}_failures.json"
+  python "${ROOT}/course/25_agent_r1_news/analyze_failures.py" \
+    "${result}" \
+    --maximum-examples "${FAILURE_EXAMPLES:-5}" \
+    --output "${failure_output}" \
+    > /dev/null
+done
+
 # 分段格式是空格分隔的“日志路径:起始步:结束步”；路径中不要包含空格。
 if [[ -n "${GRPO_SEGMENTS:-}" ]]; then
   read -r -a segments <<< "${GRPO_SEGMENTS}"
