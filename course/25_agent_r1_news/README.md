@@ -386,6 +386,7 @@ tmux attach -t agent_r1_grpo
 - 先 `reflect` 再 `search_rules`：环境会给负奖励；需要增加合法轨迹监督。
 - JSON 被截断：提高每轮输出上限，但先检查模型是否在 finish 中复制整份规则。
 - reward 始终相同：提高温度或采样数，并检查同一组是否真的产生了不同动作。
+- 某个任务专属 reward 的日志均值偶尔是 `NaN`：三任务混训时，插件会对不适用的样本返回 `None` 作为任务掩码；若当前随机 batch 没有该任务，ms-swift 对空集合记录的均值就是 `NaN`。只要总 `reward`、`loss`、`kl` 和参数梯度仍是有限值，这不是数值故障。若这些总量也出现 `NaN`，才应立即停止并检查奖励函数与优化器。
 - 组合器 F1 低：Top-K 候选过多时会带入跨类规则；需要学习选择候选，不是机械提交全部候选。
 - 训练 reward 上升但验证变差：可能在利用关键词弱标注，应检查人工留出和证据忠实性。
 - 某个任务输出另一任务的 finish 字段：system prompt 不应同时展示多个 schema；评测 `task_schema_score`，并把 `invalid_finish_schema` 与普通 JSON 错误分开。
