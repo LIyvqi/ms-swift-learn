@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 import sys
 import unittest
 from importlib import import_module
@@ -79,6 +80,23 @@ class AgentR1新闻测试(unittest.TestCase):
         self.assertIsNotNone(payload)
         self.assertEqual(score, 1.0)
         self.assertFalse(error)
+
+    def test_全部_sft_目标都有非空显式思考(self):
+        assistant_count = 0
+        for name in ("sft_train.jsonl", "sft_val.jsonl"):
+            path = 项目根目录 / "datasets/agent_r1_news" / name
+            with path.open(encoding="utf-8") as handle:
+                for line_number, line in enumerate(handle, start=1):
+                    row = json.loads(line)
+                    for message in row["messages"]:
+                        if message["role"] != "assistant":
+                            continue
+                        assistant_count += 1
+                        self.assertIsNotNone(
+                            环境模块.思考模式.search(message["content"]),
+                            f"{name}:{line_number} 缺少非空显式思考",
+                        )
+        self.assertEqual(assistant_count, 12800)
 
     def test_专家完成决策轨迹(self):
         config = {
