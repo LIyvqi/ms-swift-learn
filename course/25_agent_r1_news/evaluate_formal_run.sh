@@ -48,6 +48,7 @@ EVAL_STEPS="${EVAL_STEPS}" \
 EVAL_PREFIX="${EVAL_PREFIX}" \
 EVAL_DATASET="${DATASET}" \
 EVAL_SAMPLES="${EVAL_SAMPLES}" \
+EVAL_BATCH_SIZE="${EVAL_BATCH_SIZE}" \
 EVAL_OUTPUT_ROOT="${OUTPUT_ROOT}" \
 bash "${ROOT}/course/25_agent_r1_news/evaluate_checkpoints.sh"
 
