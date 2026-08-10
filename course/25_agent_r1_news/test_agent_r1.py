@@ -29,10 +29,33 @@ class AgentR1新闻测试(unittest.TestCase):
         results = self.knowledge.search("网球队参加比赛，最终比分三比二", top_k=5)
         self.assertTrue(any(row["category"] == "体育" for row in results[:2]))
 
+    def test_重排分数实际参与排序(self):
+        results = self.knowledge.search("银行 利率", top_k=5, rerank=True)
+        self.assertEqual(results[0]["rule_id"], "FIN-MARKET")
+        self.assertIn("retrieval", results[0]["scores"])
+        self.assertIn("rerank", results[0]["scores"])
+        self.assertNotEqual(
+            results[0]["scores"]["retrieval"], results[0]["scores"]["rerank"]
+        )
+
     def test_组合器删除旧版重复(self):
         result = self.knowledge.compose(["FIN-ROOT-LEGACY", "FIN-ROOT", "FIN-MARKET"])
         self.assertEqual(result["canonical_rule_ids"].count("FIN-ROOT"), 1)
         self.assertEqual(result["output_count"], 2)
+
+    def test_组合器报告跨类别冲突并保留例外(self):
+        result = self.knowledge.compose(
+            ["FIN-ROOT", "SPT-ROOT", "FIN-ENTERPRISE"]
+        )
+        self.assertEqual(result["conflicts"][0]["type"], "category_conflict")
+        categories = result["conflicts"][0]["categories"]
+        self.assertEqual(set(categories), {"财经", "体育"})
+        enterprise = next(
+            rule
+            for rule in result["rules"]
+            if rule["canonical_id"] == "FIN-ENTERPRISE"
+        )
+        self.assertTrue(enterprise["exceptions"])
 
     def test_动作协议拒绝非_json(self):
         payload, score, error = 导入动作("我决定选择财经")
@@ -102,6 +125,44 @@ class AgentR1新闻测试(unittest.TestCase):
         self.assertLess(reward, 0)
         self.assertFalse(done)
         self.assertEqual(info["event"], "invalid_reflect")
+
+    def test_错误首轮召回可由反思改写修正(self):
+        config = {
+            "task": "decision",
+            "article": "球队在网球比赛中以三比二获胜，运动员获得冠军。",
+            "label": "体育",
+            "gold_rule_ids": ["SPT-ROOT", "SPT-COMP"],
+            "gold_evidence": ["比赛", "运动员", "冠军"],
+            "record_id": "unit-reflection-gain",
+            "max_steps": 6,
+        }
+        env = NewsPolicyEnvironment(self.knowledge, config)
+        env.reset()
+        wrong_search = (
+            '<think>先测试一个可能错误的查询。</think><action>'
+            '{"tool":"search_rules","arguments":'
+            '{"query":"银行 利率 证券","top_k":5}}</action>'
+        )
+        _, _, done, info = env.step(wrong_search)
+        first_recall = info["metrics"]["retrieval_recall"]
+        self.assertFalse(done)
+
+        repaired_search = (
+            '<think>首轮偏向财经，需要围绕赛事证据改写。</think><action>'
+            '{"tool":"reflect","arguments":'
+            '{"diagnosis":"首轮类别错误","new_query":"球队 比赛 冠军",'
+            '"top_k":5}}</action>'
+        )
+        _, reward, done, info = env.step(repaired_search)
+        self.assertFalse(done)
+        self.assertGreaterEqual(reward, 0)
+        self.assertEqual(
+            [step["event"] for step in info["trace"]],
+            ["search_rules", "reflect"],
+        )
+        self.assertGreater(info["metrics"]["retrieval_recall"], first_recall)
+        self.assertGreater(info["metrics"]["reflection_gain"], 0)
+        self.assertEqual(info["metrics"]["reflection_success"], 1.0)
 
     def test_错误_top_k_不会让环境崩溃(self):
         config = {
