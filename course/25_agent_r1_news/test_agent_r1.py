@@ -13,6 +13,7 @@ if str(项目根目录) not in sys.path:
 
 知识模块 = import_module("course.25_agent_r1_news.knowledge_pipeline")
 环境模块 = import_module("course.25_agent_r1_news.agent_system")
+奖励模块 = import_module("course.plugins.agent_r1_news")
 RuleKnowledgeBase = 知识模块.RuleKnowledgeBase
 NewsPolicyEnvironment = 环境模块.NewsPolicyEnvironment
 导入动作 = 环境模块.导入动作
@@ -44,16 +45,12 @@ class AgentR1新闻测试(unittest.TestCase):
         self.assertEqual(result["output_count"], 2)
 
     def test_组合器报告跨类别冲突并保留例外(self):
-        result = self.knowledge.compose(
-            ["FIN-ROOT", "SPT-ROOT", "FIN-ENTERPRISE"]
-        )
+        result = self.knowledge.compose(["FIN-ROOT", "SPT-ROOT", "FIN-ENTERPRISE"])
         self.assertEqual(result["conflicts"][0]["type"], "category_conflict")
         categories = result["conflicts"][0]["categories"]
         self.assertEqual(set(categories), {"财经", "体育"})
         enterprise = next(
-            rule
-            for rule in result["rules"]
-            if rule["canonical_id"] == "FIN-ENTERPRISE"
+            rule for rule in result["rules"] if rule["canonical_id"] == "FIN-ENTERPRISE"
         )
         self.assertTrue(enterprise["exceptions"])
 
@@ -139,7 +136,7 @@ class AgentR1新闻测试(unittest.TestCase):
         env = NewsPolicyEnvironment(self.knowledge, config)
         env.reset()
         wrong_search = (
-            '<think>先测试一个可能错误的查询。</think><action>'
+            "<think>先测试一个可能错误的查询。</think><action>"
             '{"tool":"search_rules","arguments":'
             '{"query":"银行 利率 证券","top_k":5}}</action>'
         )
@@ -148,7 +145,7 @@ class AgentR1新闻测试(unittest.TestCase):
         self.assertFalse(done)
 
         repaired_search = (
-            '<think>首轮偏向财经，需要围绕赛事证据改写。</think><action>'
+            "<think>首轮偏向财经，需要围绕赛事证据改写。</think><action>"
             '{"tool":"reflect","arguments":'
             '{"diagnosis":"首轮类别错误","new_query":"球队 比赛 冠军",'
             '"top_k":5}}</action>'
@@ -279,6 +276,88 @@ class AgentR1新闻测试(unittest.TestCase):
         self.assertEqual(info["trace"][-1]["event"], "finish")
         self.assertEqual(info["metrics"]["decision_accuracy"], 1.0)
         self.assertEqual(len(info["trace"]), 5)
+
+    def test_任务专属奖励正确使用掩码(self):
+        reward = 奖励模块.AgentNewsRetrievalReward()
+        values = reward(
+            [],
+            ["retrieve", "decision"],
+            [
+                {"task_metrics": {"retrieval_f1": 0.75}},
+                {"task_metrics": {"retrieval_f1": 1.0}},
+            ],
+        )
+        self.assertEqual(values, [0.75, None])
+
+    def test_决策奖励同时检查分类规则和证据(self):
+        reward = 奖励模块.AgentNewsDecisionReward()
+        values = reward(
+            [],
+            ["decision"],
+            [
+                {
+                    "task_metrics": {
+                        "decision_accuracy": 1.0,
+                        "rule_compliance": 0.5,
+                        "evidence_coverage": 0.75,
+                    }
+                }
+            ],
+        )
+        self.assertAlmostEqual(values[0], (1.0 + 0.3 * 0.5 + 0.2 * 0.75) / 1.5)
+
+    def test_协议奖励惩罚无效动作和冗余轮次(self):
+        reward = 奖励模块.AgentNewsProtocolReward()
+        clean_trace = [
+            {"event": "search_rules"},
+            {"event": "reflect"},
+            {"event": "finish"},
+        ]
+        noisy_trace = [
+            {"event": "invalid_search"},
+            {"event": "search_rules"},
+            {"event": "reflect"},
+            {"event": "search_rules"},
+            {"event": "finish"},
+        ]
+        values = reward(
+            [],
+            ["retrieve", "retrieve"],
+            [
+                {
+                    "task_metrics": {
+                        "protocol_score": 1.0,
+                        "task_schema_score": 1.0,
+                    },
+                    "agent_trace": clean_trace,
+                },
+                {
+                    "task_metrics": {
+                        "protocol_score": 1.0,
+                        "task_schema_score": 1.0,
+                    },
+                    "agent_trace": noisy_trace,
+                },
+            ],
+        )
+        self.assertEqual(values[0], 1.0)
+        self.assertLess(values[1], values[0])
+
+    def test_反思奖励使用召回增益和成功标记(self):
+        reward = 奖励模块.AgentNewsReflectionReward()
+        values = reward(
+            [],
+            ["retrieve"],
+            [
+                {
+                    "task_metrics": {
+                        "reflection_gain": 0.4,
+                        "reflection_success": 1.0,
+                    }
+                }
+            ],
+        )
+        self.assertAlmostEqual(values[0], 0.7 * 0.4 + 0.3)
 
 
 if __name__ == "__main__":
