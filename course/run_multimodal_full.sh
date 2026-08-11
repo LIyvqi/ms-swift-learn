@@ -11,6 +11,7 @@ STATUS_DIR="${PROJECT_ROOT}/outputs/multimodal_full_status"
 mkdir -p "${STATUS_DIR}"
 printf '开始时间：%s\n' "$(date --iso-8601=seconds)" >"${STATUS_DIR}/running.txt"
 rm -f "${STATUS_DIR}/done.txt" "${STATUS_DIR}/failed.txt"
+: >"${STATUS_DIR}/steps.log"
 
 记录步骤() {
   printf '[%s] %s\n' "$(date --iso-8601=seconds)" "$1" | tee -a "${STATUS_DIR}/steps.log"
@@ -97,6 +98,13 @@ MAX_COMPLETION_LENGTH="${MM_COT_COMPLETION_LENGTH:-1024}" \
 
 记录步骤 "在固定 40 条验证集上执行 Base、SFT、GRPO 与 OPD 真实生成对比"
 bash course/evaluate_multimodal_full.sh
+
+记录步骤 "训练与评测完成，汇总各阶段物理显存和 GPU 利用率"
+python tools/summarize_gpu_samples.py \
+  --samples "${STATUS_DIR}/gpu_samples.jsonl" \
+  --steps "${STATUS_DIR}/steps.log" \
+  --output-json "${STATUS_DIR}/gpu_summary.json" \
+  --output-md "${STATUS_DIR}/gpu_summary.md"
 
 printf '完成时间：%s\n' "$(date --iso-8601=seconds)" >"${STATUS_DIR}/done.txt"
 rm -f "${STATUS_DIR}/running.txt"

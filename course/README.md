@@ -75,7 +75,7 @@ bash course/run_multimodal_full.sh
 
 七条训练完成后，runner 会调用 `course/evaluate_multimodal_full.sh`，在固定 40 条验证集上真实生成 Base、LoRA、全参数 SFT、GRPO 和 OPD 的 Direct/CoT 输出。汇总表写入 `outputs/multimodal_full_evaluation/COMPARISON.md`，同时保留逐条 JSONL 便于排错。
 
-正式 runner 还会按秒把 `rocm-smi` 的物理显存与 GPU 利用率写入 `outputs/multimodal_full_status/gpu_samples.jsonl`。它和带时间戳的 `steps.log` 可以对齐到每个阶段，用于比较 batch 调整后的峰值与吞吐；不要用框架可能重复计数的逻辑显存替代这份外部采样。
+正式 runner 还会按秒把 `rocm-smi` 的物理显存与 GPU 利用率写入 `outputs/multimodal_full_status/gpu_samples.jsonl`。它和带时间戳的 `steps.log` 会自动汇总为 `gpu_summary.md`，用于比较 batch 调整后的峰值与吞吐；不要用框架可能重复计数的逻辑显存替代这份外部采样。
 
 ## 推荐学习顺序
 
