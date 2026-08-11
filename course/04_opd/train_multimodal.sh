@@ -45,7 +45,7 @@ swift rlhf \
   --vllm_limit_mm_per_prompt '{"image":1,"video":0}' \
   --vllm_mm_processor_cache_gb "${MM_PROCESSOR_CACHE_GB:-2}" \
   --vllm_enforce_eager true \
-  --sleep_level 1 \
+  --sleep_level "${SLEEP_LEVEL:-1}" \
   --num_generations 1 \
   --generation_batch_size "${GENERATION_BATCH:-${RL_BATCH:-4}}" \
   --temperature "${TEMPERATURE:-0.8}" \

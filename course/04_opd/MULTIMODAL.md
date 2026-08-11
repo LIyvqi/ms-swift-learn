@@ -64,6 +64,7 @@ OPD 和 GRPO 一样使用 Prompt-only 数据，但 ms-swift 4.4.3 的 OPD-RL 还
 | `freeze_vit` | true | 学生策略不更新视觉编码器 |
 | `SAVE_STEPS` | 等于总步数 | 可缩短滚动保存间隔；`save_total_limit=1` 控制磁盘占用 |
 | `SAVE_ONLY_MODEL` | true | 设为 false 才会保存优化器状态并支持精确断点恢复 |
+| `SLEEP_LEVEL` | 1 | 0 让 vLLM 常驻；1 节省峰值显存但会反复休眠与唤醒 |
 
 OPD 的教师优势可以概括为：
 

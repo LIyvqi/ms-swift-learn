@@ -78,6 +78,7 @@ R_cot = 1.00 × 最终答案正确
 | `MAX_PIXELS` | 1048576 | 1048576 | 限制单图计算量 |
 | `SAVE_STEPS` | 等于总步数 | 等于总步数 | 可缩短滚动保存间隔；`save_total_limit=1` 只保留最近检查点 |
 | `SAVE_ONLY_MODEL` | true | true | 设为 false 才会保留优化器状态并支持精确断点恢复 |
+| `SLEEP_LEVEL` | 1 | 1 | 0 让 vLLM 常驻；1 节省峰值显存但依赖 CuMemAllocator 稳定性 |
 
 脚本默认冻结视觉编码器和对齐层，只训练策略 LoRA。图像只需编码一次但每个 Prompt 会生成多个候选，因此开启 2GiB 多模态处理缓存通常比禁用更快。
 
