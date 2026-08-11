@@ -85,6 +85,8 @@ source ./activate.sh
 bash course/run_multimodal_full.sh
 ```
 
+该入口在七条训练链路结束后自动执行固定验证集生成评测，按纯文本、纯图像和图文混合分别报告结果。
+
 ## 推荐学习顺序
 
 1. 阅读 [环境记录](TRAINING_ENVIRONMENT.md)，了解 ROCm、持久化缓存和版本约束。

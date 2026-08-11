@@ -79,6 +79,9 @@ VLLM_MEMORY="${MM_OPD_VLLM_MEMORY:-0.50}" \
 MAX_COMPLETION_LENGTH="${MM_COT_COMPLETION_LENGTH:-1024}" \
   bash course/04_opd/train_multimodal.sh
 
+记录步骤 "在固定 40 条验证集上执行 Base、SFT、GRPO 与 OPD 真实生成对比"
+bash course/evaluate_multimodal_full.sh
+
 printf '完成时间：%s\n' "$(date --iso-8601=seconds)" >"${STATUS_DIR}/done.txt"
 rm -f "${STATUS_DIR}/running.txt"
 记录步骤 "第 01～04 课七条正式多模态训练全部完成"

@@ -97,3 +97,11 @@ python course/03_grpo/test_multimodal_rewards.py
 - 开放问答可增加冻结版本的大模型裁判，但要记录模型版本、费用与失败率。
 
 训练后必须按三种模态分别报告准确率、严格格式率、空思考率、图片读取失败率和截断率。总 reward 上升不能单独证明视觉推理能力提升。
+
+仓库的统一真实生成评测入口为：
+
+```bash
+bash course/evaluate_multimodal_full.sh
+```
+
+它会同时保留逐条输出和分模态汇总，避免只依据训练 reward 下结论。
