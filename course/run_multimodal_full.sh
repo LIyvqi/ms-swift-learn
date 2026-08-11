@@ -36,6 +36,7 @@ OPD_BATCH_SIZE="${MM_OPD_BATCH:-6}"
 记录步骤 "校验 200 条数据、视觉模板与全部自定义奖励"
 python tools/validate_multimodal_200.py
 python tools/validate_multimodal_template.py
+python tools/audit_multimodal_lengths.py
 python course/03_grpo/test_multimodal_rewards.py
 
 记录步骤 "01 Direct 多模态 LoRA SFT：${SFT_EPOCHS} epoch，batch=${LORA_BATCH}"

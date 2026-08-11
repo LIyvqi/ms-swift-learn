@@ -80,8 +80,18 @@ curl -L --fail \
 python tools/prepare_multimodal_200.py
 python tools/validate_multimodal_200.py
 python tools/validate_multimodal_template.py
+python tools/audit_multimodal_lengths.py
 ```
 
 生成脚本会精确重建 `datasets/multimodal_200/`。`source_manifest.jsonl` 保存来源、模态和划分，`stats.json` 保存统计，`checksums.json` 校验所有派生文件及图片。
 
-最后一条命令只加载 tokenizer 和视觉处理器，不加载模型权重或占用 GPU；它会确认纯文本不产生 `pixel_values`，两类视觉输入都能产生 `pixel_values`、`image_grid_thw` 和 `mm_token_type_ids`。
+`validate_multimodal_template.py` 只加载 tokenizer 和视觉处理器，不加载模型权重或占用 GPU；它会确认纯文本不产生 `pixel_values`，两类视觉输入都能产生 `pixel_values`、`image_grid_thw` 和 `mm_token_type_ids`。
+
+`audit_multimodal_lengths.py` 会进一步真实编码全部 200 个源样本的最长 CoT 监督视图和 Prompt 视图，分别检查 2048 与 1536 token 阈值。Direct 更短，mixed 中每个目标来自 Direct 或 CoT，因此这两个最长视图可以覆盖课程实际使用的全部格式。
+
+本仓库当前固定数据的实测结果：
+
+| 最长视图 | 样本数 | 中位数 | P95 | 最大值 | 阈值 | 超限 |
+|---|---:|---:|---:|---:|---:|---:|
+| CoT SFT | 200 | 316 | 1205 | 1649 | 2048 | 0 |
+| CoT Prompt | 200 | 158 | 771 | 1383 | 1536 | 0 |
