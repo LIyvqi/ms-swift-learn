@@ -23,7 +23,14 @@ def 主程序() -> None:
     ) == [1.0, 1.0, 0.0]
 
     direct = 模块.多模态直接格式奖励()
-    assert direct(["<answer>A</answer>", "说明如下<answer>A</answer>"]) == [1.0, 0.0]
+    assert direct(
+        [
+            "<answer>A</answer>",
+            "<think>\n\n</think>\n\n<answer>A</answer>",
+            "<think>因为图中箭头向右。</think><answer>A</answer>",
+            "说明如下<answer>A</answer>",
+        ]
+    ) == [1.0, 1.0, 0.0, 0.0]
 
     cot = 模块.多模态思考结构奖励()
     assert cot(

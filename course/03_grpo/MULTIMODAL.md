@@ -43,7 +43,7 @@ R_direct = 1.00 × 最终答案正确
            + 0.25 × 严格 <answer> 格式
 ```
 
-Direct 格式奖励要求输出中只有一个 `<answer>...</answer>`，出现解释文字或 `<think>` 都不计格式分。
+Direct 格式奖励要求输出中只有一个非空 `<answer>...</answer>`。Qwen3.5 模板在关闭 thinking 时仍可能注入空的 `<think></think>` 前缀，因此奖励兼容这个框架前缀；其中一旦出现非空推理内容，或 answer 外出现解释文字，仍不计格式分。
 
 ## 显式 CoT 奖励
 

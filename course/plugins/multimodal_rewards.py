@@ -9,7 +9,9 @@ from swift.rewards import ORM, orms
 答案模式 = re.compile(r"<answer>\s*(.*?)\s*</answer>", re.DOTALL | re.IGNORECASE)
 思考模式 = re.compile(r"<think>\s*(.*?)\s*</think>", re.DOTALL | re.IGNORECASE)
 严格直接格式 = re.compile(
-    r"^\s*<answer>\s*.+?\s*</answer>\s*$", re.DOTALL | re.IGNORECASE
+    r"^\s*(?:<think>\s*</think>\s*)?"
+    r"<answer>\s*.+?\s*</answer>\s*$",
+    re.DOTALL | re.IGNORECASE,
 )
 严格思考格式 = re.compile(
     r"^\s*<think>\s*(?P<reason>.+?)\s*</think>\s*"
@@ -71,16 +73,10 @@ class 多模态答案正确奖励(ORM):
 
 
 class 多模态直接格式奖励(ORM):
-    """直接回答只能包含一个非空 answer 块，不能泄漏 think。"""
+    """只允许非空 answer；兼容模板注入的空 think，但禁止真实思考内容。"""
 
     def __call__(self, completions, **kwargs) -> list[float]:
-        return [
-            float(
-                bool(严格直接格式.fullmatch(completion))
-                and "<think>" not in completion.lower()
-            )
-            for completion in completions
-        ]
+        return [float(bool(严格直接格式.fullmatch(completion))) for completion in completions]
 
 
 class 多模态思考结构奖励(ORM):
