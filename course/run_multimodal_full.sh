@@ -24,6 +24,21 @@ rm -f "${STATUS_DIR}/done.txt" "${STATUS_DIR}/failed.txt"
 }
 trap 失败处理 ERR
 
+清理显存监控() {
+  if [[ -n "${GPU_MONITOR_PID:-}" ]]; then
+    kill "${GPU_MONITOR_PID}" 2>/dev/null || true
+    wait "${GPU_MONITOR_PID}" 2>/dev/null || true
+  fi
+}
+trap 清理显存监控 EXIT
+
+# 按秒保留整条流水线的物理显存与 GPU 利用率，阶段边界由 steps.log 对齐。
+python tools/monitor_rocm.py \
+  --pid "$$" \
+  --output "${STATUS_DIR}/gpu_samples.jsonl" \
+  --interval "${MM_GPU_SAMPLE_INTERVAL:-1}" &
+GPU_MONITOR_PID=$!
+
 SFT_EPOCHS="${MM_FULL_SFT_EPOCHS:-3}"
 RL_STEPS="${MM_FULL_RL_STEPS:-100}"
 LORA_BATCH="${MM_LORA_BATCH:-12}"
