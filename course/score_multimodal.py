@@ -12,7 +12,9 @@ from pathlib import Path
 答案模式 = re.compile(r"<answer>\s*(.*?)\s*</answer>", re.DOTALL | re.IGNORECASE)
 思考模式 = re.compile(r"<think>\s*(.*?)\s*</think>", re.DOTALL | re.IGNORECASE)
 严格直接格式 = re.compile(
-    r"^\s*<answer>\s*.+?\s*</answer>\s*$", re.DOTALL | re.IGNORECASE
+    r"^\s*(?:<think>\s*</think>\s*)?"
+    r"<answer>\s*.+?\s*</answer>\s*$",
+    re.DOTALL | re.IGNORECASE,
 )
 严格思考格式 = re.compile(
     r"^\s*<think>\s*(?P<reason>.+?)\s*</think>\s*"
@@ -109,10 +111,8 @@ def 评测(rows: list[dict]) -> dict:
             value.strip() for value in 思考模式.findall(response) if value.strip()
         ]
         if style == "direct":
-            strict = (
-                bool(严格直接格式.fullmatch(response))
-                and "<think>" not in response.lower()
-            )
+            # Qwen 模板关闭 thinking 时仍可能注入空 think 前缀；它不属于显式推理。
+            strict = bool(严格直接格式.fullmatch(response))
         elif style == "cot":
             match = 严格思考格式.fullmatch(response)
             strict = bool(match and 12 <= len(match.group("reason").strip()) <= 4000)

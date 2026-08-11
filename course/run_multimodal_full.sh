@@ -64,9 +64,16 @@ FULL_BATCH="${MM_FULL_BATCH:-8}"
 LORA_EVAL_BATCH="${MM_LORA_EVAL_BATCH:-8}"
 FULL_EVAL_BATCH="${MM_FULL_EVAL_BATCH:-8}"
 RL_BATCH_SIZE="${MM_RL_BATCH:-6}"
+# CoT 的长度分布有长尾：batch=6 遇到单条 2048-token rollout 时，
+# 外部物理显存实测达到 183.98/191.69 GiB。保留 12 条集中生成，
+# 只把反向 batch 降为 3，在不明显牺牲生成吞吐的情况下留出动态余量。
+COT_RL_BATCH_SIZE="${MM_COT_RL_BATCH:-3}"
 RL_GENERATIONS="${MM_NUM_GENERATIONS:-3}"
 RL_GENERATION_BATCH="${MM_GENERATION_BATCH:-12}"
-OPD_BATCH_SIZE="${MM_OPD_BATCH:-6}"
+DIRECT_OPD_BATCH_SIZE="${MM_DIRECT_OPD_BATCH:-${MM_OPD_BATCH:-6}}"
+# CoT OPD 还会执行教师前向，默认沿用更安全的反向 batch；生成仍可集中处理 6 条。
+COT_OPD_BATCH_SIZE="${MM_COT_OPD_BATCH:-3}"
+COT_OPD_GENERATION_BATCH="${MM_COT_OPD_GENERATION_BATCH:-6}"
 
 if [[ "${START_STAGE}" -gt 1 ]]; then
   记录步骤 "从阶段 ${START_STAGE} 继续正式流水线，保留先前已完成结果"
@@ -108,26 +115,26 @@ if [[ "${START_STAGE}" -le 4 ]]; then
 fi
 
 if [[ "${START_STAGE}" -le 5 ]]; then
-  记录步骤 "03 显式 CoT 多模态 GRPO：${RL_STEPS} step，batch=${RL_BATCH_SIZE}，组大小=${RL_GENERATIONS}"
+  记录步骤 "03 显式 CoT 多模态 GRPO：${RL_STEPS} step，batch=${COT_RL_BATCH_SIZE}，生成batch=${RL_GENERATION_BATCH}，组大小=${RL_GENERATIONS}"
   STEPS="${RL_STEPS}" STYLE=cot RUN_TAG="full_${RL_STEPS}step" \
-  RL_BATCH="${RL_BATCH_SIZE}" NUM_GENERATIONS="${RL_GENERATIONS}" \
+  RL_BATCH="${COT_RL_BATCH_SIZE}" NUM_GENERATIONS="${RL_GENERATIONS}" \
   GENERATION_BATCH="${RL_GENERATION_BATCH}" VLLM_MEMORY="${MM_GRPO_VLLM_MEMORY:-0.55}" \
   MAX_COMPLETION_LENGTH="${MM_COT_COMPLETION_LENGTH:-2048}" \
     bash course/03_grpo/train_multimodal.sh
 fi
 
 if [[ "${START_STAGE}" -le 6 ]]; then
-  记录步骤 "04 Direct 多模态 OPD：${RL_STEPS} step，batch=${OPD_BATCH_SIZE}"
+  记录步骤 "04 Direct 多模态 OPD：${RL_STEPS} step，batch=${DIRECT_OPD_BATCH_SIZE}"
   STEPS="${RL_STEPS}" STYLE=direct RUN_TAG="full_${RL_STEPS}step" \
-  RL_BATCH="${OPD_BATCH_SIZE}" GENERATION_BATCH="${OPD_BATCH_SIZE}" \
+  RL_BATCH="${DIRECT_OPD_BATCH_SIZE}" GENERATION_BATCH="${DIRECT_OPD_BATCH_SIZE}" \
   VLLM_MEMORY="${MM_OPD_VLLM_MEMORY:-0.50}" \
     bash course/04_opd/train_multimodal.sh
 fi
 
 if [[ "${START_STAGE}" -le 7 ]]; then
-  记录步骤 "04 显式 CoT 多模态 OPD：${RL_STEPS} step，batch=${OPD_BATCH_SIZE}"
+  记录步骤 "04 显式 CoT 多模态 OPD：${RL_STEPS} step，batch=${COT_OPD_BATCH_SIZE}，生成batch=${COT_OPD_GENERATION_BATCH}"
   STEPS="${RL_STEPS}" STYLE=cot RUN_TAG="full_${RL_STEPS}step" \
-  RL_BATCH="${OPD_BATCH_SIZE}" GENERATION_BATCH="${OPD_BATCH_SIZE}" \
+  RL_BATCH="${COT_OPD_BATCH_SIZE}" GENERATION_BATCH="${COT_OPD_GENERATION_BATCH}" \
   VLLM_MEMORY="${MM_OPD_VLLM_MEMORY:-0.50}" \
   MAX_COMPLETION_LENGTH="${MM_COT_COMPLETION_LENGTH:-2048}" \
     bash course/04_opd/train_multimodal.sh
