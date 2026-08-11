@@ -71,12 +71,15 @@ R_cot = 1.00 × 最终答案正确
 | `MAX_COMPLETION_LENGTH` | 128 | 1024 | CoT 需要更长生成空间 |
 | `NUM_GENERATIONS` | 4 | 4 | 每个 Prompt 的组内候选数 |
 | `RL_BATCH` | 4 | 4 | 单设备在线 batch |
+| `GENERATION_BATCH` | 同 `RL_BATCH` | 同 `RL_BATCH` | 每轮集中送入 vLLM 的生成 batch，必须与组大小兼容 |
 | `VLLM_MEMORY` | 0.55 | 0.55 | colocate vLLM 显存规划比例 |
 | `vllm_limit_mm_per_prompt` | image=1 | image=1 | 每条最多一张图片；纯文本可为零张 |
 | `MM_PROCESSOR_CACHE_GB` | 2 | 2 | 缓存视觉预处理结果，重复 rollout 更快 |
 | `MAX_PIXELS` | 1048576 | 1048576 | 限制单图计算量 |
 
 脚本默认冻结视觉编码器和对齐层，只训练策略 LoRA。图像只需编码一次但每个 Prompt 会生成多个候选，因此开启 2GiB 多模态处理缓存通常比禁用更快。
+
+大显存机器可以同时增大 `RL_BATCH` 和 `GENERATION_BATCH`。应先用单步任务观察物理峰值，再至少预留 10% 显存余量；只提高 vLLM 的规划比例而不增加生成 batch，通常不会等比例提升吞吐。
 
 ## 校验奖励与扩展
 

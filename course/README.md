@@ -64,6 +64,15 @@ bash course/00_setup/verify.sh
 
 多模态补充数据位于 `datasets/multimodal_200/`，包含 60 条纯文本、60 条纯图像和 80 条图文混合源样本。Direct 与 CoT 是同一批 200 个源样本的成对视图；完整字段、划分和扩展方法见 [多模态数据说明](../datasets/multimodal_200/README.md)。
 
+七条链路的正式训练可统一执行：
+
+```bash
+source ./activate.sh
+bash course/run_multimodal_full.sh
+```
+
+默认包含 Direct/CoT LoRA SFT、mixed 语言模型全参数 SFT、Direct/CoT GRPO 和 Direct/CoT OPD。正式 runner 使用 3 epoch SFT 与 100 step 在线训练；可以通过 `MM_FULL_SFT_EPOCHS`、`MM_FULL_RL_STEPS`、`MM_LORA_BATCH`、`MM_FULL_BATCH`、`MM_RL_BATCH` 和 `MM_GENERATION_BATCH` 覆盖。
+
 ## 推荐学习顺序
 
 ### 1. LoRA SFT：训练两位轻量教师

@@ -53,6 +53,7 @@ swift rlhf \
   --vllm_enforce_eager true \
   --sleep_level 1 \
   --num_generations "${NUM_GENERATIONS:-4}" \
+  --generation_batch_size "${GENERATION_BATCH:-${RL_BATCH:-4}}" \
   --temperature "${TEMPERATURE:-0.8}" \
   --per_device_train_batch_size "${RL_BATCH:-4}" \
   --gradient_accumulation_steps 1 \

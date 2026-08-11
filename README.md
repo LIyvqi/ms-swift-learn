@@ -78,6 +78,13 @@ python tools/validate_multimodal_200.py
 bash course/00_setup/verify.sh
 ```
 
+完整多模态训练使用统一入口，依次执行第 01～04 课的七条真实链路：
+
+```bash
+source ./activate.sh
+bash course/run_multimodal_full.sh
+```
+
 ## 推荐学习顺序
 
 1. 阅读 [环境记录](TRAINING_ENVIRONMENT.md)，了解 ROCm、持久化缓存和版本约束。

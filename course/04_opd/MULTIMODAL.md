@@ -56,6 +56,7 @@ OPD 和 GRPO 一样使用 Prompt-only 数据：
 | `TEACHER_KL_COEF` | 0.3 | 教师 token 分布信号权重 |
 | `num_generations` | 1 | 每个 Prompt 生成一次；纯 OPD 不依赖组内相对奖励 |
 | `RL_BATCH` | 4 | 在线生成 batch |
+| `GENERATION_BATCH` | 同 `RL_BATCH` | 每轮集中送入 vLLM 的生成 batch |
 | `LEARNING_RATE` | `5e-6` | 学生 LoRA 学习率 |
 | `VLLM_MEMORY` | 0.50 | 给教师前向和训练部分保留更多空间 |
 | `MM_PROCESSOR_CACHE_GB` | 2 | 缓存重复使用的图像预处理结果 |
