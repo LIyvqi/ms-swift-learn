@@ -55,9 +55,11 @@ SFT_EPOCHS="${MM_FULL_SFT_EPOCHS:-3}"
 RL_STEPS="${MM_FULL_RL_STEPS:-100}"
 # batch=24 首轮能训练，但验证/保存后进入第二轮时会因显存峰值叠加 OOM。
 # batch=16 降低了单步峰值，但多种动态形状在轮次边界叠加时仍会 OOM。
-# 正式值使用 12/12，并逐批释放验证 logits 和 PyTorch 缓存。
+# Direct 正式值使用 12；CoT 的监督序列更长，batch=12 在第二轮最长批次仍会 OOM，
+# 因此 CoT LoRA 与含 CoT 的 mixed 全参训练使用 8，并逐批释放验证 logits 和缓存。
 LORA_BATCH="${MM_LORA_BATCH:-12}"
-FULL_BATCH="${MM_FULL_BATCH:-12}"
+COT_LORA_BATCH="${MM_COT_LORA_BATCH:-8}"
+FULL_BATCH="${MM_FULL_BATCH:-8}"
 # 验证会物化全词表 logits，不能盲目继承训练 batch。
 LORA_EVAL_BATCH="${MM_LORA_EVAL_BATCH:-8}"
 FULL_EVAL_BATCH="${MM_FULL_EVAL_BATCH:-8}"
@@ -84,9 +86,9 @@ if [[ "${START_STAGE}" -le 1 ]]; then
 fi
 
 if [[ "${START_STAGE}" -le 2 ]]; then
-  记录步骤 "01 显式 CoT 多模态 LoRA SFT：${SFT_EPOCHS} epoch，batch=${LORA_BATCH}"
+  记录步骤 "01 显式 CoT 多模态 LoRA SFT：${SFT_EPOCHS} epoch，batch=${COT_LORA_BATCH}"
   EPOCHS="${SFT_EPOCHS}" STYLE=cot RUN_TAG="full_e${SFT_EPOCHS}" \
-  MM_SFT_BATCH="${LORA_BATCH}" MM_EVAL_BATCH="${LORA_EVAL_BATCH}" \
+  MM_SFT_BATCH="${COT_LORA_BATCH}" MM_EVAL_BATCH="${LORA_EVAL_BATCH}" \
     bash course/01_lora_sft/train_multimodal.sh
 fi
 

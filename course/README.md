@@ -71,7 +71,7 @@ source ./activate.sh
 bash course/run_multimodal_full.sh
 ```
 
-默认包含 Direct/CoT LoRA SFT、mixed 语言模型全参数 SFT、Direct/CoT GRPO 和 Direct/CoT OPD。正式 runner 使用 3 epoch SFT 与 100 step 在线训练；可以通过 `MM_FULL_SFT_EPOCHS`、`MM_FULL_RL_STEPS`、`MM_LORA_BATCH`、`MM_FULL_BATCH`、`MM_RL_BATCH` 和 `MM_GENERATION_BATCH` 覆盖。
+默认包含 Direct/CoT LoRA SFT、mixed 语言模型全参数 SFT、Direct/CoT GRPO 和 Direct/CoT OPD。正式 runner 使用 3 epoch SFT 与 100 step 在线训练；可以通过 `MM_FULL_SFT_EPOCHS`、`MM_FULL_RL_STEPS`、`MM_LORA_BATCH`、`MM_COT_LORA_BATCH`、`MM_FULL_BATCH`、`MM_RL_BATCH` 和 `MM_GENERATION_BATCH` 覆盖。Direct LoRA 默认 batch=12；显式 CoT 和 mixed 全参训练含更长序列，默认 batch=8。中断后可设置 `MM_START_STAGE=1～8` 从指定阶段继续，并保留已有步骤日志。
 
 七条训练完成后，runner 会调用 `course/evaluate_multimodal_full.sh`，在固定 40 条验证集上真实生成 Base、LoRA、全参数 SFT、GRPO 和 OPD 的 Direct/CoT 输出。汇总表写入 `outputs/multimodal_full_evaluation/COMPARISON.md`，同时保留逐条 JSONL 便于排错。
 
