@@ -100,6 +100,8 @@ MAX_COMPLETION_LENGTH="${MM_COT_COMPLETION_LENGTH:-1024}" \
 bash course/evaluate_multimodal_full.sh
 
 记录步骤 "训练与评测完成，汇总各阶段物理显存和 GPU 利用率"
+清理显存监控
+GPU_MONITOR_PID=""
 python tools/summarize_gpu_samples.py \
   --samples "${STATUS_DIR}/gpu_samples.jsonl" \
   --steps "${STATUS_DIR}/steps.log" \
