@@ -52,6 +52,18 @@ def 校验记录(path: Path, rows: list[dict], prompt_only: bool) -> None:
         if not prompt_only and roles[-1] != "assistant":
             raise ValueError(f"{path}:{index} 监督数据必须以 assistant 结束")
 
+        if prompt_only:
+            teacher_prompt = row.get("teacher_prompt")
+            if not isinstance(teacher_prompt, str) or not teacher_prompt.strip():
+                raise ValueError(f"{path}:{index} OPD 提示缺少 teacher_prompt")
+            if row["solution"] not in teacher_prompt or row["final_answer"] not in teacher_prompt:
+                raise ValueError(f"{path}:{index} teacher_prompt 未完整携带参考解析和答案")
+            student_user = next(
+                message["content"] for message in reversed(messages) if message["role"] == "user"
+            )
+            if not teacher_prompt.startswith(student_user):
+                raise ValueError(f"{path}:{index} teacher_prompt 未保留学生原始输入")
+
         image_count = len(row.get("images") or [])
         placeholder_count = sum(
             message.get("content", "").count("<image>") for message in messages
@@ -59,6 +71,10 @@ def 校验记录(path: Path, rows: list[dict], prompt_only: bool) -> None:
         if image_count != placeholder_count:
             raise ValueError(
                 f"{path}:{index} 图片数 {image_count} 与占位符数 {placeholder_count} 不一致"
+            )
+        if prompt_only and row["teacher_prompt"].count("<image>") != image_count:
+            raise ValueError(
+                f"{path}:{index} 教师视图的图片占位符数与 images 不一致"
             )
         for image_path in row.get("images") or []:
             resolved = 项目根目录 / image_path

@@ -28,6 +28,7 @@ else
   COMPLETION_LENGTH="${MAX_COMPLETION_LENGTH:-256}"
 fi
 
+# 最长学生提示 1383 token，加上 2048 token CoT 仍保留在 4096 内。
 swift rlhf \
   --rlhf_type grpo \
   --model "${STUDENT}" \
@@ -60,7 +61,7 @@ swift rlhf \
   --learning_rate "${LEARNING_RATE:-5e-6}" \
   --beta "${BETA:-0.001}" \
   --max_grad_norm "${MAX_GRAD_NORM:-0.5}" \
-  --max_length "${MAX_LENGTH:-1536}" \
+  --max_length "${MAX_LENGTH:-4096}" \
   --max_completion_length "${COMPLETION_LENGTH}" \
   --max_pixels "${MAX_PIXELS:-1048576}" \
   --logging_steps 1 \

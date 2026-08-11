@@ -232,7 +232,33 @@ def 构造消息(sample: dict, style: str, include_answer: bool) -> list[dict[st
     return messages
 
 
-def 输出记录(sample: dict, style: str, include_answer: bool) -> dict:
+def 构造教师提示(sample: dict, style: str) -> str:
+    """构造 OPD 专用的特权教师视图。
+
+    ms-swift 会用这个字段替换最后一条 user 消息，教师因此能看到
+    参考解析和答案，学生 rollout 仍只看原始 messages。
+    """
+
+    student_user = 构造消息(sample, style, False)[-1]["content"]
+    if style == "cot":
+        instruction = "请依据参考信息输出完整推理，并严格保留 <think> 和 <answer> 格式。"
+    else:
+        instruction = "请依据参考信息直接作答，并严格保留 <answer> 格式。"
+    return (
+        f"{student_user}\n\n"
+        f"【仅教师可见的参考信息】\n"
+        f"参考解析：{sample['solution']}\n"
+        f"参考答案：{sample['final_answer']}\n"
+        f"{instruction}"
+    )
+
+
+def 输出记录(
+    sample: dict,
+    style: str,
+    include_answer: bool,
+    include_teacher_prompt: bool = False,
+) -> dict:
     """只输出课程所需字段，避免复制无关的源数据元信息。"""
 
     row = {
@@ -250,6 +276,8 @@ def 输出记录(sample: dict, style: str, include_answer: bool) -> dict:
         row["options"] = sample["options"]
     if sample.get("image"):
         row["images"] = [sample["image"]]
+    if include_teacher_prompt:
+        row["teacher_prompt"] = 构造教师提示(sample, style)
     return row
 
 
@@ -384,7 +412,7 @@ def 主程序() -> None:
             )
             写JSONL(
                 args.output / f"prompts_{style}_{split_name}.jsonl",
-                [输出记录(row, style, False) for row in split_rows],
+                [输出记录(row, style, False, True) for row in split_rows],
             )
         mixed = [
             输出记录(row, "direct" if index % 2 == 0 else "cot", True)
@@ -403,7 +431,7 @@ def 主程序() -> None:
         )
         写JSONL(
             args.output / f"prompts_{style}_smoke.jsonl",
-            [输出记录(row, style, False) for row in smoke_samples],
+            [输出记录(row, style, False, True) for row in smoke_samples],
         )
     写JSONL(
         args.output / "mixed_smoke.jsonl",

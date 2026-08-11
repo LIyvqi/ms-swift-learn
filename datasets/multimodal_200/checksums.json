@@ -1,5 +1,5 @@
 {
-  "README.md": "6f0244715c9c6882b6b5932f32acde3053cec1878bd95e8b2bb97bea5ef42181",
+  "README.md": "1d2d69de598179a921fd482ee9fab121a465d116b965782b9e42bc33b749ac9c",
   "cot_smoke.jsonl": "4821a98fc7370e317dcb1d05e50a9a9bfc8db143de2744eac52a347ab6a0c06f",
   "cot_train.jsonl": "22de43bc9d435252e7c41a89d9dcf9a3207ea225ba37cea701a122ca0a48c1b7",
   "cot_val.jsonl": "d72d5dcddfd933781915ccf1738fbd7f6293ecdb2824fbea02b0956039e07552",
@@ -149,12 +149,12 @@
   "mixed_smoke.jsonl": "0d3b526351fde4a1f69cc7e528abab75ae06572edc4c8e53d0db56f0a812a090",
   "mixed_train.jsonl": "8a5c4d653406ccff8dcfd359f227350675eea60f272e1fcdb45aaa7e0cdc47b1",
   "mixed_val.jsonl": "17656dd5de250325f3f10f471f939c486eacd3cb057d83af2366cbdf4f78ce1e",
-  "prompts_cot_smoke.jsonl": "8d58ff2b3a439eae666c2f21e26b216951870aec38c14b97831a0d3f1053c24a",
-  "prompts_cot_train.jsonl": "263a9ccb4a52cbe36c9f4c19bbb18c69a43a7523c08b837b77868b3bcf3c8121",
-  "prompts_cot_val.jsonl": "cf81eb85387a8f85e3616e43cf7c0a20bec0837c983e3ef0d67315e9c6b06cc2",
-  "prompts_direct_smoke.jsonl": "6b09fde1c1310d856cc64aa334c469ef7556d6ac6eab83a6502d664d6b37ad0a",
-  "prompts_direct_train.jsonl": "5047aa282529517b5c3151912f2da25a4243ca78c5a425f8ee2962f1334bc62b",
-  "prompts_direct_val.jsonl": "468f30d51e9e314215c8f0b933598c057191688cd8fcec58f5d4c47a10c9ac5e",
+  "prompts_cot_smoke.jsonl": "3a9df991891146a88ec644575f752db4270d8da8432161608935362b8d0f7b35",
+  "prompts_cot_train.jsonl": "c19deb565562d60a0fbf3705c82db63d871ce8faaa88b759648a6f061d1de669",
+  "prompts_cot_val.jsonl": "29615b6a1638804c833237cbd93c84c77363ffa9d1bcf630f2699c5151a9d6a5",
+  "prompts_direct_smoke.jsonl": "9dc5296c5af7cc289875ffcd9261c7125a3ee258103cb9c303bcb447c8d7c1e5",
+  "prompts_direct_train.jsonl": "eeafb91c1afbb217f8378832ad3a25cb416252d5ec380322de638e9cfa337f19",
+  "prompts_direct_val.jsonl": "ce0ac907d6f697af02f431cc7881d3d5ce47f7df71860342e94e9e65dc779824",
   "source_manifest.jsonl": "ad3ba94fee5ace7a0a7f232c2b9bbd1bb2afc3713de9c5c5239e8b7f2210c929",
   "stats.json": "3bfc934fca7dc000770ca01dee24ff97a86b10e408d0b78d2a01975571b052bd"
 }

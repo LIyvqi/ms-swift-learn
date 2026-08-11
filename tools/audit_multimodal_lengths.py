@@ -36,7 +36,13 @@ def 分位数(values: list[int], ratio: float) -> int:
     return ordered[index]
 
 
-def 审计视图(processor, name: str, mode: str, limit: int) -> dict:
+def 审计视图(
+    processor,
+    name: str,
+    mode: str,
+    limit: int,
+    teacher_view: bool = False,
+) -> dict:
     """在不按课程阈值截断的模板中编码，再检查真实长度上限。"""
 
     template = get_template(processor, max_length=8192)
@@ -44,6 +50,15 @@ def 审计视图(processor, name: str, mode: str, limit: int) -> dict:
     lengths = []
     violations = []
     for row in 读取记录(name):
+        if teacher_view:
+            teacher_prompt = row.get("teacher_prompt")
+            if not teacher_prompt:
+                raise ValueError(f"{row['id']} 缺少 teacher_prompt")
+            row["messages"] = [message.copy() for message in row["messages"]]
+            for message in reversed(row["messages"]):
+                if message["role"] == "user":
+                    message["content"] = teacher_prompt
+                    break
         encoded = template.encode(row)
         input_ids = encoded["input_ids"]
         length = len(input_ids) if isinstance(input_ids, list) else input_ids.shape[-1]
@@ -53,7 +68,7 @@ def 审计视图(processor, name: str, mode: str, limit: int) -> dict:
                 {"id": row["id"], "modality": row["modality"], "tokens": length}
             )
     return {
-        "视图": name,
+        "视图": f"{name}_teacher" if teacher_view else name,
         "样本数": len(lengths),
         "阈值": limit,
         "最小": min(lengths),
@@ -73,11 +88,13 @@ def 主程序() -> None:
         审计视图(processor, "cot", "train", 2048),
         # GRPO 的 Prompt-only JSONL 仍由训练数据模板编码；infer 模式只接受 InferRequest。
         审计视图(processor, "prompts_cot", "train", 1536),
+        # OPD 教师会看到原题、参考解析和答案，需要单独审计。
+        审计视图(processor, "prompts_cot", "train", 3072, teacher_view=True),
     ]
     print(json.dumps(results, ensure_ascii=False, indent=2))
     if any(result["超限数"] for result in results):
         raise RuntimeError("多模态数据存在超过课程 max_length 的样本")
-    print("全部 200 个源样本的最长监督视图和最长提示视图均未超限。")
+    print("全部 200 个源样本的监督、学生提示和 OPD 教师提示视图均未超限。")
 
 
 if __name__ == "__main__":

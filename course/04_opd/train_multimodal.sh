@@ -20,6 +20,7 @@ else
   COMPLETION_LENGTH="${MAX_COMPLETION_LENGTH:-256}"
 fi
 
+# OPD 教师提示最长 1678 token，与 2048 token CoT 合计不超过 4096。
 # 教师和学生共享基础视觉编码器，蒸馏当前 rollout token 的教师分布。
 swift rlhf \
   --rlhf_type grpo \
@@ -52,7 +53,7 @@ swift rlhf \
   --gradient_accumulation_steps 1 \
   --learning_rate "${LEARNING_RATE:-5e-6}" \
   --max_grad_norm "${MAX_GRAD_NORM:-0.5}" \
-  --max_length "${MAX_LENGTH:-1536}" \
+  --max_length "${MAX_LENGTH:-4096}" \
   --max_completion_length "${COMPLETION_LENGTH}" \
   --max_pixels "${MAX_PIXELS:-1048576}" \
   --logging_steps 1 \

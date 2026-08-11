@@ -36,18 +36,18 @@ CMMU 部分覆盖数学、生物、物理、化学、地理、政治、历史七
 ### 图文混合 Prompt-only GRPO/OPD
 
 ```json
-{"id":"mm-0013","modality":"image_text","style":"cot","question":"题目文本……","options":["选项A","选项B","选项C","选项D"],"solution":"参考过程……","final_answer":"A","images":["datasets/multimodal_200/images/cmmu_math_3021_image_text.jpg"],"messages":[{"role":"system","content":"请分析题目并严格输出 <think>推理过程</think><answer>最终答案</answer>。"},{"role":"user","content":"<image>\n题目：题目文本……\n选项：\nA. 选项A\nB. 选项B\nC. 选项C\nD. 选项D"}]}
+{"id":"mm-0013","modality":"image_text","style":"cot","question":"题目文本……","options":["选项A","选项B","选项C","选项D"],"solution":"参考过程……","final_answer":"A","images":["datasets/multimodal_200/images/cmmu_math_3021_image_text.jpg"],"messages":[{"role":"system","content":"请分析题目并严格输出 <think>推理过程</think><answer>最终答案</answer>。"},{"role":"user","content":"<image>\n题目：题目文本……\n选项：\nA. 选项A\nB. 选项B\nC. 选项C\nD. 选项D"}],"teacher_prompt":"<image>\n题目：题目文本……\n选项：……\n\n【仅教师可见的参考信息】\n参考解析：参考过程……\n参考答案：A\n请依据参考信息输出完整推理，并严格保留 <think> 和 <answer> 格式。"}
 ```
 
-GRPO 与 OPD 的 `messages` 不能预先放标准 `assistant`，否则模型不是从 Prompt 自己 rollout。顶层 `final_answer`、`solution` 和 `modality` 不会自动展示给模型，只供奖励、评估和排错使用。
+GRPO 与 OPD 的 `messages` 不能预先放标准 `assistant`，否则模型不是从 Prompt 自己 rollout。`teacher_prompt` 是 OPD 的特权教师视图：ms-swift 用它替换最后一条 user 消息来计算教师 token 对数概率，学生不会看到其中的解析和答案。GRPO 会忽略该字段，仍使用顶层 `final_answer`、`solution` 计算自定义奖励。
 
 ## Direct、CoT 与 mixed 视图
 
 - `direct_*.jsonl`：200 个源样本的无思维链监督视图，回答严格为 `<answer>...</answer>`。
 - `cot_*.jsonl`：同一批源样本的显式过程监督视图，回答严格为 `<think>...</think><answer>...</answer>`。
 - `mixed_*.jsonl`：每个源样本只出现一次，Direct/CoT 约 1:1 交替，用于第 02 课默认全参 SFT。
-- `prompts_direct_*.jsonl`：没有 assistant 的 Direct 在线训练提示。
-- `prompts_cot_*.jsonl`：没有 assistant 的显式 CoT 在线训练提示。
+- `prompts_direct_*.jsonl`：没有 assistant 的 Direct 在线训练提示，并含 OPD `teacher_prompt`。
+- `prompts_cot_*.jsonl`：没有 assistant 的显式 CoT 在线训练提示，并含 OPD `teacher_prompt`。
 - `*_smoke.jsonl`：各取一条纯文本、纯图像、图文混合记录，用于一阶段单步链路测试。
 
 Direct 与 CoT 是同一组 200 个源样本的两个训练视图，不应把它们误报为 400 个独立样本。训练集和验证集按 `source_id` 隔离，同一源题不会跨集合。
@@ -57,7 +57,7 @@ Direct 与 CoT 是同一组 200 个源样本的两个训练视图，不应把它
 1. 每行是一个完整 JSON 对象，文件使用 UTF-8 JSONL。
 2. 每出现一个 `<image>`，顶层 `images` 必须恰好提供一个路径，顺序一一对应。
 3. 图片路径应相对仓库根目录，训练命令也从仓库根目录启动。
-4. SFT 最后一条消息是 `assistant`；GRPO/OPD Prompt 最后一条通常是 `user`。
+4. SFT 最后一条消息是 `assistant`；GRPO/OPD Prompt 最后一条通常是 `user`。OPD 还必须有非空 `teacher_prompt`，并保留原题与全部图像占位符。
 5. Direct 与 CoT 必须使用明确、互斥的输出协议，不能仅靠文件名猜测。
 6. 先按源样本划分训练/验证，再生成 Direct、CoT 或图片改写，避免同题泄漏。
 7. 图像分类、OCR、文档问答等任务可复用相同结构，只需修改 `question`、`final_answer` 和奖励解析器。
@@ -95,3 +95,6 @@ python tools/audit_multimodal_lengths.py
 |---|---:|---:|---:|---:|---:|---:|
 | CoT SFT | 200 | 316 | 1205 | 1649 | 2048 | 0 |
 | CoT Prompt | 200 | 158 | 771 | 1383 | 1536 | 0 |
+| CoT OPD 教师 Prompt | 200 | 345 | 1235 | 1678 | 3072 | 0 |
+
+OPD 中最长教师 Prompt 1678 token 加上 2048 token 回答为 3726 token，因此训练脚本把 `MAX_LENGTH` 设为 4096，避免教师 token 分布被静默截断。

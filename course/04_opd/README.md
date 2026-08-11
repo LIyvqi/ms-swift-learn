@@ -24,15 +24,16 @@ MAX_GRAD_NORM=0.5 MAX_COMPLETION_LENGTH=192 \
 
 ## OPD 数据格式
 
-OPD 使用提示词数据，`messages` 不含 `assistant`。纯教师蒸馏本身不需要标准答案，但建议保留 `solution` 与 `final_answer`，以便之后做统一任务评测。
+OPD 使用提示词数据，`messages` 不含 `assistant`。ms-swift 4.4.3 会从 `teacher_prompt` 构造教师视图；没有该字段时，教师前向不会产生有效蒸馏信号。`solution` 与 `final_answer` 仍建议保留，以便做统一任务评测。
 
 ```json
-{"id":"opd-0001","question":"12 名学生平均分成 3 组，每组多少人？","solution":"12÷3=4，因此每组 \\boxed{4} 人。","final_answer":"4","teacher_tag":"cot","messages":[{"role":"system","content":"请逐步计算并把答案放入 \\boxed{}。"},{"role":"user","content":"12 名学生平均分成 3 组，每组多少人？"}]}
+{"id":"opd-0001","question":"12 名学生平均分成 3 组，每组多少人？","solution":"12÷3=4，因此每组 \\boxed{4} 人。","final_answer":"4","teacher_tag":"cot","messages":[{"role":"system","content":"请逐步计算并把答案放入 \\boxed{}。"},{"role":"user","content":"12 名学生平均分成 3 组，每组多少人？"}],"teacher_prompt":"12 名学生平均分成 3 组，每组多少人？\n\n参考解析：12÷3=4。\n参考答案：4\n请依据参考信息完成作答。"}
 ```
 
 通用要求：
 
 - `messages` 的最后一个角色通常是 `user`，不能放标准 `assistant` 回答。
+- `teacher_prompt` 必须非空，并保留学生原题；多模态数据还必须保留全部 `<image>` 占位符。
 - CoT 提示应配 CoT 教师，Direct 提示应配 Direct 教师。
 - `solution` 不参与本脚本损失，但保留它能复用 GRPO 奖励和评测工具。
 - 如果自己的任务只有无标注提示，也可以做纯 OPD，但必须有能够覆盖该任务的教师。
