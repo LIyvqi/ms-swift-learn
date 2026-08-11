@@ -20,7 +20,7 @@ if [[ "${STYLE}" == "cot" ]]; then
   )
   REWARD_WEIGHTS=(1.0 0.25 0.20 0.15)
   ENABLE_THINKING=true
-  COMPLETION_LENGTH="${MAX_COMPLETION_LENGTH:-1024}"
+  COMPLETION_LENGTH="${MAX_COMPLETION_LENGTH:-2048}"
 else
   REWARD_FUNCS=(course_multimodal_accuracy course_multimodal_direct_format)
   REWARD_WEIGHTS=(1.0 0.25)

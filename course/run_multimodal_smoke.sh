@@ -47,7 +47,7 @@ SMOKE=1 STYLE=direct RL_BATCH=2 NUM_GENERATIONS=2 \
   bash course/03_grpo/train_multimodal.sh
 
 记录步骤 "03 显式 CoT 多模态 GRPO 冒烟"
-SMOKE=1 STYLE=cot RL_BATCH=2 NUM_GENERATIONS=2 MAX_COMPLETION_LENGTH=1024 \
+SMOKE=1 STYLE=cot RL_BATCH=2 NUM_GENERATIONS=2 MAX_COMPLETION_LENGTH=2048 \
   bash course/03_grpo/train_multimodal.sh
 
 记录步骤 "04 Direct 多模态 OPD 冒烟"
@@ -55,7 +55,7 @@ SMOKE=1 STYLE=direct RL_BATCH=2 \
   bash course/04_opd/train_multimodal.sh
 
 记录步骤 "04 显式 CoT 多模态 OPD 冒烟"
-SMOKE=1 STYLE=cot RL_BATCH=2 MAX_COMPLETION_LENGTH=1024 \
+SMOKE=1 STYLE=cot RL_BATCH=2 MAX_COMPLETION_LENGTH=2048 \
   bash course/04_opd/train_multimodal.sh
 
 printf '完成时间：%s\n' "$(date --iso-8601=seconds)" >"${STATUS_DIR}/done.txt"

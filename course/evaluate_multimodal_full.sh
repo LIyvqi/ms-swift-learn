@@ -36,7 +36,7 @@ mkdir -p "${RESULT_ROOT}"
   local max_tokens=256
   if [[ "${style}" == "cot" ]]; then
     enable_thinking=true
-    max_tokens="${MM_EVAL_COT_TOKENS:-1024}"
+    max_tokens="${MM_EVAL_COT_TOKENS:-2048}"
   fi
 
   # 只有 40 条固定样本，完整结果存在时跳过重复生成，但仍重新计算评分。
