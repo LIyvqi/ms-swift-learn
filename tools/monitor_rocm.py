@@ -56,14 +56,18 @@ def 主程序() -> None:
     parser.add_argument(
         "--maximum-samples", type=int, default=0, help="测试用最大采样数，0 表示不限"
     )
+    parser.add_argument(
+        "--append", action="store_true", help="续跑时追加采样，不覆盖前序阶段记录"
+    )
     args = parser.parse_args()
 
     if args.interval <= 0:
         raise ValueError("interval 必须大于 0")
     args.output.parent.mkdir(parents=True, exist_ok=True)
     count = 0
-    # 每次正式 runner 都生成一份自洽的新记录，避免失败重跑后混入旧时间段。
-    with args.output.open("w", encoding="utf-8") as handle:
+    # 首次运行创建新记录；分阶段续跑则保留前序曲线，阶段边界由 steps.log 对齐。
+    mode = "a" if args.append else "w"
+    with args.output.open(mode, encoding="utf-8") as handle:
         while 进程存在(args.pid):
             try:
                 row = 采样()

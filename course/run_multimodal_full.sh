@@ -45,10 +45,15 @@ trap 失败处理 ERR
 trap 清理显存监控 EXIT
 
 # 按秒保留整条流水线的物理显存与 GPU 利用率，阶段边界由 steps.log 对齐。
+GPU_MONITOR_APPEND=()
+if [[ "${START_STAGE}" -gt 1 ]]; then
+  GPU_MONITOR_APPEND=(--append)
+fi
 python tools/monitor_rocm.py \
   --pid "$$" \
   --output "${STATUS_DIR}/gpu_samples.jsonl" \
-  --interval "${MM_GPU_SAMPLE_INTERVAL:-1}" &
+  --interval "${MM_GPU_SAMPLE_INTERVAL:-1}" \
+  "${GPU_MONITOR_APPEND[@]}" &
 GPU_MONITOR_PID=$!
 
 SFT_EPOCHS="${MM_FULL_SFT_EPOCHS:-3}"
