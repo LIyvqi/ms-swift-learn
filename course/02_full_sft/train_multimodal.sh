@@ -24,6 +24,7 @@ swift sft \
   --max_pixels "${MAX_PIXELS:-1048576}" \
   --per_device_train_batch_size "${MM_SFT_BATCH:-${SFT_BATCH}}" \
   --per_device_eval_batch_size "${MM_EVAL_BATCH:-${MM_SFT_BATCH:-${SFT_BATCH}}}" \
+  --eval_accumulation_steps "${EVAL_ACCUMULATION_STEPS:-1}" \
   --gradient_accumulation_steps 1 \
   --learning_rate "${LEARNING_RATE:-1e-5}" \
   --warmup_ratio 0.05 \
@@ -33,6 +34,7 @@ swift sft \
   --save_only_model true \
   --gradient_checkpointing false \
   --group_by_length "${GROUP_BY_LENGTH:-true}" \
+  --torch_empty_cache_steps "${EMPTY_CACHE_STEPS:-1}" \
   --dataloader_num_workers 2 \
   --dataset_num_proc 2 \
   --report_to tensorboard \

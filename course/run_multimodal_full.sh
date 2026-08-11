@@ -44,8 +44,9 @@ GPU_MONITOR_PID=$!
 SFT_EPOCHS="${MM_FULL_SFT_EPOCHS:-3}"
 RL_STEPS="${MM_FULL_RL_STEPS:-100}"
 # batch=24 首轮能训练，但验证/保存后进入第二轮时会因显存峰值叠加 OOM。
-# 正式值使用 16/12，在保留高吞吐的同时给轮次边界和动态形状留出余量。
-LORA_BATCH="${MM_LORA_BATCH:-16}"
+# batch=16 降低了单步峰值，但多种动态形状在轮次边界叠加时仍会 OOM。
+# 正式值使用 12/12，并逐批释放验证 logits 和 PyTorch 缓存。
+LORA_BATCH="${MM_LORA_BATCH:-12}"
 FULL_BATCH="${MM_FULL_BATCH:-12}"
 # 验证会物化全词表 logits，不能盲目继承训练 batch。
 LORA_EVAL_BATCH="${MM_LORA_EVAL_BATCH:-8}"

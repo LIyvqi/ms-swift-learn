@@ -68,6 +68,8 @@ MM_SFT_BATCH=1 LEARNING_RATE=2e-6 EPOCHS=1 STYLE=mixed \
 | `MM_SFT_BATCH` | 继承 `SFT_BATCH` | 默认正式训练为 8，可按显存调整 |
 | `MM_EVAL_BATCH` | 继承训练 batch | 验证会保留全词表 logits，大训练 batch 时应单独降低 |
 | `GROUP_BY_LENGTH` | `true` | 预先统计 token 长度并减少批内 padding；小数据预处理成本远小于训练节省 |
+| `EVAL_ACCUMULATION_STEPS` | 1 | 逐批把验证预测移到 CPU，避免累积全词表 logits |
+| `EMPTY_CACHE_STEPS` | 1 | 逐步释放未使用的 PyTorch 显存缓存 |
 | `LEARNING_RATE` | `1e-5` | 全参语言模型学习率 |
 | `save_total_limit` | 1 | 只留一个检查点，控制磁盘占用 |
 
