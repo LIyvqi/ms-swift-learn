@@ -46,6 +46,9 @@ RL_STEPS="${MM_FULL_RL_STEPS:-100}"
 # 正式值扩大到 24/16，同时保留足够的每轮更新次数和动态形状余量。
 LORA_BATCH="${MM_LORA_BATCH:-24}"
 FULL_BATCH="${MM_FULL_BATCH:-16}"
+# 验证会物化全词表 logits，不能盲目继承训练 batch。
+LORA_EVAL_BATCH="${MM_LORA_EVAL_BATCH:-8}"
+FULL_EVAL_BATCH="${MM_FULL_EVAL_BATCH:-8}"
 RL_BATCH_SIZE="${MM_RL_BATCH:-6}"
 RL_GENERATIONS="${MM_NUM_GENERATIONS:-3}"
 RL_GENERATION_BATCH="${MM_GENERATION_BATCH:-12}"
@@ -59,17 +62,17 @@ python course/03_grpo/test_multimodal_rewards.py
 
 记录步骤 "01 Direct 多模态 LoRA SFT：${SFT_EPOCHS} epoch，batch=${LORA_BATCH}"
 EPOCHS="${SFT_EPOCHS}" STYLE=direct RUN_TAG="full_e${SFT_EPOCHS}" \
-MM_SFT_BATCH="${LORA_BATCH}" \
+MM_SFT_BATCH="${LORA_BATCH}" MM_EVAL_BATCH="${LORA_EVAL_BATCH}" \
   bash course/01_lora_sft/train_multimodal.sh
 
 记录步骤 "01 显式 CoT 多模态 LoRA SFT：${SFT_EPOCHS} epoch，batch=${LORA_BATCH}"
 EPOCHS="${SFT_EPOCHS}" STYLE=cot RUN_TAG="full_e${SFT_EPOCHS}" \
-MM_SFT_BATCH="${LORA_BATCH}" \
+MM_SFT_BATCH="${LORA_BATCH}" MM_EVAL_BATCH="${LORA_EVAL_BATCH}" \
   bash course/01_lora_sft/train_multimodal.sh
 
 记录步骤 "02 mixed 多模态语言模型全参数 SFT：${SFT_EPOCHS} epoch，batch=${FULL_BATCH}"
 EPOCHS="${SFT_EPOCHS}" STYLE=mixed RUN_TAG="full_e${SFT_EPOCHS}" \
-MM_SFT_BATCH="${FULL_BATCH}" \
+MM_SFT_BATCH="${FULL_BATCH}" MM_EVAL_BATCH="${FULL_EVAL_BATCH}" \
   bash course/02_full_sft/train_multimodal.sh
 
 记录步骤 "03 Direct 多模态 GRPO：${RL_STEPS} step，batch=${RL_BATCH_SIZE}，组大小=${RL_GENERATIONS}"

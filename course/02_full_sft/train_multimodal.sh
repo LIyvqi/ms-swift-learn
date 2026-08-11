@@ -32,6 +32,7 @@ swift sft \
   --save_total_limit 1 \
   --save_only_model true \
   --gradient_checkpointing false \
+  --group_by_length "${GROUP_BY_LENGTH:-true}" \
   --dataloader_num_workers 2 \
   --dataset_num_proc 2 \
   --report_to tensorboard \
