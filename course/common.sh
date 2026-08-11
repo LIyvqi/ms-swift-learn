@@ -25,6 +25,10 @@ if [[ -n "${STEPS:-}" && ! "${STEPS}" =~ ^[1-9][0-9]*$ ]]; then
   echo "STEPS 必须是正整数" >&2
   return 2
 fi
+if [[ -n "${SAVE_STEPS:-}" && ! "${SAVE_STEPS}" =~ ^[1-9][0-9]*$ ]]; then
+  echo "SAVE_STEPS 必须是正整数" >&2
+  return 2
+fi
 if [[ -n "${EPOCHS:-}" && ! "${EPOCHS}" =~ ^[1-9][0-9]*$ ]]; then
   echo "EPOCHS 必须是正整数" >&2
   return 2
@@ -78,7 +82,8 @@ latest_checkpoint() {
 
 training_span_args() {
   if [[ -n "${STEPS:-}" ]]; then
-    printf '%s\n' --max_steps "${STEPS}" --save_steps "${STEPS}"
+    # 在线训练可缩短滚动保存间隔；各脚本的 save_total_limit 负责限制磁盘占用。
+    printf '%s\n' --max_steps "${STEPS}" --save_steps "${SAVE_STEPS:-${STEPS}}"
   elif [[ -n "${EPOCHS:-}" ]]; then
     printf '%s\n' --num_train_epochs "${EPOCHS}" --save_strategy epoch --eval_strategy epoch
   elif [[ "${SMOKE:-0}" == "1" ]]; then
