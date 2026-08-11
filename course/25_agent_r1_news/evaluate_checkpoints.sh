@@ -13,7 +13,8 @@ if [[ -z "${RUN_DIR}" ]]; then
   exit 1
 fi
 
-mapfile -t CHECKPOINTS < <(find "${RUN_DIR}" -mindepth 1 -maxdepth 1 -type d -name 'checkpoint-*' | sort -V)
+# 恢复运行可以用符号链接引用旧检查点；-L 让它们与真实目录使用同一评测协议。
+mapfile -t CHECKPOINTS < <(find -L "${RUN_DIR}" -mindepth 1 -maxdepth 1 -type d -name 'checkpoint-*' | sort -V)
 if [[ "${#CHECKPOINTS[@]}" -eq 0 ]]; then
   echo "运行目录中没有 checkpoint：${RUN_DIR}" >&2
   exit 1
@@ -26,13 +27,25 @@ for checkpoint in "${CHECKPOINTS[@]}"; do
   if [[ -n "${EVAL_STEPS:-}" && " ${EVAL_STEPS} " != *" ${step} "* ]]; then
     continue
   fi
-  python "${ROOT}/course/25_agent_r1_news/evaluate_agent.py" \
+  result="${OUTPUT_ROOT}/${EVAL_PREFIX:-sft}_checkpoint_${step}_evaluation.json"
+  dataset="${EVAL_DATASET:-${ROOT}/datasets/agent_r1_news/rl_smoke.jsonl}"
+  if python "${ROOT}/course/25_agent_r1_news/evaluation_result_matches.py" \
+    "${result}" \
     --adapter "${checkpoint}" \
-    --dataset "${EVAL_DATASET:-${ROOT}/datasets/agent_r1_news/rl_smoke.jsonl}" \
+    --dataset "${dataset}" \
     --maximum-samples "${EVAL_SAMPLES:-12}" \
     --sample-offset "${EVAL_OFFSET:-0}" \
-    --batch-size "${EVAL_BATCH_SIZE:-24}" \
-    --output "${OUTPUT_ROOT}/${EVAL_PREFIX:-sft}_checkpoint_${step}_evaluation.json"
+    --batch-size "${EVAL_BATCH_SIZE:-24}" >/dev/null 2>&1; then
+    echo "已有完整同协议评测，跳过 checkpoint-${step}。"
+  else
+    python "${ROOT}/course/25_agent_r1_news/evaluate_agent.py" \
+      --adapter "${checkpoint}" \
+      --dataset "${dataset}" \
+      --maximum-samples "${EVAL_SAMPLES:-12}" \
+      --sample-offset "${EVAL_OFFSET:-0}" \
+      --batch-size "${EVAL_BATCH_SIZE:-24}" \
+      --output "${result}"
+  fi
   EVALUATED_STEPS["${step}"]=1
 done
 

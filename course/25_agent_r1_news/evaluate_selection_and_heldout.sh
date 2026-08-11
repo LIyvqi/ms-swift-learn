@@ -56,13 +56,23 @@ if ((selection_end > total_samples || heldout_end > total_samples)); then
 fi
 
 SFT_SELECTION="${OUTPUT_ROOT}/${PREFIX}_sft_selection_evaluation.json"
-python "${ROOT}/course/25_agent_r1_news/evaluate_agent.py" \
+if python "${ROOT}/course/25_agent_r1_news/evaluation_result_matches.py" \
+  "${SFT_SELECTION}" \
   --adapter "${SFT_ADAPTER_PATH}" \
   --dataset "${DATASET}" \
   --sample-offset "${SELECTION_OFFSET}" \
   --maximum-samples "${SELECTION_SAMPLES}" \
-  --batch-size "${BATCH_SIZE}" \
-  --output "${SFT_SELECTION}"
+  --batch-size "${BATCH_SIZE}" >/dev/null 2>&1; then
+  echo "已有完整同协议评测，跳过 SFT 选择集。"
+else
+  python "${ROOT}/course/25_agent_r1_news/evaluate_agent.py" \
+    --adapter "${SFT_ADAPTER_PATH}" \
+    --dataset "${DATASET}" \
+    --sample-offset "${SELECTION_OFFSET}" \
+    --maximum-samples "${SELECTION_SAMPLES}" \
+    --batch-size "${BATCH_SIZE}" \
+    --output "${SFT_SELECTION}"
+fi
 
 # 所有候选只看选择集；evaluate_formal_run 同时生成统一对比表和训练曲线。
 GRPO_RUN_DIR="${RUN_DIR}" \
@@ -104,20 +114,40 @@ PY
 # 留出集不再参与任何模型选择，只比较训练前 SFT 和已锁定的最佳 GRPO。
 SFT_HELDOUT="${OUTPUT_ROOT}/${PREFIX}_sft_heldout_evaluation.json"
 BEST_HELDOUT="${OUTPUT_ROOT}/${PREFIX}_best_heldout_evaluation.json"
-python "${ROOT}/course/25_agent_r1_news/evaluate_agent.py" \
+if ! python "${ROOT}/course/25_agent_r1_news/evaluation_result_matches.py" \
+  "${SFT_HELDOUT}" \
   --adapter "${SFT_ADAPTER_PATH}" \
   --dataset "${DATASET}" \
   --sample-offset "${HELDOUT_OFFSET}" \
   --maximum-samples "${HELDOUT_SAMPLES}" \
-  --batch-size "${BATCH_SIZE}" \
-  --output "${SFT_HELDOUT}"
-python "${ROOT}/course/25_agent_r1_news/evaluate_agent.py" \
+  --batch-size "${BATCH_SIZE}" >/dev/null 2>&1; then
+  python "${ROOT}/course/25_agent_r1_news/evaluate_agent.py" \
+    --adapter "${SFT_ADAPTER_PATH}" \
+    --dataset "${DATASET}" \
+    --sample-offset "${HELDOUT_OFFSET}" \
+    --maximum-samples "${HELDOUT_SAMPLES}" \
+    --batch-size "${BATCH_SIZE}" \
+    --output "${SFT_HELDOUT}"
+else
+  echo "已有完整同协议评测，跳过 SFT 留出集。"
+fi
+if ! python "${ROOT}/course/25_agent_r1_news/evaluation_result_matches.py" \
+  "${BEST_HELDOUT}" \
   --adapter "${BEST_ADAPTER}" \
   --dataset "${DATASET}" \
   --sample-offset "${HELDOUT_OFFSET}" \
   --maximum-samples "${HELDOUT_SAMPLES}" \
-  --batch-size "${BATCH_SIZE}" \
-  --output "${BEST_HELDOUT}"
+  --batch-size "${BATCH_SIZE}" >/dev/null 2>&1; then
+  python "${ROOT}/course/25_agent_r1_news/evaluate_agent.py" \
+    --adapter "${BEST_ADAPTER}" \
+    --dataset "${DATASET}" \
+    --sample-offset "${HELDOUT_OFFSET}" \
+    --maximum-samples "${HELDOUT_SAMPLES}" \
+    --batch-size "${BATCH_SIZE}" \
+    --output "${BEST_HELDOUT}"
+else
+  echo "已有完整同协议评测，跳过最佳 GRPO 留出集。"
+fi
 
 python "${ROOT}/course/25_agent_r1_news/compare_evaluations.py" \
   "${SFT_HELDOUT}" "${BEST_HELDOUT}" \

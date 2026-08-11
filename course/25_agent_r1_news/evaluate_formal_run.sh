@@ -36,13 +36,23 @@ fi
 if [[ -n "${EARLY_CHECKPOINT:-}" ]]; then
   EARLY_STEP="${EARLY_STEP:-${EARLY_CHECKPOINT##*-}}"
   EARLY_RESULT="${OUTPUT_ROOT}/${EVAL_PREFIX}_checkpoint_${EARLY_STEP}_evaluation.json"
-  python "${ROOT}/course/25_agent_r1_news/evaluate_agent.py" \
+  if python "${ROOT}/course/25_agent_r1_news/evaluation_result_matches.py" \
+    "${EARLY_RESULT}" \
     --adapter "${EARLY_CHECKPOINT}" \
     --dataset "${DATASET}" \
     --maximum-samples "${EVAL_SAMPLES}" \
     --sample-offset "${EVAL_OFFSET}" \
-    --batch-size "${EVAL_BATCH_SIZE}" \
-    --output "${EARLY_RESULT}"
+    --batch-size "${EVAL_BATCH_SIZE}" >/dev/null 2>&1; then
+    echo "已有完整同协议评测，跳过早期 checkpoint-${EARLY_STEP}。"
+  else
+    python "${ROOT}/course/25_agent_r1_news/evaluate_agent.py" \
+      --adapter "${EARLY_CHECKPOINT}" \
+      --dataset "${DATASET}" \
+      --maximum-samples "${EVAL_SAMPLES}" \
+      --sample-offset "${EVAL_OFFSET}" \
+      --batch-size "${EVAL_BATCH_SIZE}" \
+      --output "${EARLY_RESULT}"
+  fi
   COMPARE_FILES+=("${EARLY_RESULT}")
   COMPARE_LABELS+=("GRPO-${EARLY_STEP}")
 fi
