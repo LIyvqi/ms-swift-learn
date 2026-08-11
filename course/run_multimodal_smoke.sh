@@ -11,6 +11,7 @@ STATUS_DIR="${PROJECT_ROOT}/outputs/multimodal_course_status"
 mkdir -p "${STATUS_DIR}"
 printf '开始时间：%s\n' "$(date --iso-8601=seconds)" >"${STATUS_DIR}/running.txt"
 rm -f "${STATUS_DIR}/done.txt" "${STATUS_DIR}/failed.txt"
+: >"${STATUS_DIR}/steps.log"
 
 记录步骤() {
   printf '[%s] %s\n' "$(date --iso-8601=seconds)" "$1" | tee -a "${STATUS_DIR}/steps.log"
