@@ -7,6 +7,13 @@ source "$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)/common.sh"
 MM_DATA_ROOT="${PROJECT_ROOT}/datasets/multimodal_200"
 PLUGIN_MULTIMODAL="${COURSE_DIR}/plugins/multimodal_rewards.py"
 
+best_multimodal_checkpoint() {
+  local run_glob="$1"
+  python "${PROJECT_ROOT}/tools/select_best_multimodal_checkpoint.py" \
+    --output-root "${PROJECT_ROOT}/outputs" \
+    --run-glob "${run_glob}"
+}
+
 multimodal_dataset_path() {
   local view="$1"
   local split="${2:-train}"
@@ -18,9 +25,7 @@ multimodal_dataset_path() {
 
 latest_multimodal_student() {
   local checkpoint
-  checkpoint="$({ find "${PROJECT_ROOT}/outputs" -type d \
-    -path '*/02_full_sft_multimodal*/v*/checkpoint-*' -printf '%T@ %p\n' 2>/dev/null || true; } \
-    | sort -nr | head -n 1 | cut -d' ' -f2-)"
+  checkpoint="$(best_multimodal_checkpoint '02_full_sft_multimodal*/v*' 2>/dev/null || true)"
   if [[ -z "${checkpoint}" ]]; then
     echo "缺少多模态全参 SFT 学生，请先运行 course/02_full_sft/train_multimodal.sh" >&2
     return 1
@@ -31,9 +36,7 @@ latest_multimodal_student() {
 latest_multimodal_teacher() {
   local style="$1"
   local checkpoint
-  checkpoint="$({ find "${PROJECT_ROOT}/outputs" -type d \
-    -path "*/01_lora_multimodal_${style}*/v*/checkpoint-*" -printf '%T@ %p\n' 2>/dev/null || true; } \
-    | sort -nr | head -n 1 | cut -d' ' -f2-)"
+  checkpoint="$(best_multimodal_checkpoint "01_lora_multimodal_${style}*/v*" 2>/dev/null || true)"
   if [[ -z "${checkpoint}" ]]; then
     echo "缺少 ${style} 多模态 LoRA 教师，请先运行第 01 课对应风格" >&2
     return 1

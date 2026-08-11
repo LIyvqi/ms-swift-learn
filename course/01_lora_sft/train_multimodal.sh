@@ -11,6 +11,7 @@ fi
 mapfile -t SPAN < <(training_span_args)
 
 # 默认冻结视觉编码器与对齐层，只在语言模型上加入 LoRA；小数据上更稳定。
+# 三轮正式实验默认保留每轮检查点，便于按验证损失选择而不是只取最后一轮。
 swift sft \
   --model "${MODEL_BASE}" \
   --dataset "$(multimodal_dataset_path "${STYLE}")" \
@@ -32,7 +33,7 @@ swift sft \
   --learning_rate "${LEARNING_RATE:-1e-4}" \
   --warmup_ratio 0.05 \
   --logging_steps 1 \
-  --save_total_limit 1 \
+  --save_total_limit "${SAVE_LIMIT:-4}" \
   --save_only_model true \
   --gradient_checkpointing false \
   --group_by_length "${GROUP_BY_LENGTH:-true}" \

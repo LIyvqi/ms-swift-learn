@@ -11,6 +11,7 @@ fi
 mapfile -t SPAN < <(training_span_args)
 
 # 课程默认完整更新语言模型，但冻结已经预训练好的视觉编码器和对齐层。
+# 三轮正式实验默认保留每轮检查点，便于按验证损失选择而不是只取最后一轮。
 swift sft \
   --model "${MODEL_BASE}" \
   --dataset "$(multimodal_dataset_path "${STYLE}")" \
@@ -30,7 +31,7 @@ swift sft \
   --warmup_ratio 0.05 \
   --weight_decay 0.1 \
   --logging_steps 1 \
-  --save_total_limit 1 \
+  --save_total_limit "${SAVE_LIMIT:-4}" \
   --save_only_model true \
   --gradient_checkpointing false \
   --group_by_length "${GROUP_BY_LENGTH:-true}" \

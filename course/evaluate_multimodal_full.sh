@@ -12,17 +12,11 @@ DATA_ROOT="${ROOT}/datasets/multimodal_200"
 RESULT_ROOT="${ROOT}/outputs/multimodal_full_evaluation"
 mkdir -p "${RESULT_ROOT}"
 
-最新检查点() {
-  local output_pattern="$1"
-  local checkpoint
-  checkpoint="$({ find "${ROOT}/outputs" -type d \
-    -path "${output_pattern}" -printf '%T@ %p\n' 2>/dev/null || true; } \
-    | sort -nr | head -n 1 | cut -d' ' -f2-)"
-  if [[ -z "${checkpoint}" ]]; then
-    echo "找不到待评测检查点：${output_pattern}" >&2
-    return 1
-  fi
-  printf '%s\n' "${checkpoint}"
+最佳检查点() {
+  local run_glob="$1"
+  python "${ROOT}/tools/select_best_multimodal_checkpoint.py" \
+    --output-root "${ROOT}/outputs" \
+    --run-glob "${run_glob}"
 }
 
 推理并评分() {
@@ -64,13 +58,13 @@ mkdir -p "${RESULT_ROOT}"
     --output "${summary}" >/dev/null
 }
 
-DIRECT_TEACHER="$(最新检查点 '*/01_lora_multimodal_direct_full_e*/v*/checkpoint-*')"
-COT_TEACHER="$(最新检查点 '*/01_lora_multimodal_cot_full_e*/v*/checkpoint-*')"
-FULL_STUDENT="$(最新检查点 '*/02_full_sft_multimodal_mixed_full_e*/v*/checkpoint-*')"
-DIRECT_GRPO="$(最新检查点 '*/03_grpo_multimodal_direct_full_*step/v*/checkpoint-*')"
-COT_GRPO="$(最新检查点 '*/03_grpo_multimodal_cot_full_*step/v*/checkpoint-*')"
-DIRECT_OPD="$(最新检查点 '*/04_opd_multimodal_direct_full_*step/v*/checkpoint-*')"
-COT_OPD="$(最新检查点 '*/04_opd_multimodal_cot_full_*step/v*/checkpoint-*')"
+DIRECT_TEACHER="$(最佳检查点 '01_lora_multimodal_direct_full_e*/v*')"
+COT_TEACHER="$(最佳检查点 '01_lora_multimodal_cot_full_e*/v*')"
+FULL_STUDENT="$(最佳检查点 '02_full_sft_multimodal_mixed_full_e*/v*')"
+DIRECT_GRPO="$(最佳检查点 '03_grpo_multimodal_direct_full_*step/v*')"
+COT_GRPO="$(最佳检查点 '03_grpo_multimodal_cot_full_*step/v*')"
+DIRECT_OPD="$(最佳检查点 '04_opd_multimodal_direct_full_*step/v*')"
+COT_OPD="$(最佳检查点 '04_opd_multimodal_cot_full_*step/v*')"
 
 推理并评分 base_direct direct --model "${MODEL_BASE}"
 推理并评分 base_cot cot --model "${MODEL_BASE}"
