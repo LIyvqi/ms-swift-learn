@@ -66,7 +66,7 @@ swift rlhf \
   --max_pixels "${MAX_PIXELS:-1048576}" \
   --logging_steps 1 \
   --save_total_limit 1 \
-  --save_only_model true \
+  --save_only_model "${SAVE_ONLY_MODEL:-true}" \
   --dataset_num_proc 2 \
   --dataloader_num_workers 2 \
   --log_completions true \

@@ -77,6 +77,7 @@ R_cot = 1.00 × 最终答案正确
 | `MM_PROCESSOR_CACHE_GB` | 2 | 2 | 缓存视觉预处理结果，重复 rollout 更快 |
 | `MAX_PIXELS` | 1048576 | 1048576 | 限制单图计算量 |
 | `SAVE_STEPS` | 等于总步数 | 等于总步数 | 可缩短滚动保存间隔；`save_total_limit=1` 只保留最近检查点 |
+| `SAVE_ONLY_MODEL` | true | true | 设为 false 才会保留优化器状态并支持精确断点恢复 |
 
 脚本默认冻结视觉编码器和对齐层，只训练策略 LoRA。图像只需编码一次但每个 Prompt 会生成多个候选，因此开启 2GiB 多模态处理缓存通常比禁用更快。
 
