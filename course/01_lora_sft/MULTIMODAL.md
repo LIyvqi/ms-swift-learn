@@ -54,7 +54,7 @@ EPOCHS=3 STYLE=cot RUN_TAG=mm_cot_e3 \
 | `MM_EVAL_BATCH` | 继承训练 batch | 验证 batch；大训练 batch 时建议单独降低 |
 | `GROUP_BY_LENGTH` | `true` | 把 token 长度接近的样本组成 batch，减少多模态长序列的 padding |
 
-验证时会为全词表 logits 分配显存，因此“训练 batch 能放下”不代表相同的验证 batch 也能放下。本机实测训练 batch=24 正常，验证 batch=24 需额外申请 22.71 GiB 并 OOM，正式流水线因此使用训练 24、验证 8。
+验证时会为全词表 logits 分配显存，因此“训练 batch 能放下”不代表相同的验证 batch 也能放下。本机实测训练 batch=24 的首轮峰值为 153.06 GiB，但验证/保存后进入第二轮时仍因额外 102 MiB 申请而 OOM；验证 batch=24 另会尝试额外申请 22.71 GiB。因此正式流水线最终使用训练 16、验证 8，不以单步勉强放下作为安全标准。
 | `LEARNING_RATE` | `1e-4` | LoRA 学习率 |
 
 默认冻结视觉部分的原因是：基础模型已经有视觉能力，而本课程只有 140 个视觉源样本；直接更新视觉编码器更容易过拟合。若研究视觉域适配，可设置 `FREEZE_VIT=false`，但应降低学习率、增加数据并单独验证灾难性遗忘。
