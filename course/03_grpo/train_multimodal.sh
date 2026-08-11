@@ -25,7 +25,7 @@ else
   REWARD_FUNCS=(course_multimodal_accuracy course_multimodal_direct_format)
   REWARD_WEIGHTS=(1.0 0.25)
   ENABLE_THINKING=false
-  COMPLETION_LENGTH="${MAX_COMPLETION_LENGTH:-128}"
+  COMPLETION_LENGTH="${MAX_COMPLETION_LENGTH:-256}"
 fi
 
 swift rlhf \

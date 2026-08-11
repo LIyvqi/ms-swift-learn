@@ -68,7 +68,7 @@ R_cot = 1.00 × 最终答案正确
 | 参数 | Direct | CoT | 说明 |
 |---|---:|---:|---|
 | `enable_thinking` | false | true | 控制 Qwen3.5 rollout 模板 |
-| `MAX_COMPLETION_LENGTH` | 128 | 1024 | CoT 需要更长生成空间 |
+| `MAX_COMPLETION_LENGTH` | 256 | 1024 | Direct 的 128 token 冒烟实测截断率为 100%；CoT 还需要更长生成空间 |
 | `NUM_GENERATIONS` | 4 | 4 | 每个 Prompt 的组内候选数 |
 | `RL_BATCH` | 4 | 4 | 单设备在线 batch |
 | `GENERATION_BATCH` | 同 `RL_BATCH` | 同 `RL_BATCH` | 每轮集中送入 vLLM 的生成 batch，必须与组大小兼容 |

@@ -33,7 +33,7 @@ mkdir -p "${RESULT_ROOT}"
   local summary="${RESULT_ROOT}/${name}.json"
   local dataset="${DATA_ROOT}/${style}_val.jsonl"
   local enable_thinking=false
-  local max_tokens=128
+  local max_tokens=256
   if [[ "${style}" == "cot" ]]; then
     enable_thinking=true
     max_tokens="${MM_EVAL_COT_TOKENS:-1024}"

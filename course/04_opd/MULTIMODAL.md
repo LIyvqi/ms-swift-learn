@@ -44,7 +44,7 @@ OPD 和 GRPO 一样使用 Prompt-only 数据：
 
 ## Direct 与 CoT 教师不能混用
 
-- `STYLE=direct`：自动寻找 `01_lora_multimodal_direct` 教师，关闭 thinking，生成上限 128 token。
+- `STYLE=direct`：自动寻找 `01_lora_multimodal_direct` 教师，关闭 thinking，生成上限 256 token。128 token 冒烟实测会全部截断。
 - `STYLE=cot`：自动寻找 `01_lora_multimodal_cot` 教师，开启 thinking，生成上限 1024 token。
 
 把 Direct 教师配给 CoT Prompt，教师往往会压低过程 token 概率；反过来则可能让 Direct 学生冗长续写。脚本按风格查找教师，但手动设置 `TEACHER_ADAPTER` 时需要自己保证一致。

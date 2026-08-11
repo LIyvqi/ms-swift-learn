@@ -17,7 +17,7 @@ if [[ "${STYLE}" == "cot" ]]; then
   COMPLETION_LENGTH="${MAX_COMPLETION_LENGTH:-1024}"
 else
   ENABLE_THINKING=false
-  COMPLETION_LENGTH="${MAX_COMPLETION_LENGTH:-128}"
+  COMPLETION_LENGTH="${MAX_COMPLETION_LENGTH:-256}"
 fi
 
 # 教师和学生共享基础视觉编码器，蒸馏当前 rollout token 的教师分布。
