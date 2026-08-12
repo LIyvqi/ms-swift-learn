@@ -1,6 +1,6 @@
 # Qwen3.5-0.8B 训练与蒸馏课程
 
-本目录使用同一个 `Qwen3.5-0.8B-Base`，按从监督学习到在线/离线蒸馏、人类偏好对齐和 Agent 持续学习的顺序组织。第 01 至 04 节还增加了 200 条混合模态补充线，覆盖纯文本、纯图像、图文输入以及 Direct/显式 CoT；原始文本课程仍保留。第 08 至 09 节演示 Direct-RLOO 与 CoT-RLOO；第 10 至 22 节使用统一新闻偏好数据和 1～5 分评分数据，系统比较 SFT/DFT、DPO、RM/PPO、KTO、CPO、SimPO、ORPO、GRPO/DAPO/GSPO、GKD/OPD-RL/OPSD 以及两个同名 REAL；第 23 节用 JitRL 演示不更新模型参数的推理期持续学习，第 24 节进一步研究知识支持库、历史案例库和规则库协同修正 logits，第 25 节实现可训练的检索、反思、规则组合和执行多轮智能体。
+本目录使用同一个 `Qwen3.5-0.8B-Base`，按从监督学习到在线/离线蒸馏、人类偏好对齐和 Agent 持续学习的顺序组织。第 01 至 04 节还增加了 200 条混合模态补充线，覆盖纯文本、纯图像、图文输入以及 Direct/显式 CoT；原始文本课程仍保留。第 08 至 09 节演示 Direct-RLOO 与 CoT-RLOO；第 10 至 22 节使用统一新闻偏好数据和 1～5 分评分数据，系统比较 SFT/DFT、DPO、RM/PPO、KTO、CPO、SimPO、ORPO、GRPO/DAPO/GSPO、GKD/OPD-RL/OPSD 以及两个同名 REAL；第 23 节用 JitRL 演示不更新模型参数的推理期持续学习，第 24 节进一步研究知识支持库、历史案例库和规则库协同修正 logits，第 25 节实现可训练的检索、反思、规则组合和执行多轮智能体，第 26 节把私有审核规则训练进独立 Memory 并由冻结 Executive 或确定性执行器使用。
 
 所有实验已经进一步完成 100 步实测，定量结果、稳定性问题和调参建议见 [RESULTS_100_STEPS.md](RESULTS_100_STEPS.md)。多轮、学习率、散度参数、batch 与统一生成评测的最终对照见 [TUNING_RESULTS.md](TUNING_RESULTS.md)。第 01～04 课的三模态正式训练、容量实验和固定验证集结果单独记录在 [多模态正式实验结果](MULTIMODAL_RESULTS.md)。
 
@@ -36,6 +36,7 @@
 | `23_jitrl` | [JitRL 推理期持续强化学习](23_jitrl/README.md) |
 | `24_kcr_jitrl` | [KCR-JitRL 知识、案例与规则协同](24_kcr_jitrl/README.md) |
 | `25_agent_r1_news` | [Agent-R1 风格的新闻规则智能体](25_agent_r1_news/README.md) |
+| `26_memo_rule_memory` | [MeMo 参数化规则记忆新闻审核](26_memo_rule_memory/README.md)；[实测结果](26_memo_rule_memory/RESULTS.md) |
 | `plugins` | [奖励插件与自定义奖励](plugins/README.md) |
 | `tools` | [数据生成与资产校验](tools/README.md) |
 
@@ -225,6 +226,14 @@ bash course/25_agent_r1_news/run_full.sh
 ```
 
 第 25 节把新闻分类改造成 `Retrieve → Rerank → Reflect → Compose → Execute` 的动态环境。模型首轮看不到规则库，通过结构化动作调用检索、反思和规则组合工具；SFT 学习完整专家轨迹，GYM-GRPO 再用检索、组合、决策、协议、反思和环境过程奖励优化策略。课程使用全部 2880 条三任务训练轨迹，数据格式、显存边界、失败实验和动态评测见 [Agent-R1 风格课程](25_agent_r1_news/README.md)。
+
+### 14. MeMo：参数化规则记忆辅助内容审核
+
+```bash
+bash course/26_memo_rule_memory/run_full_course.sh
+```
+
+第 26 节使用 680 条反思问答对 `Qwen3.5-0.8B-Base` 做三轮全参数 SFT，把 80 条合成审核规则编码进独立 Memory。推理时冻结 Executive 不再接收整份规则库，而是通过 Grounding、分片回忆、候选确认和冲突检查取得少量规则事实。120 条新闻实测中，推荐的“MeMo + 稳定 ID 注册表 + 确定性执行器”达到 97.50%，长正文直接输入消融只有 52.50%；数据格式、API 接入、逐轮选模和完整限制见 [MeMo 教程](26_memo_rule_memory/README.md) 与 [实测报告](26_memo_rule_memory/RESULTS.md)。
 
 ## 先跑完整冒烟测试链路
 

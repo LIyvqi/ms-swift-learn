@@ -1,0 +1,50 @@
+[
+  {
+    "model": "models/Qwen3.5-0.8B-Base",
+    "adapter": null,
+    "samples": 200,
+    "format_rate": 0.185,
+    "decision_accuracy": 0.1,
+    "rule_precision": 0.0,
+    "rule_recall": 0.0,
+    "rule_f1": 0.0,
+    "fact_anchor_coverage": 0.0,
+    "elapsed_seconds": 87.29136070099958
+  },
+  {
+    "model": "outputs/26_memo_rule_memory/full_sft/v0-20260813-021836/checkpoint-11",
+    "adapter": null,
+    "samples": 200,
+    "format_rate": 1.0,
+    "decision_accuracy": 0.645,
+    "rule_precision": 0.03,
+    "rule_recall": 0.025,
+    "rule_f1": 0.026666666666666665,
+    "fact_anchor_coverage": 0.32833333333333337,
+    "elapsed_seconds": 27.207954225999856
+  },
+  {
+    "model": "outputs/26_memo_rule_memory/full_sft/v0-20260813-021836/checkpoint-22",
+    "adapter": null,
+    "samples": 200,
+    "format_rate": 1.0,
+    "decision_accuracy": 0.855,
+    "rule_precision": 0.41,
+    "rule_recall": 0.4025,
+    "rule_f1": 0.405,
+    "fact_anchor_coverage": 0.6108333333333333,
+    "elapsed_seconds": 31.064649248999558
+  },
+  {
+    "model": "outputs/26_memo_rule_memory/full_sft/v0-20260813-021836/checkpoint-33",
+    "adapter": null,
+    "samples": 200,
+    "format_rate": 1.0,
+    "decision_accuracy": 0.96,
+    "rule_precision": 0.7225,
+    "rule_recall": 0.7225,
+    "rule_f1": 0.7225,
+    "fact_anchor_coverage": 0.8341666666666667,
+    "elapsed_seconds": 31.069442747999346
+  }
+]

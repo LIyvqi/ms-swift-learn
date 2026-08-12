@@ -1,0 +1,18 @@
+{
+  "rules.jsonl": {
+    "sha256": "95ae8584b367f35a87fe72b912618bc97af3d32d214a11b365a57101a397dcaa",
+    "rows": 80
+  },
+  "memory_train.jsonl": {
+    "sha256": "6f075be6840404665fdddaaf90a98c21c2a2d800c5190ad259c37e3f64b15615",
+    "rows": 680
+  },
+  "memory_val.jsonl": {
+    "sha256": "b99478bb5872e0e571b2c0a4ca4e1fa7db28a95c7f6388aa8d4b993bded10c24",
+    "rows": 200
+  },
+  "audit_val.jsonl": {
+    "sha256": "fb7e7bbd3844926192c3c2ab9d83e2c3dd0ee569a55668a77a6acb48015cdc3b",
+    "rows": 120
+  }
+}

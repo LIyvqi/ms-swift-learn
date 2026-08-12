@@ -1,0 +1,29 @@
+{
+  "model": "models/Qwen3.5-0.8B-Base",
+  "measurements": [
+    {
+      "rules": 80,
+      "all_rules_context_chars": 7879,
+      "all_rules_prompt_tokens": 5062,
+      "memory_request_tokens": 105
+    },
+    {
+      "rules": 400,
+      "all_rules_context_chars": 39399,
+      "all_rules_prompt_tokens": 23798,
+      "memory_request_tokens": 105
+    },
+    {
+      "rules": 800,
+      "all_rules_context_chars": 78799,
+      "all_rules_prompt_tokens": 47218,
+      "memory_request_tokens": 105
+    },
+    {
+      "rules": 1600,
+      "all_rules_context_chars": 157599,
+      "all_rules_prompt_tokens": 94058,
+      "memory_request_tokens": 105
+    }
+  ]
+}
