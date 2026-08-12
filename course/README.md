@@ -2,7 +2,7 @@
 
 本目录使用同一个 `Qwen3.5-0.8B-Base`，按从监督学习到在线/离线蒸馏、人类偏好对齐和 Agent 持续学习的顺序组织。第 01 至 04 节还增加了 200 条混合模态补充线，覆盖纯文本、纯图像、图文输入以及 Direct/显式 CoT；原始文本课程仍保留。第 08 至 09 节演示 Direct-RLOO 与 CoT-RLOO；第 10 至 22 节使用统一新闻偏好数据和 1～5 分评分数据，系统比较 SFT/DFT、DPO、RM/PPO、KTO、CPO、SimPO、ORPO、GRPO/DAPO/GSPO、GKD/OPD-RL/OPSD 以及两个同名 REAL；第 23 节用 JitRL 演示不更新模型参数的推理期持续学习，第 24 节进一步研究知识支持库、历史案例库和规则库协同修正 logits，第 25 节实现可训练的检索、反思、规则组合和执行多轮智能体。
 
-所有实验已经进一步完成 100 步实测，定量结果、稳定性问题和调参建议见 [RESULTS_100_STEPS.md](RESULTS_100_STEPS.md)。多轮、学习率、散度参数、batch 与统一生成评测的最终对照见 [TUNING_RESULTS.md](TUNING_RESULTS.md)。
+所有实验已经进一步完成 100 步实测，定量结果、稳定性问题和调参建议见 [RESULTS_100_STEPS.md](RESULTS_100_STEPS.md)。多轮、学习率、散度参数、batch 与统一生成评测的最终对照见 [TUNING_RESULTS.md](TUNING_RESULTS.md)。第 01～04 课的三模态正式训练、容量实验和固定验证集结果单独记录在 [多模态正式实验结果](MULTIMODAL_RESULTS.md)。
 
 ## 分目录详细教程
 
@@ -71,7 +71,7 @@ source ./activate.sh
 bash course/run_multimodal_full.sh
 ```
 
-默认包含 Direct/CoT LoRA SFT、mixed 语言模型全参数 SFT、Direct/CoT GRPO 和 Direct/CoT OPD。正式 runner 使用 3 epoch SFT 与 100 step 在线训练；可以通过 `MM_FULL_SFT_EPOCHS`、`MM_FULL_RL_STEPS`、`MM_LORA_BATCH`、`MM_COT_LORA_BATCH`、`MM_FULL_BATCH`、`MM_RL_BATCH` 和 `MM_GENERATION_BATCH` 覆盖。Direct LoRA 默认 batch=12；显式 CoT 和 mixed 全参训练含更长序列，默认 batch=8。中断后可设置 `MM_START_STAGE=1～8` 从指定阶段继续，并保留已有步骤日志。
+默认包含 Direct/CoT LoRA SFT、mixed 语言模型全参数 SFT、Direct/CoT GRPO 和 Direct/CoT OPD。正式 runner 使用 3 epoch SFT 与 100 step 在线训练；可以通过 `MM_FULL_SFT_EPOCHS`、`MM_FULL_RL_STEPS`、`MM_LORA_BATCH`、`MM_COT_LORA_BATCH`、`MM_FULL_BATCH`、`MM_RL_BATCH` 和 `MM_COT_RL_BATCH` 覆盖。Direct LoRA 默认 batch=12；显式 CoT 和 mixed 全参训练含更长序列，默认 batch=8。在线阶段因 2048-token CoT 长尾采用不同容量：GRPO 为反向 batch=3、集中生成 batch=12，OPD 为反向 batch=3、集中生成 batch=6；Direct OPD 则使用 batch=6、集中生成 batch=12。可分别用 `MM_GENERATION_BATCH`、`MM_DIRECT_OPD_BATCH`、`MM_DIRECT_OPD_GENERATION_BATCH`、`MM_COT_OPD_BATCH` 和 `MM_COT_OPD_GENERATION_BATCH` 覆盖。在线检查点默认每 25 step 保存模型、优化器、调度器与随机数状态；可用 `MM_RL_SAVE_STEPS` 调整。当前 ROCm 环境默认令 `MM_ONLINE_SLEEP_LEVEL=0`，绕开 vLLM 显存休眠分配器的原生崩溃路径。中断后可设置 `MM_START_STAGE=1～8` 从指定阶段继续，并保留已有步骤日志。
 
 七条训练完成后，runner 会调用 `course/evaluate_multimodal_full.sh`，在固定 40 条验证集上真实生成 Base、LoRA、全参数 SFT、GRPO 和 OPD 的 Direct/CoT 输出。汇总表写入 `outputs/multimodal_full_evaluation/COMPARISON.md`，同时保留逐条 JSONL 便于排错。
 
