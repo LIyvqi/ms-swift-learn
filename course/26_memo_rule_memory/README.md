@@ -124,20 +124,28 @@ python course/26_memo_rule_memory/run_audit_experiment.py \
 
 ## 结构化多轮协议
 
-```text
-第 1 阶段 Grounding
-  完整内容 → Memory 反查候选规则、事实与例外
-          ↓
-第 2 阶段 Rule Identification
-  候选 ID + 内容末段 → Memory 确认条件、处置和优先级
-          ↓
-第 3 阶段 Decision Seeking
-  已确认 ID → Memory 检查绑定例外和跨规则冲突
-          ↓
-最终执行
-  冻结 Executive 生成 <audit>JSON</audit>
-  或确定性执行器按 PASS/REVIEW/REJECT 与 priority 决策
+```mermaid
+flowchart TD
+    A[待审核新闻或内容] --> B[Grounding：提取真正需要审核的片段]
+    B --> C{是否包含多条独立线索}
+    C -- 是 --> D[拆分风险、例外与冲突线索]
+    C -- 否 --> E[保留单条审核线索]
+    D --> F[Memory 第一阶段：召回候选规则]
+    E --> F
+    F --> G[Memory 第二阶段：确认条件、处置、优先级与例外]
+    G --> H[Memory 第三阶段：检查例外绑定和规则冲突]
+    H --> I[稳定 ID 注册表：校验、规范化并合并规则]
+    I --> J{是否得到有效规则}
+    J -- 否 --> K[安全降级为人工 REVIEW]
+    J -- 是 --> L{选择执行方式}
+    L -- 推荐 --> M[确定性执行器：先绑定例外，再比较风险与优先级]
+    L -- 可选 --> N[冻结的本地或 API Executive]
+    M --> O[输出 decision、matched_rules、evidence 与 reason]
+    N --> O
 ```
+
+推荐线上走 `M` 分支：Memory 负责回忆，确定性代码负责最终处置；课程的 97.50% 结果来自该分支。
+`N` 分支便于替换为购买的 API 模型，但必须单独验证格式、例外绑定和跨规则执行能力。
 
 每个阶段独立询问 Memory，避免一段错误长对话污染后续；控制器保留原始响应，便于追踪“规则没想起”“例外没绑定”还是“Executive 执行错了”。
 
