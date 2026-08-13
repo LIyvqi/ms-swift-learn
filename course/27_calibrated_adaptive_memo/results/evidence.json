@@ -1,0 +1,6 @@
+{
+  "comparison_sha256": "177cf0f9f1259dab484847eac79e87f80fcb6e2136d19118c83c163d7ccbf837",
+  "config_sha256": "3aa591f769c154afe159631ef687fd41bd66f9360467d1c81175175112a7e368",
+  "verifier_traces_sha256": "c6fed893a3d520ccb21731204fa8496f904a241395a29ff5b4549c076d2ad0ee",
+  "source_output_dir": "outputs/27_calibrated_adaptive_memo/full_experiment"
+}

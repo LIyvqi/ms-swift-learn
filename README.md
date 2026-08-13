@@ -1,6 +1,6 @@
 # ms-swift-learn
 
-这是一个围绕 `Qwen3.5-0.8B-Base` 和 ms-swift 4.4.3 源码环境编写的大模型训练学习仓库。项目使用固定的 GSM8K、CMMU 多模态子集与复旦新闻教学数据，覆盖 LoRA/全参 SFT、DFT、DPO、RM/PPO、KTO、CPO、SimPO、ORPO、GRPO/RLOO/DAPO/GSPO、自定义奖励、GKD、OPD/MOPD/OPSD、Regression-Aware REAL，以及无需梯度更新的 JitRL Agent 持续学习、KCR-JitRL 三库协同、Agent-R1 风格多轮规则智能体和 MeMo 参数化规则记忆。第 01～04 课同时提供纯文本、纯图像、图文混合以及 Direct/显式 CoT 训练链路。所有新增课程、脚本注释和笔记都使用中文。
+这是一个围绕 `Qwen3.5-0.8B-Base` 和 ms-swift 4.4.3 源码环境编写的大模型训练学习仓库。项目使用固定的 GSM8K、CMMU 多模态子集与复旦新闻教学数据，覆盖 LoRA/全参 SFT、DFT、DPO、RM/PPO、KTO、CPO、SimPO、ORPO、GRPO/RLOO/DAPO/GSPO、自定义奖励、GKD、OPD/MOPD/OPSD、Regression-Aware REAL，以及无需梯度更新的 JitRL Agent 持续学习、KCR-JitRL 三库协同、Agent-R1 风格多轮规则智能体、MeMo 参数化规则记忆和 CA-MeMo 置信度校准/主动验证。第 01～04 课同时提供纯文本、纯图像、图文混合以及 Direct/显式 CoT 训练链路。所有新增课程、脚本注释和笔记都使用中文。
 
 ## 已完成实验
 
@@ -18,8 +18,9 @@
 | JitRL | 本地权重或 API 推理期修正 logits | 后 10 局 **84%**（API） |
 | KCR-JitRL | 知识、案例与规则协同修正 logits | 总成功率 **90%**（API） |
 | MeMo 规则记忆 | 0.8B Memory + 可审计规则执行 | 新闻审核 **97.50%** |
+| CA-MeMo 可靠推理 | 校准 + 主动搜索 + 独立规则验证 | Accuracy **79.17%**；Coverage **61.11%**；覆盖内处置错误率 **0%** |
 
-前面的数学与蒸馏结果来自固定 100 条验证题；MeMo 结果来自 120 条独立新闻审核案例。各项均为温度 0 的实际生成，完整参数、轮次、格式率和长度对照见 [多轮调参报告](course/TUNING_RESULTS.md) 与 [MeMo 实测报告](course/26_memo_rule_memory/RESULTS.md)。
+前面的数学与蒸馏结果来自固定 100 条验证题；MeMo 结果来自 120 条独立新闻审核案例；CA-MeMo 结果来自严格分离的 72 条校准案例和 72 条困难测试案例。各项均为温度 0 的实际生成，完整参数、轮次、格式率和长度对照见 [多轮调参报告](course/TUNING_RESULTS.md)、[MeMo 实测报告](course/26_memo_rule_memory/RESULTS.md) 与 [CA-MeMo 实测报告](course/27_calibrated_adaptive_memo/RESULTS.md)。
 
 新闻分类 SFT/RLOO 的 Direct 结果与 CoT-RLOO 使用不同输出要求；97.50% 是 320 条独立新闻上的显式 CoT 分类结果，不应只按数值与 99.06% 的 Direct 短答案结果判断优劣。
 
@@ -38,6 +39,7 @@ ms-swift-learn/
 ├── datasets/real_judge_1to5/ # 1～5 分回归感知评分数据
 ├── datasets/agent_r1_news/   # 检索、组合、决策三任务多轮轨迹与规则库
 ├── datasets/memo_rule_memory/ # 80 条规则、Memory 问答和新闻审核验证集
+├── datasets/calibrated_adaptive_memo/ # 校准集、OOD 与六类困难审核测试
 ├── results/evaluations/       # 33 组逐题生成评测
 ├── results/figures/           # 精选训练曲线
 ├── results/jitrl/             # JitRL 精选实验摘要
@@ -106,6 +108,7 @@ bash course/run_multimodal_full.sh
 12. 完成 [KCR-JitRL 三库协同](course/24_kcr_jitrl/README.md)，学习支持库、案例库、规则库、置信度门控和案例规则浓缩。
 13. 完成 [Agent-R1 风格新闻规则智能体](course/25_agent_r1_news/README.md)，学习检索、反思、规则组合、GYM 多轮环境和多任务 GRPO。
 14. 完成 [MeMo 规则记忆内容审核](course/26_memo_rule_memory/README.md)，学习把私有规则训练进独立 Memory、结构化回忆、例外绑定和确定性执行。
+15. 完成 [CA-MeMo 可靠推理](course/27_calibrated_adaptive_memo/README.md)，学习外部置信度校准、共形候选集合、主动 Memory 搜索、独立验证与低置信拒答。
 
 ## 复现命令
 
@@ -167,9 +170,12 @@ bash course/25_agent_r1_news/run_full.sh
 
 # MeMo 参数化规则记忆与新闻审核
 bash course/26_memo_rule_memory/run_full_course.sh
+
+# CA-MeMo 校准、主动搜索与独立验证
+bash course/27_calibrated_adaptive_memo/run_full_course.sh
 ```
 
-训练产物、JitRL、KCR-JitRL 和 MeMo 完整轨迹默认写入被 Git 忽略的 `outputs/`。项目不会自动上传模型或检查点。
+训练产物、JitRL、KCR-JitRL、MeMo 和 CA-MeMo 完整轨迹默认写入被 Git 忽略的 `outputs/`。项目不会自动上传模型或检查点。
 
 ## 第三方内容
 

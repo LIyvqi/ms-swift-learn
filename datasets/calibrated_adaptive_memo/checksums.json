@@ -1,0 +1,10 @@
+{
+  "calibration.jsonl": {
+    "rows": 72,
+    "sha256": "b34784804c24775f3b951af991aa825a990a226add2fa4d319f93cd290df293a"
+  },
+  "test.jsonl": {
+    "rows": 72,
+    "sha256": "f82144d367941ceff39a8c44328ba9f0197d071c3b15d812f9668390f9a40316"
+  }
+}

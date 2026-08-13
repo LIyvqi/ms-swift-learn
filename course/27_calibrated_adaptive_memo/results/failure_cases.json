@@ -1,0 +1,267 @@
+[
+  {
+    "case_id": "ca-tes-0005",
+    "scenario_type": "adjacent_boundary",
+    "is_ood": false,
+    "gold_decision": "REJECT",
+    "predicted_decision": "REVIEW",
+    "gold_rule_ids": [
+      "POL-15-DANGEROUS_GUIDE"
+    ],
+    "predicted_rule_ids": [],
+    "accepted": false,
+    "confidence": 0.43477352189769836,
+    "route": "low_abstain",
+    "authority_rule_ids": []
+  },
+  {
+    "case_id": "ca-tes-0014",
+    "scenario_type": "bound_exception",
+    "is_ood": false,
+    "gold_decision": "PASS",
+    "predicted_decision": "REVIEW",
+    "gold_rule_ids": [
+      "POL-02-OFFSITE",
+      "POL-17-WARNING"
+    ],
+    "predicted_rule_ids": [],
+    "accepted": false,
+    "confidence": 0.4348414094965025,
+    "route": "low_abstain",
+    "authority_rule_ids": []
+  },
+  {
+    "case_id": "ca-tes-0015",
+    "scenario_type": "bound_exception",
+    "is_ood": false,
+    "gold_decision": "PASS",
+    "predicted_decision": "REVIEW",
+    "gold_rule_ids": [
+      "POL-03-GUARANTEE",
+      "POL-16-REPORT"
+    ],
+    "predicted_rule_ids": [],
+    "accepted": false,
+    "confidence": 0.2013686828062817,
+    "route": "low_abstain",
+    "authority_rule_ids": []
+  },
+  {
+    "case_id": "ca-tes-0016",
+    "scenario_type": "adversarial_rewrite",
+    "is_ood": false,
+    "gold_decision": "REJECT",
+    "predicted_decision": "REJECT",
+    "gold_rule_ids": [
+      "POL-07-EVASION"
+    ],
+    "predicted_rule_ids": [
+      "POL-02-OFFSITE"
+    ],
+    "accepted": true,
+    "confidence": 0.591637669256279,
+    "route": "medium_search",
+    "authority_rule_ids": [
+      "POL-02-OFFSITE"
+    ]
+  },
+  {
+    "case_id": "ca-tes-0018",
+    "scenario_type": "adversarial_rewrite",
+    "is_ood": false,
+    "gold_decision": "REJECT",
+    "predicted_decision": "REVIEW",
+    "gold_rule_ids": [
+      "POL-05-PRIVACY"
+    ],
+    "predicted_rule_ids": [],
+    "accepted": false,
+    "confidence": 0.36062257031340755,
+    "route": "low_abstain",
+    "authority_rule_ids": []
+  },
+  {
+    "case_id": "ca-tes-0034",
+    "scenario_type": "adversarial_rewrite",
+    "is_ood": false,
+    "gold_decision": "REJECT",
+    "predicted_decision": "REVIEW",
+    "gold_rule_ids": [
+      "FIN-07-EVASION"
+    ],
+    "predicted_rule_ids": [],
+    "accepted": false,
+    "confidence": 0.4349831506409763,
+    "route": "low_abstain",
+    "authority_rule_ids": []
+  },
+  {
+    "case_id": "ca-tes-0035",
+    "scenario_type": "adversarial_rewrite",
+    "is_ood": false,
+    "gold_decision": "REJECT",
+    "predicted_decision": "REVIEW",
+    "gold_rule_ids": [
+      "FIN-14-SYNTHETIC"
+    ],
+    "predicted_rule_ids": [],
+    "accepted": false,
+    "confidence": 0.5343325417260987,
+    "route": "medium_search",
+    "authority_rule_ids": []
+  },
+  {
+    "case_id": "ca-tes-0036",
+    "scenario_type": "adversarial_rewrite",
+    "is_ood": false,
+    "gold_decision": "REJECT",
+    "predicted_decision": "REVIEW",
+    "gold_rule_ids": [
+      "FIN-05-PRIVACY"
+    ],
+    "predicted_rule_ids": [],
+    "accepted": false,
+    "confidence": 0.31612328555847596,
+    "route": "low_abstain",
+    "authority_rule_ids": []
+  },
+  {
+    "case_id": "ca-tes-0051",
+    "scenario_type": "bound_exception",
+    "is_ood": false,
+    "gold_decision": "PASS",
+    "predicted_decision": "REVIEW",
+    "gold_rule_ids": [
+      "SPT-03-GUARANTEE",
+      "SPT-16-REPORT"
+    ],
+    "predicted_rule_ids": [],
+    "accepted": false,
+    "confidence": 0.3656330508483562,
+    "route": "low_abstain",
+    "authority_rule_ids": []
+  },
+  {
+    "case_id": "ca-tes-0054",
+    "scenario_type": "adversarial_rewrite",
+    "is_ood": false,
+    "gold_decision": "REJECT",
+    "predicted_decision": "REVIEW",
+    "gold_rule_ids": [
+      "SPT-05-PRIVACY"
+    ],
+    "predicted_rule_ids": [],
+    "accepted": false,
+    "confidence": 0.429956832599042,
+    "route": "low_abstain",
+    "authority_rule_ids": []
+  },
+  {
+    "case_id": "ca-tes-0055",
+    "scenario_type": "standard",
+    "is_ood": false,
+    "gold_decision": "REJECT",
+    "predicted_decision": "REVIEW",
+    "gold_rule_ids": [
+      "TEC-01-SALE"
+    ],
+    "predicted_rule_ids": [],
+    "accepted": false,
+    "confidence": 0.19553111706223444,
+    "route": "low_abstain",
+    "authority_rule_ids": []
+  },
+  {
+    "case_id": "ca-tes-0060",
+    "scenario_type": "adjacent_boundary",
+    "is_ood": false,
+    "gold_decision": "REVIEW",
+    "predicted_decision": "REVIEW",
+    "gold_rule_ids": [
+      "TEC-10-ALLEGATION"
+    ],
+    "predicted_rule_ids": [],
+    "accepted": false,
+    "confidence": 0.32728036511312153,
+    "route": "low_abstain",
+    "authority_rule_ids": []
+  },
+  {
+    "case_id": "ca-tes-0064",
+    "scenario_type": "multi_rule_conflict",
+    "is_ood": false,
+    "gold_decision": "REJECT",
+    "predicted_decision": "REVIEW",
+    "gold_rule_ids": [
+      "TEC-09-RUMOR",
+      "TEC-01-SALE"
+    ],
+    "predicted_rule_ids": [],
+    "accepted": false,
+    "confidence": 0.42144705621222806,
+    "route": "low_abstain",
+    "authority_rule_ids": []
+  },
+  {
+    "case_id": "ca-tes-0067",
+    "scenario_type": "bound_exception",
+    "is_ood": false,
+    "gold_decision": "PASS",
+    "predicted_decision": "REVIEW",
+    "gold_rule_ids": [
+      "TEC-01-SALE",
+      "TEC-16-REPORT"
+    ],
+    "predicted_rule_ids": [],
+    "accepted": false,
+    "confidence": 0.3703591481853738,
+    "route": "low_abstain",
+    "authority_rule_ids": []
+  },
+  {
+    "case_id": "ca-tes-0069",
+    "scenario_type": "bound_exception",
+    "is_ood": false,
+    "gold_decision": "PASS",
+    "predicted_decision": "REVIEW",
+    "gold_rule_ids": [
+      "TEC-03-GUARANTEE",
+      "TEC-16-REPORT"
+    ],
+    "predicted_rule_ids": [],
+    "accepted": false,
+    "confidence": 0.2921841749489421,
+    "route": "low_abstain",
+    "authority_rule_ids": []
+  },
+  {
+    "case_id": "ca-tes-0070",
+    "scenario_type": "adversarial_rewrite",
+    "is_ood": false,
+    "gold_decision": "REJECT",
+    "predicted_decision": "REVIEW",
+    "gold_rule_ids": [
+      "TEC-07-EVASION"
+    ],
+    "predicted_rule_ids": [],
+    "accepted": false,
+    "confidence": 0.29157644046513276,
+    "route": "low_abstain",
+    "authority_rule_ids": []
+  },
+  {
+    "case_id": "ca-tes-0072",
+    "scenario_type": "adversarial_rewrite",
+    "is_ood": false,
+    "gold_decision": "REJECT",
+    "predicted_decision": "REVIEW",
+    "gold_rule_ids": [
+      "TEC-05-PRIVACY"
+    ],
+    "predicted_rule_ids": [],
+    "accepted": false,
+    "confidence": 0.4308313966648009,
+    "route": "low_abstain",
+    "authority_rule_ids": []
+  }
+]

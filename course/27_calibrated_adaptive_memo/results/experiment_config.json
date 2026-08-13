@@ -1,0 +1,27 @@
+{
+  "memory_model_name": "checkpoint-33",
+  "memory_backend": "local",
+  "ms_swift": {
+    "git_tag": "v4.4.3",
+    "git_commit": "e1287928be4451b9ed5e2fb00a24ad3c8f61287b",
+    "package_version_string": "4.5.0.dev0",
+    "module_path": "/mnt/workspace/ms-swift-learn/third_party/ms-swift-official-4.4.3/swift/__init__.py"
+  },
+  "calibration_samples": 72,
+  "test_samples": 72,
+  "calibration_positive_rate": 0.2777777777777778,
+  "route_thresholds": {
+    "low": 0.43525425510380195,
+    "high": 0.5360456758720508
+  },
+  "conformal_alpha": 0.1,
+  "conformal_threshold": 0.9387755102040817,
+  "authority_bm25_threshold": 18.542601232132657,
+  "medium_search_cases_all_splits": 101,
+  "request_logprobs": "auto",
+  "batch_size": 128,
+  "api_concurrency": 8,
+  "judge_backend": "none",
+  "input_price_per_million": 0.0,
+  "output_price_per_million": 0.0
+}

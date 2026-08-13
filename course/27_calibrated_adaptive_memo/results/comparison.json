@@ -1,0 +1,415 @@
+[
+  {
+    "method": "memory_single",
+    "samples": 72,
+    "decision_accuracy": 0.5277777777777778,
+    "complete_accuracy": 0.3055555555555556,
+    "decision_macro_f1": 0.3442958008175399,
+    "rule_precision": 0.4166666666666667,
+    "rule_recall": 0.375,
+    "rule_f1": 0.3888888888888889,
+    "ece": 0.6554402819957487,
+    "brier": 0.636622816179046,
+    "coverage": 0.9444444444444444,
+    "selective_risk": 0.47058823529411764,
+    "aurc": 0.569575188085225,
+    "ood_false_accept_rate": 0.8333333333333334,
+    "search_rescue_rate": 0.0,
+    "pick_at_n": 1.0,
+    "mean_memory_calls": 1.0,
+    "mean_judge_calls": 0.0,
+    "mean_prompt_tokens": 183.55555555555554,
+    "mean_completion_tokens": 105.86111111111111,
+    "mean_latency_seconds": 0.22503843052951725,
+    "mean_authority_seconds": 0.0,
+    "total_estimated_api_cost": 0.0,
+    "conformal_empirical_coverage": null,
+    "conformal_mean_set_size": null,
+    "scenario_metrics": {
+      "adjacent_boundary": {
+        "samples": 12,
+        "accuracy": 0.6666666666666666,
+        "coverage": 1.0
+      },
+      "adversarial_rewrite": {
+        "samples": 12,
+        "accuracy": 0.75,
+        "coverage": 1.0
+      },
+      "bound_exception": {
+        "samples": 12,
+        "accuracy": 0.0,
+        "coverage": 0.8333333333333334
+      },
+      "multi_rule_conflict": {
+        "samples": 12,
+        "accuracy": 0.5,
+        "coverage": 1.0
+      },
+      "ood_no_rule": {
+        "samples": 12,
+        "accuracy": 0.25,
+        "coverage": 0.8333333333333334
+      },
+      "standard": {
+        "samples": 12,
+        "accuracy": 1.0,
+        "coverage": 1.0
+      }
+    }
+  },
+  {
+    "method": "fixed_three_stage",
+    "samples": 72,
+    "decision_accuracy": 0.5277777777777778,
+    "complete_accuracy": 0.2916666666666667,
+    "decision_macro_f1": 0.37794937794937794,
+    "rule_precision": 0.4027777777777778,
+    "rule_recall": 0.3611111111111111,
+    "rule_f1": 0.375,
+    "ece": 0.6944444444444443,
+    "brier": 0.6882716049382717,
+    "coverage": 0.9722222222222222,
+    "selective_risk": 0.4714285714285714,
+    "aurc": 0.665833662731602,
+    "ood_false_accept_rate": 0.9166666666666666,
+    "search_rescue_rate": 0.0,
+    "pick_at_n": 1.0,
+    "mean_memory_calls": 3.0,
+    "mean_judge_calls": 0.0,
+    "mean_prompt_tokens": 567.5555555555555,
+    "mean_completion_tokens": 321.15277777777777,
+    "mean_latency_seconds": 0.6112157195260318,
+    "mean_authority_seconds": 0.0,
+    "total_estimated_api_cost": 0.0,
+    "conformal_empirical_coverage": null,
+    "conformal_mean_set_size": null,
+    "scenario_metrics": {
+      "adjacent_boundary": {
+        "samples": 12,
+        "accuracy": 0.6666666666666666,
+        "coverage": 1.0
+      },
+      "adversarial_rewrite": {
+        "samples": 12,
+        "accuracy": 0.75,
+        "coverage": 1.0
+      },
+      "bound_exception": {
+        "samples": 12,
+        "accuracy": 0.08333333333333333,
+        "coverage": 0.9166666666666666
+      },
+      "multi_rule_conflict": {
+        "samples": 12,
+        "accuracy": 0.5,
+        "coverage": 1.0
+      },
+      "ood_no_rule": {
+        "samples": 12,
+        "accuracy": 0.16666666666666666,
+        "coverage": 0.9166666666666666
+      },
+      "standard": {
+        "samples": 12,
+        "accuracy": 1.0,
+        "coverage": 1.0
+      }
+    }
+  },
+  {
+    "method": "simple_vote",
+    "samples": 72,
+    "decision_accuracy": 0.5416666666666666,
+    "complete_accuracy": 0.2361111111111111,
+    "decision_macro_f1": 0.4422302737520129,
+    "rule_precision": 0.3587962962962963,
+    "rule_recall": 0.3194444444444444,
+    "rule_f1": 0.3287037037037037,
+    "ece": 0.537037037037037,
+    "brier": 0.4722222222222222,
+    "coverage": 0.9722222222222222,
+    "selective_risk": 0.45714285714285713,
+    "aurc": 0.7082398192226116,
+    "ood_false_accept_rate": 0.9166666666666666,
+    "search_rescue_rate": 0.0,
+    "pick_at_n": 0.7272727272727273,
+    "mean_memory_calls": 3.0,
+    "mean_judge_calls": 0.0,
+    "mean_prompt_tokens": 545.6666666666666,
+    "mean_completion_tokens": 325.43055555555554,
+    "mean_latency_seconds": 0.6708674642882096,
+    "mean_authority_seconds": 0.0,
+    "total_estimated_api_cost": 0.0,
+    "conformal_empirical_coverage": null,
+    "conformal_mean_set_size": null,
+    "scenario_metrics": {
+      "adjacent_boundary": {
+        "samples": 12,
+        "accuracy": 0.6666666666666666,
+        "coverage": 1.0
+      },
+      "adversarial_rewrite": {
+        "samples": 12,
+        "accuracy": 0.8333333333333334,
+        "coverage": 1.0
+      },
+      "bound_exception": {
+        "samples": 12,
+        "accuracy": 0.25,
+        "coverage": 0.9166666666666666
+      },
+      "multi_rule_conflict": {
+        "samples": 12,
+        "accuracy": 0.4166666666666667,
+        "coverage": 1.0
+      },
+      "ood_no_rule": {
+        "samples": 12,
+        "accuracy": 0.08333333333333333,
+        "coverage": 0.9166666666666666
+      },
+      "standard": {
+        "samples": 12,
+        "accuracy": 1.0,
+        "coverage": 1.0
+      }
+    }
+  },
+  {
+    "method": "calibrated_route",
+    "samples": 72,
+    "decision_accuracy": 0.2777777777777778,
+    "complete_accuracy": 0.16666666666666666,
+    "decision_macro_f1": 0.14492753623188406,
+    "rule_precision": 0.16666666666666666,
+    "rule_recall": 0.16666666666666666,
+    "rule_f1": 0.16666666666666666,
+    "ece": 0.2153511780182259,
+    "brier": 0.2648864902783946,
+    "coverage": 0.0,
+    "selective_risk": null,
+    "aurc": 0.7466615323231773,
+    "ood_false_accept_rate": 0.0,
+    "search_rescue_rate": 0.0,
+    "pick_at_n": 0.0,
+    "mean_memory_calls": 2.0,
+    "mean_judge_calls": 0.0,
+    "mean_prompt_tokens": 370.1111111111111,
+    "mean_completion_tokens": 213.26388888888889,
+    "mean_latency_seconds": 0.415231866475702,
+    "mean_authority_seconds": 0.0,
+    "total_estimated_api_cost": 0.0,
+    "conformal_empirical_coverage": 1.0,
+    "conformal_mean_set_size": 3.0,
+    "scenario_metrics": {
+      "adjacent_boundary": {
+        "samples": 12,
+        "accuracy": 0.6666666666666666,
+        "coverage": 0.0
+      },
+      "adversarial_rewrite": {
+        "samples": 12,
+        "accuracy": 0.0,
+        "coverage": 0.0
+      },
+      "bound_exception": {
+        "samples": 12,
+        "accuracy": 0.0,
+        "coverage": 0.0
+      },
+      "multi_rule_conflict": {
+        "samples": 12,
+        "accuracy": 0.0,
+        "coverage": 0.0
+      },
+      "ood_no_rule": {
+        "samples": 12,
+        "accuracy": 1.0,
+        "coverage": 0.0
+      },
+      "standard": {
+        "samples": 12,
+        "accuracy": 0.0,
+        "coverage": 0.0
+      }
+    }
+  },
+  {
+    "method": "calibrated_search",
+    "samples": 72,
+    "decision_accuracy": 0.5,
+    "complete_accuracy": 0.2361111111111111,
+    "decision_macro_f1": 0.34955216654563054,
+    "rule_precision": 0.3680555555555556,
+    "rule_recall": 0.3680555555555556,
+    "rule_f1": 0.3564814814814815,
+    "ece": 0.2153511780182259,
+    "brier": 0.2648864902783946,
+    "coverage": 0.0,
+    "selective_risk": null,
+    "aurc": 0.7466615323231773,
+    "ood_false_accept_rate": 0.0,
+    "search_rescue_rate": 0.0,
+    "pick_at_n": 0.4782608695652174,
+    "mean_memory_calls": 4.125,
+    "mean_judge_calls": 0.0,
+    "mean_prompt_tokens": 790.6944444444445,
+    "mean_completion_tokens": 452.69444444444446,
+    "mean_latency_seconds": 0.7832639648893261,
+    "mean_authority_seconds": 0.0,
+    "total_estimated_api_cost": 0.0,
+    "conformal_empirical_coverage": 1.0,
+    "conformal_mean_set_size": 3.0,
+    "scenario_metrics": {
+      "adjacent_boundary": {
+        "samples": 12,
+        "accuracy": 0.5833333333333334,
+        "coverage": 0.0
+      },
+      "adversarial_rewrite": {
+        "samples": 12,
+        "accuracy": 0.4166666666666667,
+        "coverage": 0.0
+      },
+      "bound_exception": {
+        "samples": 12,
+        "accuracy": 0.0,
+        "coverage": 0.0
+      },
+      "multi_rule_conflict": {
+        "samples": 12,
+        "accuracy": 0.5,
+        "coverage": 0.0
+      },
+      "ood_no_rule": {
+        "samples": 12,
+        "accuracy": 0.5833333333333334,
+        "coverage": 0.0
+      },
+      "standard": {
+        "samples": 12,
+        "accuracy": 0.9166666666666666,
+        "coverage": 0.0
+      }
+    }
+  },
+  {
+    "method": "calibrated_search_verifier",
+    "samples": 72,
+    "decision_accuracy": 0.7916666666666666,
+    "complete_accuracy": 0.7638888888888888,
+    "decision_macro_f1": 0.7737525632262474,
+    "rule_precision": 0.7638888888888888,
+    "rule_recall": 0.7638888888888888,
+    "rule_f1": 0.7638888888888888,
+    "ece": 0.2153511780182259,
+    "brier": 0.2648864902783946,
+    "coverage": 0.6111111111111112,
+    "selective_risk": 0.0,
+    "aurc": 0.7466615323231773,
+    "ood_false_accept_rate": 0.0,
+    "search_rescue_rate": 0.58,
+    "pick_at_n": 0.7391304347826086,
+    "mean_memory_calls": 4.125,
+    "mean_judge_calls": 0.0,
+    "mean_prompt_tokens": 790.6944444444445,
+    "mean_completion_tokens": 452.69444444444446,
+    "mean_latency_seconds": 0.7833399860559813,
+    "mean_authority_seconds": 7.6021166655159e-05,
+    "total_estimated_api_cost": 0.0,
+    "conformal_empirical_coverage": 1.0,
+    "conformal_mean_set_size": 3.0,
+    "scenario_metrics": {
+      "adjacent_boundary": {
+        "samples": 12,
+        "accuracy": 0.9166666666666666,
+        "coverage": 0.8333333333333334
+      },
+      "adversarial_rewrite": {
+        "samples": 12,
+        "accuracy": 0.4166666666666667,
+        "coverage": 0.4166666666666667
+      },
+      "bound_exception": {
+        "samples": 12,
+        "accuracy": 0.5833333333333334,
+        "coverage": 0.5833333333333334
+      },
+      "multi_rule_conflict": {
+        "samples": 12,
+        "accuracy": 0.9166666666666666,
+        "coverage": 0.9166666666666666
+      },
+      "ood_no_rule": {
+        "samples": 12,
+        "accuracy": 1.0,
+        "coverage": 0.0
+      },
+      "standard": {
+        "samples": 12,
+        "accuracy": 0.9166666666666666,
+        "coverage": 0.9166666666666666
+      }
+    }
+  },
+  {
+    "method": "all_authority_rules",
+    "samples": 72,
+    "decision_accuracy": 0.9861111111111112,
+    "complete_accuracy": 0.9722222222222222,
+    "decision_macro_f1": 0.9876505094164866,
+    "rule_precision": 0.9722222222222222,
+    "rule_recall": 0.9722222222222222,
+    "rule_f1": 0.9722222222222222,
+    "ece": 0.02777777777777779,
+    "brier": 0.027777777777777776,
+    "coverage": 0.8194444444444444,
+    "selective_risk": 0.0,
+    "aurc": 0.03173862949255559,
+    "ood_false_accept_rate": 0.0,
+    "search_rescue_rate": 0.0,
+    "pick_at_n": 1.0,
+    "mean_memory_calls": 0.0,
+    "mean_judge_calls": 0.0,
+    "mean_prompt_tokens": 0.0,
+    "mean_completion_tokens": 0.0,
+    "mean_latency_seconds": 0.00010639598609587766,
+    "mean_authority_seconds": 0.00010639598609587766,
+    "total_estimated_api_cost": 0.0,
+    "conformal_empirical_coverage": null,
+    "conformal_mean_set_size": null,
+    "scenario_metrics": {
+      "adjacent_boundary": {
+        "samples": 12,
+        "accuracy": 1.0,
+        "coverage": 1.0
+      },
+      "adversarial_rewrite": {
+        "samples": 12,
+        "accuracy": 0.9166666666666666,
+        "coverage": 0.9166666666666666
+      },
+      "bound_exception": {
+        "samples": 12,
+        "accuracy": 1.0,
+        "coverage": 1.0
+      },
+      "multi_rule_conflict": {
+        "samples": 12,
+        "accuracy": 1.0,
+        "coverage": 1.0
+      },
+      "ood_no_rule": {
+        "samples": 12,
+        "accuracy": 1.0,
+        "coverage": 0.0
+      },
+      "standard": {
+        "samples": 12,
+        "accuracy": 1.0,
+        "coverage": 1.0
+      }
+    }
+  }
+]
