@@ -1,0 +1,70 @@
+{
+  "随机种子": 2026,
+  "目标标签": [
+    "政治",
+    "财经",
+    "体育",
+    "计算机"
+  ],
+  "OOD源标签": [
+    "Art",
+    "Agriculture",
+    "History",
+    "Space",
+    "Enviornment"
+  ],
+  "文件": {
+    "rlcr_sft.jsonl": {
+      "样本数": 280,
+      "SHA256": "39fe08f8864681b0c4fb946e2432125842920b6c3f5544fa757f6298cdae8f6d"
+    },
+    "rlcr_sft_val.jsonl": {
+      "样本数": 40,
+      "SHA256": "e3e652ca12c2a6d759fc88560c06a332ad816a65e6c6a414b18f9533032ad949"
+    },
+    "rlcr_train.jsonl": {
+      "样本数": 960,
+      "SHA256": "47c4093e80cb9371bc0628ed3cc6b8eaf30787d857351e8c7c1106c19ddeb3b4"
+    },
+    "rlcr_smoke.jsonl": {
+      "样本数": 16,
+      "SHA256": "9b3d86eba2bdfc6d864ed21a0235c19832f2a069b8827784c1392ed23c74c927"
+    },
+    "calibration.jsonl": {
+      "样本数": 160,
+      "SHA256": "e67663405c7db5310a210efef604a9155c07e6bcd7ce53ae67a507c3f5464ebf"
+    },
+    "test.jsonl": {
+      "样本数": 160,
+      "SHA256": "3dddc23adda71573c3de1134a41e46e9ac8eb1962de6c20893464010ac04490f"
+    },
+    "ood_train.jsonl": {
+      "样本数": 100,
+      "SHA256": "57a2e0074187f6a266f731d46e85a829c0321479e37f9af5d429766fdf2f493e"
+    },
+    "ood_calibration.jsonl": {
+      "样本数": 100,
+      "SHA256": "af6cdc8788884656c79956689b6531ea58008f3e2377895801a11c3a5051e3ad"
+    },
+    "ood_test.jsonl": {
+      "样本数": 100,
+      "SHA256": "0eb5919b2d8905370c289d9f9bbd4c13cbca932580584097484294141e6f340a"
+    },
+    "verifier_train.jsonl": {
+      "样本数": 2020,
+      "SHA256": "2d2fdeb73f2e93c6c81c44969d13dd8e873a6eafa12e47d7983b60be3a0da833"
+    },
+    "verifier_val.jsonl": {
+      "样本数": 420,
+      "SHA256": "8ffcf5f8d2a294ae05f929f5815586605e997baa68d038b6b1b29e60e3ba26a2"
+    },
+    "verifier_test.jsonl": {
+      "样本数": 420,
+      "SHA256": "565fc581151c82433d3bc0c1f1db2b08a9681fd83ee450edebf481be51e969c8"
+    },
+    "verifier_smoke.jsonl": {
+      "样本数": 16,
+      "SHA256": "b3a928e4e119fe0f2a5dfa7f48f26c9cb531299813f71f30fc2a91aeb6bcaeb6"
+    }
+  }
+}

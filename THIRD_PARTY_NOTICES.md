@@ -14,5 +14,9 @@
 | JitRL 论文与官方实现 | <https://github.com/liushiliushi/JitRL> | 第 23 节算法公式和实验设计参考；官方源码未提交到本仓库 |
 | Agent-R1 论文与官方实现 | <https://github.com/AgentR1/Agent-R1> | 第 25 节的逐步状态、环境反馈和多轮策略训练设计参考；官方源码未提交到本仓库 |
 | MeMo 论文与官方实现 | <https://github.com/arunv3rma/MeMo> | 第 26 节参数化知识记忆与结构化询问流程参考；官方源码未提交到本仓库 |
+| RLCR 论文 | <https://arxiv.org/abs/2507.16806> | 第 28 节 Brier 校准奖励与联合置信输出参考 |
+| Rewarding Doubt 论文 | <https://openreview.net/pdf/7dc238561a81bdd1cc2949814d255de6caaf0c3d.pdf> | 第 28 节对数 proper scoring rule 对照参考 |
+| ConfidNet 论文 | <https://proceedings.neurips.cc/paper/2019/hash/757f843a169cc678064d9530d12a1881-Abstract.html> | 第 29 节 failure prediction 与 True Class Probability 思想参考 |
+| Training Verifiers 论文 | <https://arxiv.org/abs/2110.14168> | 第 29 节独立候选正确性 Verifier 设计参考 |
 
 提交、再分发或商用模型与数据前，应分别查看对应上游页面中的最新许可证和使用条款。本仓库中的训练结果不改变上游内容的许可证归属。
