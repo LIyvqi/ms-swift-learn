@@ -16,11 +16,14 @@ swift sft \
   --model "${MODEL_BASE}" \
   --dataset "$(multimodal_dataset_path "${STYLE}")" \
   --val_dataset "$(multimodal_dataset_path "${STYLE}" val)" \
+  --load_from_cache_file true \
   --tuner_type full \
   --freeze_vit "${FREEZE_VIT:-true}" \
   --freeze_aligner "${FREEZE_ALIGNER:-true}" \
   --torch_dtype bfloat16 \
   --attn_impl eager \
+  --add_non_thinking_prefix true \
+  --loss_scale default+ignore_empty_think \
   --max_length "${MAX_LENGTH:-2048}" \
   --max_pixels "${MAX_PIXELS:-1048576}" \
   --per_device_train_batch_size "${MM_SFT_BATCH:-${SFT_BATCH}}" \

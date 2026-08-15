@@ -97,7 +97,7 @@ bash course/run_multimodal_full.sh
 ## 推荐学习顺序
 
 1. 阅读 [环境记录](TRAINING_ENVIRONMENT.md)，了解 ROCm、持久化缓存和版本约束。
-2. 按 [课程入口](course/README.md) 完成 LoRA 和全参 SFT。
+2. 按 [课程入口](course/README.md) 完成 LoRA 和全参 SFT，并阅读 [Qwen3/Qwen3.5 双思考模式最佳实践](course/QWEN3_BEST_PRACTICE.md)。
 3. 对比 GRPO、OPD 和 MOPD，理解任务奖励与教师分布信号的区别。
    第 01～04 课的多模态入口统一命名为 `train_multimodal.sh`，详细格式见 [多模态数据说明](datasets/multimodal_200/README.md)。
 4. 运行 GKD，比较 forward KL 与 JSD，以及 batch、轮次和速度的权衡。
@@ -138,6 +138,11 @@ bash course/07_tuning/run_extra_rounds.sh
 # 固定验证集生成评测
 bash course/07_tuning/run_generation_eval.sh
 bash course/07_tuning/run_final_eval.sh
+
+# Qwen3.5 Direct/Thinking 数据与推理口径审计
+python course/01_lora_sft/audit_thinking_data.py
+STYLE=cot ADAPTER=/LoRA检查点 bash course/01_lora_sft/evaluate.sh
+STYLE=both STUDENT=/全参检查点 bash course/02_full_sft/evaluate.sh
 
 # RLOO 新闻分类完整实验
 bash course/08_rloo_classification/prepare_data.sh

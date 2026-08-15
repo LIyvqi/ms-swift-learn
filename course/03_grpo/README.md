@@ -4,6 +4,8 @@
 
 本课先保留原来的答案型 GRPO 作为对照，再新增真正的显式 CoT-GRPO。显式版会让 Qwen3.5 在 `<think>...</think>` 中公开生成可审计的计算过程，并在思考块之后输出 `\boxed{最终答案}`。
 
+Qwen3/Qwen3.5 官方配置与本课程单卡 LoRA 适配的完整差异见 [双思考模式最佳实践](../QWEN3_BEST_PRACTICE.md)。
+
 这里的“显式思考”是模型输出的解题草稿，不等同于模型不可见的内部思维。奖励函数只能检查公开文本及其数学性质。
 
 ## 为什么必须修订旧实验
@@ -25,6 +27,7 @@
 | 文件 | 用途 |
 |---|---|
 | `train.sh` | 历史答案型基线；显式设置 `--enable_thinking false` |
+| `train_direct_best_practice.sh` | 官方 Qwen3.5 Direct-GRPO 参数的单卡 0.8B LoRA 适配版 |
 | `train_cot_rules.sh` | 显式 CoT，使用免费的本地规则与可执行计算奖励 |
 | `train_cot_judge.sh` | 显式 CoT，使用 OpenAI 兼容的大模型过程裁判 |
 | `train_cot_hybrid.sh` | 显式 CoT，同时使用规则奖励和大模型裁判 |
@@ -98,6 +101,15 @@ STEPS=100 STYLE=cot bash course/03_grpo/train.sh
 ```
 
 这个脚本固定 `--enable_thinking false`。`STYLE=direct` 要求只给答案；历史 `STYLE=cot` 虽然写着逐步提示，Qwen3.5 模板仍会预填空思考块。
+
+若要学习官方 Qwen3.5 Dense GRPO 的新版优化设置，使用独立 profile，不会改变上述历史入口：
+
+```bash
+SMOKE=1 bash course/03_grpo/train_direct_best_practice.sh
+STEPS=100 bash course/03_grpo/train_direct_best_practice.sh
+```
+
+它采用 8 个候选、温度 1.0、`epsilon=0.2`、`epsilon_high=0.28` 和 `scale_rewards=none`。本课仍使用 LoRA 和 256-token Direct 输出上限，未照搬官方 2B 全参、多卡、8192-token 配置。直接运行 `train.sh` 时默认 `GRPO_PROFILE=legacy`，用于复现历史结果；也可显式写 `GRPO_PROFILE=qwen35 STYLE=direct`。
 
 ### 2. 本地规则计算版，推荐先运行
 
@@ -188,6 +200,8 @@ Qwen3.5 是混合 thinking 模板。显式 CoT 脚本同时设置：
 | `VLLM_MEMORY` | 0.60 | colocate vLLM 的显存规划比例 |
 | `VLLM_MAX_MODEL_LEN` | 4096 | Prompt 与生成合计的 vLLM 上下文上限 |
 | `SCALE_REWARDS` | `group` | 标准 GRPO 的组内奖励标准化方式 |
+
+显式 CoT 还采用 `epsilon=0.2`、`epsilon_high=0.28`、余弦学习率和零 warmup。它继续保留 `scale_rewards=group`，因为多项过程奖励需要在每个候选组内形成相对信号；官方 Direct 配方的 `none` 由 `train_direct_best_practice.sh` 单独演示。
 
 规则版默认使用 8 个候选、batch 8 和 2048-token 生成上限。1024-token 实测仍有 34.38% 的生成被截断，因此课程优先保留完整推理，并降低 batch 以适配本机 191.69 GiB 真实 HBM。大模型裁判版为了控制 API 费用，默认使用 4 个候选和 batch 16。首次迁移到其他机器时先使用 `SMOKE=1`。
 

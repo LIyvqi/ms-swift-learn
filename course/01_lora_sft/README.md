@@ -4,6 +4,8 @@
 
 本目录在同一个 `Qwen3.5-0.8B-Base` 上训练两种轻量教师：CoT 教师输出解题步骤，Direct 教师只输出最终答案。训练只保存 LoRA 增量参数，不复制完整基础模型。
 
+Qwen3/Qwen3.5 官方参数的逐项对照、历史评测口径修正和模板实测见 [双思考模式最佳实践](../QWEN3_BEST_PRACTICE.md)。
+
 ## 脚本入口
 
 ```bash
@@ -35,6 +37,8 @@ Direct 数据格式相同，只需把系统指令和 `assistant` 改成直接回
 {"id":"math-0001","messages":[{"role":"system","content":"只给出最终答案，并使用 \\boxed{}。"},{"role":"user","content":"一个盒子有 4 排球，每排 6 个，共有多少个？"},{"role":"assistant","content":"\\boxed{24}"}]}
 ```
 
+不要在 Direct 原始数据中手工复制空思考标签。脚本的 `add_non_thinking_prefix=true` 会统一加入 `<think>\n\n</think>\n\n`，`loss_scale=default+ignore_empty_think` 再把这段空前缀从监督损失中排除。CoT assistant 已经以 `<think>` 开头，不会被改写，非空过程会正常参与损失。
+
 ### 自定义数据要求
 
 - 每行必须是合法 JSON，`messages` 必须是数组。
@@ -53,6 +57,9 @@ Direct 数据格式相同，只需把系统指令和 `assistant` 改成直接回
 | `lora_rank` | 16 | LoRA 秩；越大容量越高，同时增加参数量与显存 |
 | `lora_alpha` | 32 | LoRA 缩放系数；本实验相当于 `alpha/rank=2` |
 | `lora_dropout` | 0.05 | LoRA 分支的随机失活率，用于轻度正则化 |
+| `target_modules` | `all-linear` | 对语言模型全部线性层加入 LoRA，与官方示例一致 |
+| `add_non_thinking_prefix` | `true` | 只给不以 `<think>` 开头的 Direct assistant 加空思考前缀 |
+| `loss_scale` | `default+ignore_empty_think` | 监督所有 assistant，但忽略自动加入的空思考前缀 |
 | `torch_dtype` | `bfloat16` | 使用 BF16 训练，适合本机 ROCm GPU |
 | `attn_impl` | `eager` | 使用已实测稳定的注意力路径 |
 | `max_length` | 512 | 输入与回答合计最多 512 token，超长样本会被截断 |
@@ -62,6 +69,7 @@ Direct 数据格式相同，只需把系统指令和 `assistant` 改成直接回
 | `warmup_ratio` | 0.05 | 前 5% 步数逐渐升高学习率 |
 | `save_total_limit` | 1 | 每个实验最多保留一个检查点，节省磁盘 |
 | `gradient_checkpointing` | `false` | 本机显存充足，以显存换速度 |
+| `group_by_length` | `true` | 按长度组 batch，减少 CoT 数据的填充计算；可用环境变量关闭 |
 
 `STEPS`、`EPOCHS` 与 `SMOKE=1` 互斥：
 
@@ -69,6 +77,19 @@ Direct 数据格式相同，只需把系统指令和 `assistant` 改成直接回
 SMOKE=1 STYLE=cot bash course/01_lora_sft/train.sh
 STEPS=100 STYLE=cot bash course/01_lora_sft/train.sh
 EPOCHS=3 RUN_TAG=my_cot STYLE=cot bash course/01_lora_sft/train.sh
+```
+
+训练前可审计三种数据视图的真实模板、损失掩码与 token 长度：
+
+```bash
+python course/01_lora_sft/audit_thinking_data.py
+```
+
+训练后必须按风格设置推理模板。Direct 使用 `enable_thinking=false` 和短生成，CoT 使用 `enable_thinking=true` 和 2048-token 上限：
+
+```bash
+STYLE=direct ADAPTER=/绝对路径/checkpoint bash course/01_lora_sft/evaluate.sh
+STYLE=cot ADAPTER=/绝对路径/checkpoint bash course/01_lora_sft/evaluate.sh
 ```
 
 ## 输出与前置关系
@@ -83,6 +104,7 @@ EPOCHS=3 RUN_TAG=my_cot STYLE=cot bash course/01_lora_sft/train.sh
 - 先做 `SMOKE=1`，确认数据模板和反向传播正确，再跑完整轮次。
 - CoT 数据被截断时，最容易丢失末尾最终答案；换成长文本数据要相应提高 `max_length`。
 - LoRA 不能单独推理，必须同时提供它训练时使用的基础模型。
-- 验证 loss 最低不一定代表生成正确率最高。本项目 CoT 最佳生成检查点来自 3 轮计划中的第 2 轮。
+- 验证 loss 最低不一定代表生成正确率最高。历史非思考评测中，CoT 最佳检查点来自 3 轮计划中的第 2 轮；新增 thinking 评测固定使用该检查点，尚未重新比较全部轮次。
+- 历史参数搜索中的 CoT 生成没有显式打开 thinking，应视为非思考推理口径；不要与新脚本的显式 CoT 指标直接比较。
 - Direct 数据更短，loss 往往更稳定，但不代表任务能力更强。
 - 自定义数据先检查重复、空回答、极端长度和训练/验证泄漏。

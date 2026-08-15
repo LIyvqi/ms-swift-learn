@@ -82,7 +82,11 @@ swift rlhf \
   --per_device_train_batch_size "${RL_BATCH_VALUE}" \
   --gradient_accumulation_steps 1 \
   --learning_rate "${LEARNING_RATE:-5e-6}" \
+  --lr_scheduler_type cosine \
+  --warmup_ratio 0.0 \
   --beta "${BETA:-0.001}" \
+  --epsilon "${EPSILON:-0.2}" \
+  --epsilon_high "${EPSILON_HIGH:-0.28}" \
   --scale_rewards "${SCALE_REWARDS:-group}" \
   --max_grad_norm "${MAX_GRAD_NORM:-0.5}" \
   --max_length 512 \

@@ -2,7 +2,7 @@
 
 本目录使用同一个 `Qwen3.5-0.8B-Base`，按从监督学习到在线/离线蒸馏、人类偏好对齐和 Agent 持续学习的顺序组织。第 01 至 04 节还增加了 200 条混合模态补充线，覆盖纯文本、纯图像、图文输入以及 Direct/显式 CoT；原始文本课程仍保留。第 08 至 09 节演示 Direct-RLOO 与 CoT-RLOO；第 10 至 22 节使用统一新闻偏好数据和 1～5 分评分数据，系统比较 SFT/DFT、DPO、RM/PPO、KTO、CPO、SimPO、ORPO、GRPO/DAPO/GSPO、GKD/OPD-RL/OPSD 以及两个同名 REAL；第 23 节用 JitRL 演示不更新模型参数的推理期持续学习，第 24 节进一步研究知识支持库、历史案例库和规则库协同修正 logits，第 25 节实现可训练的检索、反思、规则组合和执行多轮智能体，第 26 节把私有审核规则训练进独立 Memory，第 27 节再加入外部校准、主动搜索、共形集合、独立验证和低置信拒答，第 28 节用 RLCR 训练分类策略联合生成类别与置信度，第 29 节训练参数独立的 Qwen Reward/Verifier。
 
-所有实验已经进一步完成 100 步实测，定量结果、稳定性问题和调参建议见 [RESULTS_100_STEPS.md](RESULTS_100_STEPS.md)。多轮、学习率、散度参数、batch 与统一生成评测的最终对照见 [TUNING_RESULTS.md](TUNING_RESULTS.md)。第 01～04 课的三模态正式训练、容量实验和固定验证集结果单独记录在 [多模态正式实验结果](MULTIMODAL_RESULTS.md)。
+所有实验已经进一步完成 100 步实测，定量结果、稳定性问题和调参建议见 [RESULTS_100_STEPS.md](RESULTS_100_STEPS.md)。多轮、学习率、散度参数、batch 与统一生成评测的最终对照见 [TUNING_RESULTS.md](TUNING_RESULTS.md)。第 01～04 课的三模态正式训练、容量实验和固定验证集结果单独记录在 [多模态正式实验结果](MULTIMODAL_RESULTS.md)。第 01～03 课与官方 Qwen3/Qwen3.5 教程的参数、数据模板和 Direct/Thinking 推理口径对照见 [双思考模式最佳实践](QWEN3_BEST_PRACTICE.md)。
 
 ## 分目录详细教程
 
