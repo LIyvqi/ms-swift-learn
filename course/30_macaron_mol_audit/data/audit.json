@@ -1,0 +1,150 @@
+{
+  "canonical_rows": 2000,
+  "splits": {
+    "train": 1600,
+    "validation": 200,
+    "test": 200
+  },
+  "case_library_rows": 1600,
+  "reviewed_case_rows": 0,
+  "case_validation": {
+    "valid": true,
+    "cases": 1600,
+    "reviewed_cases": 0,
+    "errors": []
+  },
+  "rule_validation": {
+    "valid": true,
+    "rules": 14,
+    "active_rules": 14,
+    "deprecated_rules": 0,
+    "errors": []
+  },
+  "evaluation_context_rows": 1200,
+  "evaluation_input_rows": 300,
+  "clean_evaluation_rows": 200,
+  "obfuscated_evaluation_rows": 100,
+  "maximum_category_rate_deviation_percentage_points": 0.1759218410537418,
+  "views": {
+    "baseline_train.jsonl": {
+      "rows": 1600,
+      "minimum_tokens": 138,
+      "mean_tokens": 581.128125,
+      "p50_tokens": 637,
+      "p95_tokens": 812,
+      "maximum_tokens": 952,
+      "over_1536": 0,
+      "over_1536_rate": 0.0
+    },
+    "baseline_validation.jsonl": {
+      "rows": 200,
+      "minimum_tokens": 504,
+      "mean_tokens": 727.305,
+      "p50_tokens": 725,
+      "p95_tokens": 833,
+      "maximum_tokens": 935,
+      "over_1536": 0,
+      "over_1536_rate": 0.0
+    },
+    "l1_train.jsonl": {
+      "rows": 1323,
+      "minimum_tokens": 176,
+      "mean_tokens": 622.3733938019652,
+      "p50_tokens": 680,
+      "p95_tokens": 850,
+      "maximum_tokens": 996,
+      "over_1536": 0,
+      "over_1536_rate": 0.0
+    },
+    "l1_validation.jsonl": {
+      "rows": 200,
+      "minimum_tokens": 548,
+      "mean_tokens": 765.93,
+      "p50_tokens": 765,
+      "p95_tokens": 868,
+      "maximum_tokens": 956,
+      "over_1536": 0,
+      "over_1536_rate": 0.0
+    },
+    "l2_train.jsonl": {
+      "rows": 738,
+      "minimum_tokens": 178,
+      "mean_tokens": 634.3536585365854,
+      "p50_tokens": 698,
+      "p95_tokens": 852,
+      "maximum_tokens": 963,
+      "over_1536": 0,
+      "over_1536_rate": 0.0
+    },
+    "l2_validation.jsonl": {
+      "rows": 200,
+      "minimum_tokens": 550,
+      "mean_tokens": 766.375,
+      "p50_tokens": 766,
+      "p95_tokens": 870,
+      "maximum_tokens": 958,
+      "over_1536": 0,
+      "over_1536_rate": 0.0
+    },
+    "l3_train.jsonl": {
+      "rows": 825,
+      "minimum_tokens": 180,
+      "mean_tokens": 616.7866666666666,
+      "p50_tokens": 677,
+      "p95_tokens": 841,
+      "maximum_tokens": 972,
+      "over_1536": 0,
+      "over_1536_rate": 0.0
+    },
+    "l3_validation.jsonl": {
+      "rows": 200,
+      "minimum_tokens": 546,
+      "mean_tokens": 762.495,
+      "p50_tokens": 762,
+      "p95_tokens": 871,
+      "maximum_tokens": 967,
+      "over_1536": 0,
+      "over_1536_rate": 0.0
+    },
+    "l4_train.jsonl": {
+      "rows": 1221,
+      "minimum_tokens": 187,
+      "mean_tokens": 629.9164619164619,
+      "p50_tokens": 688,
+      "p95_tokens": 855,
+      "maximum_tokens": 1007,
+      "over_1536": 0,
+      "over_1536_rate": 0.0
+    },
+    "l4_validation.jsonl": {
+      "rows": 200,
+      "minimum_tokens": 559,
+      "mean_tokens": 775.75,
+      "p50_tokens": 775,
+      "p95_tokens": 883,
+      "maximum_tokens": 972,
+      "over_1536": 0,
+      "over_1536_rate": 0.0
+    },
+    "router_train.jsonl": {
+      "rows": 1600,
+      "minimum_tokens": 169,
+      "mean_tokens": 609.903125,
+      "p50_tokens": 667,
+      "p95_tokens": 835,
+      "maximum_tokens": 988,
+      "over_1536": 0,
+      "over_1536_rate": 0.0
+    },
+    "router_validation.jsonl": {
+      "rows": 200,
+      "minimum_tokens": 540,
+      "mean_tokens": 756.485,
+      "p50_tokens": 757,
+      "p95_tokens": 862,
+      "maximum_tokens": 951,
+      "over_1536": 0,
+      "over_1536_rate": 0.0
+    }
+  }
+}

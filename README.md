@@ -1,6 +1,6 @@
 # ms-swift-learn
 
-这是一个围绕 `Qwen3.5-0.8B-Base` 和 ms-swift 4.4.3 源码环境编写的大模型训练学习仓库。项目使用固定的 GSM8K、CMMU 多模态子集与复旦新闻教学数据，覆盖 LoRA/全参 SFT、DFT、DPO、RM/PPO、KTO、CPO、SimPO、ORPO、GRPO/RLOO/DAPO/GSPO、自定义奖励、GKD、OPD/MOPD/OPSD、Regression-Aware REAL，以及无需梯度更新的 JitRL Agent 持续学习、KCR-JitRL 三库协同、Agent-R1 风格多轮规则智能体、MeMo 参数化规则记忆、CA-MeMo 置信度校准/主动验证、RLCR 自报置信度强化学习和独立 Qwen Verifier。第 01～04 课同时提供纯文本、纯图像、图文混合以及 Direct/显式 CoT 训练链路。所有新增课程、脚本注释和笔记都使用中文。
+这是一个围绕 `Qwen3.5-0.8B-Base` 和 ms-swift 4.4.3 源码环境编写的大模型训练学习仓库。项目使用固定的 GSM8K、CMMU 多模态子集、复旦新闻与 BeaverTails 教学数据，覆盖 LoRA/全参 SFT、DFT、DPO、RM/PPO、KTO、CPO、SimPO、ORPO、GRPO/RLOO/DAPO/GSPO、自定义奖励、GKD、OPD/MOPD/OPSD、Regression-Aware REAL，以及无需梯度更新的 JitRL Agent 持续学习、KCR-JitRL 三库协同、Agent-R1 风格多轮规则智能体、MeMo 参数化规则记忆、CA-MeMo 置信度校准/主动验证、RLCR 自报置信度强化学习、独立 Qwen Verifier 和 Macaron-V1 风格多 LoRA 内容审核。第 01～04 课同时提供纯文本、纯图像、图文混合以及 Direct/显式 CoT 训练链路。所有新增课程、脚本注释和笔记都使用中文。
 
 ## 已完成实验
 
@@ -21,8 +21,9 @@
 | CA-MeMo 可靠推理 | 校准 + 主动搜索 + 独立规则验证 | Accuracy **79.17%**；Coverage **61.11%**；覆盖内处置错误率 **0%** |
 | Brier-RLCR | 正确性 + proper scoring rule 联合训练 | Accuracy **98.13%**；Brier **0.0250** |
 | 独立 Qwen Verifier | 全参数 RM 估计候选正确概率 | 对错 AUROC **93.63%**；OOD 检出 **99%** |
+| Macaron 多 LoRA + RAG | 14 类内容审核、版本规则和案例库 | 单体 Micro-F1 **70.24%**；Top-2 **63.64%** |
 
-前面的数学与蒸馏结果来自固定 100 条验证题；MeMo 结果来自 120 条独立新闻审核案例；CA-MeMo 结果来自严格分离的 72 条校准案例和 72 条困难测试案例。各项均为温度 0 的实际生成，完整参数、轮次、格式率和长度对照见 [多轮调参报告](course/TUNING_RESULTS.md)、[MeMo 实测报告](course/26_memo_rule_memory/RESULTS.md) 与 [CA-MeMo 实测报告](course/27_calibrated_adaptive_memo/RESULTS.md)。
+前面的数学与蒸馏结果来自固定 100 条验证题；MeMo 结果来自 120 条独立新闻审核案例；CA-MeMo 结果来自严格分离的 72 条校准案例和 72 条困难测试案例；Macaron 课程使用 200 条清洁测试和 100 条成对表面扰动挑战。各项均为温度 0 的实际生成，完整参数、轮次、格式率和长度对照见 [多轮调参报告](course/TUNING_RESULTS.md)、[MeMo 实测报告](course/26_memo_rule_memory/RESULTS.md)、[CA-MeMo 实测报告](course/27_calibrated_adaptive_memo/RESULTS.md) 与 [Macaron 实测报告](course/30_macaron_mol_audit/RESULTS.md)。
 
 新闻分类 SFT/RLOO 的 Direct 结果与 CoT-RLOO 使用不同输出要求；97.50% 是 320 条独立新闻上的显式 CoT 分类结果，不应只按数值与 99.06% 的 Direct 短答案结果判断优劣。
 
@@ -33,6 +34,7 @@
 ```text
 ms-swift-learn/
 ├── course/                     # 按学习顺序组织的训练课程与中文笔记
+│   └── 30_macaron_mol_audit/data/ # 2000 条多标签审核数据、规则库和案例库
 ├── datasets/gsm8k_1k/         # 固定 1000 条教学数据和 SHA-256 校验值
 ├── datasets/multimodal_200/   # 固定 200 条文本/图片/图文混合教学数据
 ├── datasets/fudan_news_4class/ # 固定 1600 条四分类数据和校验值
@@ -114,6 +116,7 @@ bash course/run_multimodal_full.sh
 15. 完成 [CA-MeMo 可靠推理](course/27_calibrated_adaptive_memo/README.md)，学习外部置信度校准、共形候选集合、主动 Memory 搜索、独立验证与低置信拒答。
 16. 完成 [RLCR 分类置信度强化学习](course/28_rlcr_confidence/README.md)，比较正确性、Brier 与对数 proper scoring rule。
 17. 完成 [独立 Qwen Verifier](course/29_independent_confidence_verifier/README.md)，学习用真实成对 RM 训练估计候选正确概率并拒绝 OOD。
+18. 完成 [Macaron-V1 风格多 LoRA 内容审核](course/30_macaron_mol_audit/README.md)，学习回合级专家路由、Top-2 多标签扩展、规则/案例检索和新增专家回归验证。
 
 ## 复现命令
 
@@ -189,6 +192,9 @@ bash course/28_rlcr_confidence/run_full.sh
 
 # 独立 Qwen Reward/Verifier 全参数训练
 bash course/29_independent_confidence_verifier/run_full.sh
+
+# Macaron 风格多 LoRA 内容审核、规则库和案例库消融
+bash course/30_macaron_mol_audit/run_full.sh
 ```
 
 训练产物、JitRL、KCR-JitRL、MeMo 和 CA-MeMo 完整轨迹默认写入被 Git 忽略的 `outputs/`。项目不会自动上传模型或检查点。
