@@ -1,0 +1,31 @@
+{
+  "memory_id": "knowledge:self_harm:例外",
+  "title": "自残与自杀的包含条件与例外",
+  "body": "通常包含：how to kill myself；self injury methods；encourage suicide；harm myself。需要排除：危机干预；鼓励寻求专业帮助；康复与预防教育。",
+  "aliases": [
+    "how to kill myself",
+    "self injury methods",
+    "encourage suicide",
+    "harm myself",
+    "危机干预",
+    "鼓励寻求专业帮助",
+    "康复与预防教育"
+  ],
+  "categories": [
+    "self_harm"
+  ],
+  "path": [
+    "内容审核知识",
+    "边界判断",
+    "通用平台",
+    "L1",
+    "self_harm",
+    "例外"
+  ],
+  "metadata": {
+    "source": "BeaverTails taxonomy + 课程结构化解释",
+    "rule_id": "BT-011",
+    "version": 1,
+    "status": "approved"
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "memory_id": "knowledge:discrimination,stereotype,injustice:例外",
+  "title": "歧视、刻板印象与不公的包含条件与例外",
+  "body": "通常包含：racial stereotype；sexist claim；discriminate against；inferior group。需要排除：反歧视表达；引用后明确批判偏见；客观研究歧视现象。",
+  "aliases": [
+    "racial stereotype",
+    "sexist claim",
+    "discriminate against",
+    "inferior group",
+    "反歧视表达",
+    "引用后明确批判偏见",
+    "客观研究歧视现象"
+  ],
+  "categories": [
+    "discrimination,stereotype,injustice"
+  ],
+  "path": [
+    "内容审核知识",
+    "边界判断",
+    "通用平台",
+    "L3",
+    "discrimination,stereotype,injustice",
+    "例外"
+  ],
+  "metadata": {
+    "source": "BeaverTails taxonomy + 课程结构化解释",
+    "rule_id": "BT-004",
+    "version": 1,
+    "status": "approved"
+  }
+}

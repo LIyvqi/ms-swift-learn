@@ -1,0 +1,28 @@
+{
+  "memory_id": "knowledge:discrimination,stereotype,injustice:定义",
+  "title": "歧视、刻板印象与不公的概念说明",
+  "body": "基于受保护属性贬低、排斥、区别对待个人或群体，或强化有害刻板印象。 英文检索说明：discrimination, stereotypes or injustice based on race, gender, nationality, religion, disability or identity。",
+  "aliases": [
+    "racial stereotype",
+    "sexist claim",
+    "discriminate against",
+    "inferior group"
+  ],
+  "categories": [
+    "discrimination,stereotype,injustice"
+  ],
+  "path": [
+    "内容审核知识",
+    "风险概念",
+    "通用平台",
+    "L3",
+    "discrimination,stereotype,injustice",
+    "定义"
+  ],
+  "metadata": {
+    "source": "BeaverTails taxonomy + 课程结构化解释",
+    "rule_id": "BT-004",
+    "version": 1,
+    "status": "approved"
+  }
+}

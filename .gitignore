@@ -17,6 +17,11 @@ checkpoint-*/
 *.pth
 training_args.bin
 
+# 分层记忆课程会从可追踪 JSONL 重建独立 SQLite Case 后端
+datasets/hierarchical_memory_audit/*.sqlite3
+datasets/hierarchical_memory_audit/*.sqlite3-shm
+datasets/hierarchical_memory_audit/*.sqlite3-wal
+
 # Python 与 Jupyter 自动生成文件
 __pycache__/
 *.py[cod]

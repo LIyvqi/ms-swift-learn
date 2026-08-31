@@ -1,0 +1,124 @@
+{
+  "schema_version": 1,
+  "source_rows": 2000,
+  "splits": {
+    "train": 1600,
+    "validation": 200,
+    "test": 200
+  },
+  "allowed_categories": [
+    "animal_abuse",
+    "child_abuse",
+    "controversial_topics,politics",
+    "discrimination,stereotype,injustice",
+    "drug_abuse,weapons,banned_substance",
+    "financial_crime,property_crime,theft",
+    "hate_speech,offensive_language",
+    "misinformation_regarding_ethics,laws_and_safety",
+    "non_violent_unethical_behavior",
+    "privacy_violation",
+    "self_harm",
+    "sexually_explicit,adult_content",
+    "terrorism,organized_crime",
+    "violence,aiding_and_abetting,incitement"
+  ],
+  "case_store": {
+    "approved_or_training_cases": 1600,
+    "candidate_cases": 0,
+    "validation_test_indexed": 0
+  },
+  "gateway": {
+    "sources": [
+      {
+        "source_id": "case_store",
+        "connector": "sqlite_cases",
+        "records": 2204,
+        "unique_entities": 1600,
+        "hierarchy_nodes": 37,
+        "max_depth": 5
+      },
+      {
+        "source_id": "knowledge_store",
+        "connector": "directory_knowledge",
+        "records": 28,
+        "unique_entities": 28,
+        "hierarchy_nodes": 69,
+        "max_depth": 6
+      },
+      {
+        "source_id": "rule_store",
+        "connector": "jsonl_rules",
+        "records": 14,
+        "unique_entities": 14,
+        "hierarchy_nodes": 34,
+        "max_depth": 5
+      }
+    ],
+    "total_records": 2246
+  },
+  "trajectory_stats": {
+    "train:direct": 433,
+    "train:searches": 1686,
+    "train:turns:1": 433,
+    "train:turns:3": 648,
+    "train:turns:5": 519,
+    "validation:direct": 63,
+    "validation:searches": 201,
+    "validation:turns:1": 63,
+    "validation:turns:3": 73,
+    "validation:turns:5": 64
+  },
+  "generated_rows": {
+    "sft_train": 1600,
+    "sft_state_train": 1167,
+    "rl_train": 1600,
+    "sft_validation": 200,
+    "sft_state_validation": 137,
+    "rl_validation": 200,
+    "rl_test": 200
+  },
+  "checksums": {
+    "README.md": "cbd43d04366f853bba37806186514b39753b2a3d6551417a1f3d9bfa9f8e8fbc",
+    "knowledge/内容审核知识/边界判断/通用平台/L1/animal_abuse/例外.json": "2caea9dd2ca317973e01da29c4174410c830d327c7ec51a6a77c80ef241004ff",
+    "knowledge/内容审核知识/边界判断/通用平台/L1/child_abuse/例外.json": "f62e793e985a8f055898fc179b00f7d4fe644cc645cc485d322a88b1525536cf",
+    "knowledge/内容审核知识/边界判断/通用平台/L1/self_harm/例外.json": "5cf62625a07d00e7acac6c9c31175ce8f6cb0e65aea6a38ad6641d6132ff683d",
+    "knowledge/内容审核知识/边界判断/通用平台/L1/violence,aiding_and_abetting,incitement/例外.json": "7584db2d2a45efd7b5a2816b1a79f54f1814f4c4d4820e510981ffb48389fd02",
+    "knowledge/内容审核知识/边界判断/通用平台/L2/drug_abuse,weapons,banned_substance/例外.json": "0a45ff55ba2d22b4560c6741b0da2a97cf9c25f18969e8521da06f41e320b073",
+    "knowledge/内容审核知识/边界判断/通用平台/L2/financial_crime,property_crime,theft/例外.json": "8546e5255f8c9d5c3e81feba0f09db8631a9a13938adc674e8c87ad9a1be3c28",
+    "knowledge/内容审核知识/边界判断/通用平台/L2/terrorism,organized_crime/例外.json": "724c853f9865f93ccfd4feb6444f48341977b1c0ae6102bfe2c2eca6d8cd0080",
+    "knowledge/内容审核知识/边界判断/通用平台/L3/discrimination,stereotype,injustice/例外.json": "fd21ae9a55fda5da431df601271ab7b885862708694de3c85d64cf54206f69da",
+    "knowledge/内容审核知识/边界判断/通用平台/L3/hate_speech,offensive_language/例外.json": "6a29dc228dd03db7cda0bcadb22fb10c6efc97f574928a3019a44ca3f74f8ff5",
+    "knowledge/内容审核知识/边界判断/通用平台/L3/privacy_violation/例外.json": "fbcd6a28c726bdbd77b1d6fc777448767ca96ecbbafb6cd2ed026b059cfb1a04",
+    "knowledge/内容审核知识/边界判断/通用平台/L4/controversial_topics,politics/例外.json": "c78c153d536f0c367aea3ec9dffa7bce67bfe42c85fa9789f3d4742b17b129f9",
+    "knowledge/内容审核知识/边界判断/通用平台/L4/misinformation_regarding_ethics,laws_and_safety/例外.json": "5525e82eb9cb1637b3e2e575e0a1ec9d74890b834e6697a229e3fad827a4eb0a",
+    "knowledge/内容审核知识/边界判断/通用平台/L4/non_violent_unethical_behavior/例外.json": "3d4e8bdfa87620218ea0669fb07a18e29744e993ea5cb6b8e3199c25d9d1956a",
+    "knowledge/内容审核知识/边界判断/通用平台/L4/sexually_explicit,adult_content/例外.json": "98c0e463df68f83ac315b468df5f6d78271f82edeb036c0fa415dd2aa424e6f3",
+    "knowledge/内容审核知识/风险概念/通用平台/L1/animal_abuse/定义.json": "9766a6848b99c88301290fc13fde69e89c3e946bf5d2fc028f76c6f64cfa876b",
+    "knowledge/内容审核知识/风险概念/通用平台/L1/child_abuse/定义.json": "98895c34ccaa3d05fa659830ceaf08be9443f13627a3cbd0f3bd470e84f355e3",
+    "knowledge/内容审核知识/风险概念/通用平台/L1/self_harm/定义.json": "ca8d6414a5215b23c75e53cd8a0a50fdae2c0b22e99600c9f1474fa673c44b1a",
+    "knowledge/内容审核知识/风险概念/通用平台/L1/violence,aiding_and_abetting,incitement/定义.json": "f35dd98435d40bd6161de34e67da379c894cf40299ed8a72e1e288d563f03f89",
+    "knowledge/内容审核知识/风险概念/通用平台/L2/drug_abuse,weapons,banned_substance/定义.json": "c2978bbcc81560847a576529cf768f08f8411f2aa10bcc8a3da4eb9aabb23062",
+    "knowledge/内容审核知识/风险概念/通用平台/L2/financial_crime,property_crime,theft/定义.json": "096048983789de548097cc0af3723ab53980d7e9997fdc850638c484a60938b5",
+    "knowledge/内容审核知识/风险概念/通用平台/L2/terrorism,organized_crime/定义.json": "292d8f681415b49e506f61639cfc4c93433a7d424cf6b7261ca1bfb4b3135c0b",
+    "knowledge/内容审核知识/风险概念/通用平台/L3/discrimination,stereotype,injustice/定义.json": "0bbabb1f870b61bf0f0fb975fc5866a266b04f5687d7f659e88135c93accb686",
+    "knowledge/内容审核知识/风险概念/通用平台/L3/hate_speech,offensive_language/定义.json": "f4a55ab4ff1fce3cc0b5ccf992aed8862134fbe4826ede567d1059fd08aac63f",
+    "knowledge/内容审核知识/风险概念/通用平台/L3/privacy_violation/定义.json": "66ae69c746feb05b157db46e0196c0626a9c954a24608baffd520ef378919802",
+    "knowledge/内容审核知识/风险概念/通用平台/L4/controversial_topics,politics/定义.json": "ab84801e2b33b7e09dfe5ea8dc47209d24a7faddacaa9776ba7f0fb97ea6fe2e",
+    "knowledge/内容审核知识/风险概念/通用平台/L4/misinformation_regarding_ethics,laws_and_safety/定义.json": "2477b724c3ed05ce84e12178c73a79bae4ee4e8bffdbc86ed099eaad86fc4549",
+    "knowledge/内容审核知识/风险概念/通用平台/L4/non_violent_unethical_behavior/定义.json": "316d0c40e99ef1eac2c87f9e9646580fd4e269a872ad659062f1a8506af47641",
+    "knowledge/内容审核知识/风险概念/通用平台/L4/sexually_explicit,adult_content/定义.json": "41f84e43e25b18d9013518287c50c41cd7a5c3012f75d250071bb2ed84e7181f",
+    "rl_smoke.jsonl": "818ccc9c8ac8c55f7059931282bf928177bcba83a4d97358bcb9e18ea90f0722",
+    "rl_test.jsonl": "026d0cc3c1d8378ad8f62e2c7a70ce41134864ef55fcf83d04beb8a134d15141",
+    "rl_train.jsonl": "dcbe89c9c2611433088fc80e0ad45e4086d46fd05f4d1101b66c69428c5dbe40",
+    "rl_validation.jsonl": "f296ff10c8271379d4db2fe0f93c11941d62095a2c58a0d477c23bebd0716a73",
+    "rules.jsonl": "a3ef6d20527379c68fe6f914e6e7d7e581e3b7022888cd72ab2d31dc020b2841",
+    "sft_smoke.jsonl": "f3e93f77e7cf5f3904b5da70784ecfe9c82f7629f9b20992e847c107e78ec09f",
+    "sft_state_smoke.jsonl": "df1bf220652f0a5980f3f342b27286142ab979a9bbbd8085c4eeea261bf3f292",
+    "sft_state_train.jsonl": "829706882292a76a1203781c39fd32f3202c31ca8eb500dd9cbe5d9a13397d55",
+    "sft_state_validation.jsonl": "9f2c8f2e7bca7a47124b9527c129b7452773ce140eaf8ef9ce0fa6861e5d30d1",
+    "sft_train.jsonl": "d542c6fc3e9b754b07183103dd80158cf30c5ebd9ee75e58837516a556b92ec7",
+    "sft_validation.jsonl": "8893fc456696736a88669d5cb62b56c02182b0355aee59744f3502f12d335571",
+    "source_registry.json": "09171270da8c4a743156ba1bb58ee3b7263125f6c338a97602a1ddeeb8ec3381"
+  },
+  "leakage_guard": "Case 后端只含 train/reviewed；validation/test 从不进入可检索库；candidate 默认不可检索"
+}

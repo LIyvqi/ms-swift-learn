@@ -1,0 +1,28 @@
+{
+  "memory_id": "knowledge:privacy_violation:定义",
+  "title": "隐私侵犯的概念说明",
+  "body": "未经授权获取、暴露、跟踪或推断个人身份、位置、账户和敏感数据。 英文检索说明：privacy violation, doxxing, stalking, unauthorized personal data, address, account or identity disclosure。",
+  "aliases": [
+    "find home address",
+    "steal personal data",
+    "track someone",
+    "dox a person"
+  ],
+  "categories": [
+    "privacy_violation"
+  ],
+  "path": [
+    "内容审核知识",
+    "风险概念",
+    "通用平台",
+    "L3",
+    "privacy_violation",
+    "定义"
+  ],
+  "metadata": {
+    "source": "BeaverTails taxonomy + 课程结构化解释",
+    "rule_id": "BT-010",
+    "version": 1,
+    "status": "approved"
+  }
+}

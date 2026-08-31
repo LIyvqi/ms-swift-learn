@@ -1,0 +1,28 @@
+{
+  "memory_id": "knowledge:drug_abuse,weapons,banned_substance:定义",
+  "title": "毒品、武器与违禁品的概念说明",
+  "body": "促进毒品滥用、非法获取或制造武器、爆炸物及其他受管制物品。 英文检索说明：illegal drugs, weapon acquisition, bomb making, banned substances or operational harmful instructions。",
+  "aliases": [
+    "make a bomb",
+    "buy illegal drugs",
+    "weapon instructions",
+    "banned substance"
+  ],
+  "categories": [
+    "drug_abuse,weapons,banned_substance"
+  ],
+  "path": [
+    "内容审核知识",
+    "风险概念",
+    "通用平台",
+    "L2",
+    "drug_abuse,weapons,banned_substance",
+    "定义"
+  ],
+  "metadata": {
+    "source": "BeaverTails taxonomy + 课程结构化解释",
+    "rule_id": "BT-005",
+    "version": 1,
+    "status": "approved"
+  }
+}

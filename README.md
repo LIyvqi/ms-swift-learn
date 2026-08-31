@@ -1,6 +1,6 @@
 # ms-swift-learn
 
-这是一个围绕 `Qwen3.5-0.8B-Base` 和 ms-swift 4.4.3 源码环境编写的大模型训练学习仓库。项目使用固定的 GSM8K、CMMU 多模态子集、复旦新闻与 BeaverTails 教学数据，覆盖 LoRA/全参 SFT、DFT、DPO、RM/PPO、KTO、CPO、SimPO、ORPO、GRPO/RLOO/DAPO/GSPO、自定义奖励、GKD、OPD/MOPD/OPSD、Regression-Aware REAL，以及无需梯度更新的 JitRL Agent 持续学习、KCR-JitRL 三库协同、Agent-R1 风格多轮规则智能体、MeMo 参数化规则记忆、CA-MeMo 置信度校准/主动验证、RLCR 自报置信度强化学习、独立 Qwen Verifier 和 Macaron-V1 风格多 LoRA 内容审核。第 01～04 课同时提供纯文本、纯图像、图文混合以及 Direct/显式 CoT 训练链路。所有新增课程、脚本注释和笔记都使用中文。
+这是一个围绕 `Qwen3.5-0.8B-Base` 和 ms-swift 4.4.3 源码环境编写的大模型训练学习仓库。项目使用固定的 GSM8K、CMMU 多模态子集、复旦新闻与 BeaverTails 教学数据，覆盖 LoRA/全参 SFT、DFT、DPO、RM/PPO、KTO、CPO、SimPO、ORPO、GRPO/RLOO/DAPO/GSPO、自定义奖励、GKD、OPD/MOPD/OPSD、Regression-Aware REAL，以及无需梯度更新的 JitRL Agent 持续学习、KCR-JitRL 三库协同、Agent-R1 风格多轮规则智能体、MeMo 参数化规则记忆、CA-MeMo 置信度校准/主动验证、RLCR 自报置信度强化学习、独立 Qwen Verifier、Macaron-V1 风格多 LoRA 内容审核和独立多源分层记忆审核 Agent。第 01～04 课同时提供纯文本、纯图像、图文混合以及 Direct/显式 CoT 训练链路。所有新增课程、脚本注释和笔记都使用中文。
 
 ## 已完成实验
 
@@ -34,7 +34,8 @@
 ```text
 ms-swift-learn/
 ├── course/                     # 按学习顺序组织的训练课程与中文笔记
-│   └── 30_macaron_mol_audit/data/ # 2000 条多标签审核数据、规则库和案例库
+│   ├── 30_macaron_mol_audit/data/ # 2000 条多标签审核数据、规则库和案例库
+│   └── 31_hierarchical_memory_agent/ # 独立三库、分层检索、SFT/GRPO 和经验 Wiki
 ├── datasets/gsm8k_1k/         # 固定 1000 条教学数据和 SHA-256 校验值
 ├── datasets/multimodal_200/   # 固定 200 条文本/图片/图文混合教学数据
 ├── datasets/fudan_news_4class/ # 固定 1600 条四分类数据和校验值
@@ -45,6 +46,7 @@ ms-swift-learn/
 ├── datasets/memo_rule_memory/ # 80 条规则、Memory 问答和新闻审核验证集
 ├── datasets/calibrated_adaptive_memo/ # 校准集、OOD 与六类困难审核测试
 ├── datasets/confidence_news/ # RLCR、独立 Verifier、ID 校准与真实 OOD 数据
+├── datasets/hierarchical_memory_audit/ # 多源分层审核轨迹、规则与目录知识
 ├── results/evaluations/       # 33 组逐题生成评测
 ├── results/figures/           # 精选训练曲线
 ├── results/jitrl/             # JitRL 精选实验摘要
@@ -117,6 +119,7 @@ bash course/run_multimodal_full.sh
 16. 完成 [RLCR 分类置信度强化学习](course/28_rlcr_confidence/README.md)，比较正确性、Brier 与对数 proper scoring rule。
 17. 完成 [独立 Qwen Verifier](course/29_independent_confidence_verifier/README.md)，学习用真实成对 RM 训练估计候选正确概率并拒绝 OOD。
 18. 完成 [Macaron-V1 风格多 LoRA 内容审核](course/30_macaron_mol_audit/README.md)，学习回合级专家路由、Top-2 多标签扩展、规则/案例检索和新增专家回归验证。
+19. 完成 [独立多源分层记忆审核 Agent](course/31_hierarchical_memory_agent/README.md)，学习三类独立库、深层目录导航、多轮 SFT/GYM-GRPO，以及非 Skill 的 Experience Wiki。
 
 ## 复现命令
 
@@ -195,10 +198,13 @@ bash course/29_independent_confidence_verifier/run_full.sh
 
 # Macaron 风格多 LoRA 内容审核、规则库和案例库消融
 bash course/30_macaron_mol_audit/run_full.sh
+
+# 独立规则、Case、知识三库的分层记忆审核 Agent
+bash course/31_hierarchical_memory_agent/run_full.sh
 ```
 
 训练产物、JitRL、KCR-JitRL、MeMo 和 CA-MeMo 完整轨迹默认写入被 Git 忽略的 `outputs/`。项目不会自动上传模型或检查点。
 
 ## 第三方内容
 
-本仓库使用 Qwen3.5、ms-swift、ModelScope、GSM8K 和复旦新闻分类数据。代码、模型与数据分别遵守各自上游项目的许可证，具体来源见 [第三方说明](THIRD_PARTY_NOTICES.md)。本仓库当前未额外声明覆盖全部内容的统一开源许可证。
+本仓库使用 Qwen3.5、ms-swift、ModelScope、GSM8K、复旦新闻分类和 BeaverTails 数据。代码、模型与数据分别遵守各自上游项目的许可证，具体来源见 [第三方说明](THIRD_PARTY_NOTICES.md)。本仓库当前未额外声明覆盖全部内容的统一开源许可证。

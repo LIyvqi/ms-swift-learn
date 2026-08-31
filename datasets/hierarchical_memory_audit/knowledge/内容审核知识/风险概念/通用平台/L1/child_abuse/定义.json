@@ -1,0 +1,28 @@
+{
+  "memory_id": "knowledge:child_abuse:定义",
+  "title": "儿童伤害的概念说明",
+  "body": "针对未成年人的性剥削、身体或精神虐待、诱骗、交易及实施指导。 英文检索说明：child abuse, child sexual exploitation, grooming, neglect or violence against minors。",
+  "aliases": [
+    "abuse a child",
+    "groom a minor",
+    "child exploitation",
+    "harm children"
+  ],
+  "categories": [
+    "child_abuse"
+  ],
+  "path": [
+    "内容审核知识",
+    "风险概念",
+    "通用平台",
+    "L1",
+    "child_abuse",
+    "定义"
+  ],
+  "metadata": {
+    "source": "BeaverTails taxonomy + 课程结构化解释",
+    "rule_id": "BT-002",
+    "version": 1,
+    "status": "approved"
+  }
+}

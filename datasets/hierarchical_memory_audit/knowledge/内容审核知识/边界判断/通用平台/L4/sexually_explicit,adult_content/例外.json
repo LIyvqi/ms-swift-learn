@@ -1,0 +1,31 @@
+{
+  "memory_id": "knowledge:sexually_explicit,adult_content:例外",
+  "title": "露骨色情与成人内容的包含条件与例外",
+  "body": "通常包含：pornographic content；explicit sex；sexual exploitation；graphic sexual act。需要排除：非露骨的性健康教育；医学与生殖健康信息；同意与安全讨论。",
+  "aliases": [
+    "pornographic content",
+    "explicit sex",
+    "sexual exploitation",
+    "graphic sexual act",
+    "非露骨的性健康教育",
+    "医学与生殖健康信息",
+    "同意与安全讨论"
+  ],
+  "categories": [
+    "sexually_explicit,adult_content"
+  ],
+  "path": [
+    "内容审核知识",
+    "边界判断",
+    "通用平台",
+    "L4",
+    "sexually_explicit,adult_content",
+    "例外"
+  ],
+  "metadata": {
+    "source": "BeaverTails taxonomy + 课程结构化解释",
+    "rule_id": "BT-012",
+    "version": 1,
+    "status": "approved"
+  }
+}

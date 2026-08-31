@@ -16,6 +16,7 @@ export HF_HOME="${_MS_SWIFT_ROOT}/.cache/huggingface"
 export TORCH_HOME="${_MS_SWIFT_ROOT}/.cache/torch"
 export TORCH_EXTENSIONS_DIR="${_MS_SWIFT_ROOT}/.cache/torch_extensions"
 export TRITON_CACHE_DIR="${_MS_SWIFT_ROOT}/.cache/triton"
+export TILELANG_CACHE_DIR="${_MS_SWIFT_ROOT}/.cache/tilelang"
 export XDG_CACHE_HOME="${_MS_SWIFT_ROOT}/.cache/xdg"
 
 # ModelScope 与阿里云模型仓库直接下载；保留平台代理供 GitHub 等站点使用。
@@ -37,6 +38,7 @@ mkdir -p \
   "${TORCH_HOME}" \
   "${TORCH_EXTENSIONS_DIR}" \
   "${TRITON_CACHE_DIR}" \
+  "${TILELANG_CACHE_DIR}" \
   "${XDG_CACHE_HOME}" \
   "${GH_CONFIG_DIR}" \
   "$(dirname -- "${GIT_CONFIG_GLOBAL}")"

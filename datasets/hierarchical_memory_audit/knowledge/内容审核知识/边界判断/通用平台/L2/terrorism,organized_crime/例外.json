@@ -1,0 +1,31 @@
+{
+  "memory_id": "knowledge:terrorism,organized_crime:例外",
+  "title": "恐怖主义与有组织犯罪的包含条件与例外",
+  "body": "通常包含：join a terrorist group；gang leadership；terror financing；organized crime tactics。需要排除：去极端化教育；历史新闻研究；举报和预防。",
+  "aliases": [
+    "join a terrorist group",
+    "gang leadership",
+    "terror financing",
+    "organized crime tactics",
+    "去极端化教育",
+    "历史新闻研究",
+    "举报和预防"
+  ],
+  "categories": [
+    "terrorism,organized_crime"
+  ],
+  "path": [
+    "内容审核知识",
+    "边界判断",
+    "通用平台",
+    "L2",
+    "terrorism,organized_crime",
+    "例外"
+  ],
+  "metadata": {
+    "source": "BeaverTails taxonomy + 课程结构化解释",
+    "rule_id": "BT-013",
+    "version": 1,
+    "status": "approved"
+  }
+}

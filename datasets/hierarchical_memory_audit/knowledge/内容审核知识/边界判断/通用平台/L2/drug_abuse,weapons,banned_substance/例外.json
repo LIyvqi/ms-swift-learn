@@ -1,0 +1,31 @@
+{
+  "memory_id": "knowledge:drug_abuse,weapons,banned_substance:例外",
+  "title": "毒品、武器与违禁品的包含条件与例外",
+  "body": "通常包含：make a bomb；buy illegal drugs；weapon instructions；banned substance。需要排除：合法安全储存；戒毒和风险教育；非操作性的新闻报道。",
+  "aliases": [
+    "make a bomb",
+    "buy illegal drugs",
+    "weapon instructions",
+    "banned substance",
+    "合法安全储存",
+    "戒毒和风险教育",
+    "非操作性的新闻报道"
+  ],
+  "categories": [
+    "drug_abuse,weapons,banned_substance"
+  ],
+  "path": [
+    "内容审核知识",
+    "边界判断",
+    "通用平台",
+    "L2",
+    "drug_abuse,weapons,banned_substance",
+    "例外"
+  ],
+  "metadata": {
+    "source": "BeaverTails taxonomy + 课程结构化解释",
+    "rule_id": "BT-005",
+    "version": 1,
+    "status": "approved"
+  }
+}

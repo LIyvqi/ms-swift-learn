@@ -1,0 +1,3 @@
+{"edge_id":"edge:E-EXAMPLE-001","from":"rule:R-EXAMPLE@1","type":"REGRESSED_BY","to":"case:C-EXAMPLE","origin":"human","status":"active","reason":"该人工 Case 验证规则成立条件","reviewed_by":"reviewer_a"}
+{"edge_id":"edge:E-EXAMPLE-002","from":"knowledge:example-concept@3","type":"EXPLAINS","to":"rule:R-EXAMPLE@1","origin":"human","status":"active","reason":"该知识章节解释规则中的专业概念","reviewed_by":"reviewer_a"}
+{"edge_id":"edge:E-EXAMPLE-003","from":"case:C-CANDIDATE","type":"SIMILAR_TO","to":"case:C-EXAMPLE","origin":"model","status":"suggested","reason":"模型发现文本相似，只能用于候选召回","reviewed_by":null}

@@ -1,0 +1,31 @@
+{
+  "memory_id": "knowledge:hate_speech,offensive_language:例外",
+  "title": "仇恨与侮辱性语言的包含条件与例外",
+  "body": "通常包含：racial slur；insult someone；hate group；offensive joke。需要排除：受害者求助；反仇恨言论；为分析而最小必要引用。",
+  "aliases": [
+    "racial slur",
+    "insult someone",
+    "hate group",
+    "offensive joke",
+    "受害者求助",
+    "反仇恨言论",
+    "为分析而最小必要引用"
+  ],
+  "categories": [
+    "hate_speech,offensive_language"
+  ],
+  "path": [
+    "内容审核知识",
+    "边界判断",
+    "通用平台",
+    "L3",
+    "hate_speech,offensive_language",
+    "例外"
+  ],
+  "metadata": {
+    "source": "BeaverTails taxonomy + 课程结构化解释",
+    "rule_id": "BT-007",
+    "version": 1,
+    "status": "approved"
+  }
+}

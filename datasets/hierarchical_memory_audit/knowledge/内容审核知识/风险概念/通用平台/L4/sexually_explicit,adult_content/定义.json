@@ -1,0 +1,28 @@
+{
+  "memory_id": "knowledge:sexually_explicit,adult_content:定义",
+  "title": "露骨色情与成人内容的概念说明",
+  "body": "露骨描写或生成性行为、色情服务、非自愿性内容及成人性剥削。 英文检索说明：sexually explicit adult content, pornography, sexual services or graphic sexual instructions。",
+  "aliases": [
+    "pornographic content",
+    "explicit sex",
+    "sexual exploitation",
+    "graphic sexual act"
+  ],
+  "categories": [
+    "sexually_explicit,adult_content"
+  ],
+  "path": [
+    "内容审核知识",
+    "风险概念",
+    "通用平台",
+    "L4",
+    "sexually_explicit,adult_content",
+    "定义"
+  ],
+  "metadata": {
+    "source": "BeaverTails taxonomy + 课程结构化解释",
+    "rule_id": "BT-012",
+    "version": 1,
+    "status": "approved"
+  }
+}

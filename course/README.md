@@ -1,6 +1,6 @@
 # Qwen3.5-0.8B 训练与蒸馏课程
 
-本目录使用同一个 `Qwen3.5-0.8B-Base`，按从监督学习到在线/离线蒸馏、人类偏好对齐和 Agent 持续学习的顺序组织。第 01 至 04 节还增加了 200 条混合模态补充线，覆盖纯文本、纯图像、图文输入以及 Direct/显式 CoT；原始文本课程仍保留。第 08 至 09 节演示 Direct-RLOO 与 CoT-RLOO；第 10 至 22 节使用统一新闻偏好数据和 1～5 分评分数据，系统比较 SFT/DFT、DPO、RM/PPO、KTO、CPO、SimPO、ORPO、GRPO/DAPO/GSPO、GKD/OPD-RL/OPSD 以及两个同名 REAL；第 23 节用 JitRL 演示不更新模型参数的推理期持续学习，第 24 节进一步研究知识支持库、历史案例库和规则库协同修正 logits，第 25 节实现可训练的检索、反思、规则组合和执行多轮智能体，第 26 节把私有审核规则训练进独立 Memory，第 27 节再加入外部校准、主动搜索、共形集合、独立验证和低置信拒答，第 28 节用 RLCR 训练分类策略联合生成类别与置信度，第 29 节训练参数独立的 Qwen Reward/Verifier，第 30 节复现 Macaron-V1 风格的路由与多 LoRA 内容审核，并结合版本化规则库、案例库及 Top-2 多标签扩展。
+本目录使用同一个 `Qwen3.5-0.8B-Base`，按从监督学习到在线/离线蒸馏、人类偏好对齐和 Agent 持续学习的顺序组织。第 01 至 04 节还增加了 200 条混合模态补充线，覆盖纯文本、纯图像、图文输入以及 Direct/显式 CoT；原始文本课程仍保留。第 08 至 09 节演示 Direct-RLOO 与 CoT-RLOO；第 10 至 22 节使用统一新闻偏好数据和 1～5 分评分数据，系统比较 SFT/DFT、DPO、RM/PPO、KTO、CPO、SimPO、ORPO、GRPO/DAPO/GSPO、GKD/OPD-RL/OPSD 以及两个同名 REAL；第 23 节用 JitRL 演示不更新模型参数的推理期持续学习，第 24 节进一步研究知识支持库、历史案例库和规则库协同修正 logits，第 25 节实现可训练的检索、反思、规则组合和执行多轮智能体，第 26 节把私有审核规则训练进独立 Memory，第 27 节再加入外部校准、主动搜索、共形集合、独立验证和低置信拒答，第 28 节用 RLCR 训练分类策略联合生成类别与置信度，第 29 节训练参数独立的 Qwen Reward/Verifier，第 30 节复现 Macaron-V1 风格的路由与多 LoRA 内容审核，第 31 节进一步把规则、Case 和知识保留为独立深层库，只训练一个会定位、检索和决策的 Agent。
 
 所有实验已经进一步完成 100 步实测，定量结果、稳定性问题和调参建议见 [RESULTS_100_STEPS.md](RESULTS_100_STEPS.md)。多轮、学习率、散度参数、batch 与统一生成评测的最终对照见 [TUNING_RESULTS.md](TUNING_RESULTS.md)。第 01～04 课的三模态正式训练、容量实验和固定验证集结果单独记录在 [多模态正式实验结果](MULTIMODAL_RESULTS.md)。第 01～03 课与官方 Qwen3/Qwen3.5 教程的参数、数据模板和 Direct/Thinking 推理口径对照见 [双思考模式最佳实践](QWEN3_BEST_PRACTICE.md)。
 
@@ -41,6 +41,7 @@
 | `28_rlcr_confidence` | [RLCR 分类置信度强化学习](28_rlcr_confidence/README.md)；[实测结果](28_rlcr_confidence/RESULTS.md) |
 | `29_independent_confidence_verifier` | [独立 Qwen 置信度 Verifier](29_independent_confidence_verifier/README.md)；[实测结果](29_independent_confidence_verifier/RESULTS.md) |
 | `30_macaron_mol_audit` | [Macaron-V1 风格多 LoRA 内容审核](30_macaron_mol_audit/README.md)；[实测结果](30_macaron_mol_audit/RESULTS.md) |
+| `31_hierarchical_memory_agent` | [独立多源分层记忆审核 Agent](31_hierarchical_memory_agent/README.md)；[实测结果](31_hierarchical_memory_agent/RESULTS.md) |
 | `plugins` | [奖励插件与自定义奖励](plugins/README.md) |
 | `tools` | [数据生成与资产校验](tools/README.md) |
 
@@ -272,6 +273,22 @@ bash course/29_independent_confidence_verifier/run_full.sh
 [独立 Verifier 教程](29_independent_confidence_verifier/README.md) 与
 [实测报告](29_independent_confidence_verifier/RESULTS.md)。
 
+### 18. Macaron 风格多 LoRA 内容审核
+
+```bash
+bash course/30_macaron_mol_audit/run_full.sh
+```
+
+第 30 节使用 14 类 BeaverTails 数据学习多个 LoRA 专家、回合级路由和 Top-2 多标签扩展，同时加入版本化规则库和案例库消融。它适合学习多头专家，但库检索仍是相对扁平的辅助输入，详见 [Macaron 教程](30_macaron_mol_audit/README.md) 与 [实测报告](30_macaron_mol_audit/RESULTS.md)。
+
+### 19. 独立多源分层记忆审核 Agent
+
+```bash
+bash course/31_hierarchical_memory_agent/run_full.sh
+```
+
+第 31 节不再把规则、Case 和知识假设成同一个库，而是用源注册表连接 JSONL、SQLite 和目录文档三个独立深层后端。一个 Qwen Agent 学习 `locate → search → finish` 或直接结束，先做完整轨迹 SFT，再用逐状态 `last_round` SFT 对齐真实多轮推理，最后通过 GYM-GRPO 优化来源选择、引用落地和工具效率。课程还借鉴 WikiSkill 的经验沉淀组织方式，但 Experience Wiki 不是 Skill，详见 [课程说明](31_hierarchical_memory_agent/README.md) 与 [实测报告](31_hierarchical_memory_agent/RESULTS.md)。
+
 ## 先跑完整冒烟测试链路
 
 ```bash
@@ -290,6 +307,9 @@ SMOKE=1 bash course/08_rloo_classification/train_rloo.sh
 SMOKE=1 bash course/09_rloo_cot_classification/train_rloo.sh
 SMOKE=1 bash course/25_agent_r1_news/train_sft.sh
 SMOKE=1 bash course/25_agent_r1_news/train_grpo.sh
+SMOKE=1 bash course/31_hierarchical_memory_agent/train_sft.sh
+SMOKE=1 bash course/31_hierarchical_memory_agent/train_state_sft.sh
+SMOKE=1 bash course/31_hierarchical_memory_agent/train_grpo.sh
 ```
 
 冒烟测试输出带 `_smoke` 后缀，不会被正式实验误用。正式实验不设置 `SMOKE`，脚本会自动寻找同一模式下最近的前置检查点。
@@ -322,6 +342,7 @@ find outputs -name logging.jsonl -print
 - GKD：distillation loss、SFT loss、CoT/direct 两种风格的格式保持率。
 - JitRL：总体/前 10 局/后 10 局成功率、经验邻居数、参数不变量。
 - Agent-R1：Recall@K、反思最佳增益/成功率、组合 F1、决策 macro-F1、证据覆盖、显式思考覆盖率、无效动作率和平均轮数。
+- 分层记忆 Agent：目录 Recall@K、候选子树占比、来源选择、无效动作率、多标签 F1、记忆引用落地和平均工具调用数。
 
 ## 参数实验顺序
 

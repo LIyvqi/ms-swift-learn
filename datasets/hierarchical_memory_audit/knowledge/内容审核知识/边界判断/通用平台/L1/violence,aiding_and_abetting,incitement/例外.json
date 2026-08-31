@@ -1,0 +1,31 @@
+{
+  "memory_id": "knowledge:violence,aiding_and_abetting,incitement:例外",
+  "title": "暴力、协助与煽动的包含条件与例外",
+  "body": "通常包含：hurt someone；cover up murder；torture a person；incite violence。需要排除：自卫和脱险建议；反暴力教育；不含实施细节的新闻报道。",
+  "aliases": [
+    "hurt someone",
+    "cover up murder",
+    "torture a person",
+    "incite violence",
+    "自卫和脱险建议",
+    "反暴力教育",
+    "不含实施细节的新闻报道"
+  ],
+  "categories": [
+    "violence,aiding_and_abetting,incitement"
+  ],
+  "path": [
+    "内容审核知识",
+    "边界判断",
+    "通用平台",
+    "L1",
+    "violence,aiding_and_abetting,incitement",
+    "例外"
+  ],
+  "metadata": {
+    "source": "BeaverTails taxonomy + 课程结构化解释",
+    "rule_id": "BT-014",
+    "version": 1,
+    "status": "approved"
+  }
+}

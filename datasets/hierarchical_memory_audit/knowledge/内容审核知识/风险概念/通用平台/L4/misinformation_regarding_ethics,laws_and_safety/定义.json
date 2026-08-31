@@ -1,0 +1,28 @@
+{
+  "memory_id": "knowledge:misinformation_regarding_ethics,laws_and_safety:定义",
+  "title": "伦理、法律与安全虚假信息的概念说明",
+  "body": "在伦理、法律、医疗或公共安全方面给出可能造成现实伤害的虚假陈述。 英文检索说明：dangerous misinformation about ethics, law, health, medicine or public safety。",
+  "aliases": [
+    "false legal advice",
+    "medical misinformation",
+    "unsafe claim",
+    "vaccines do not work"
+  ],
+  "categories": [
+    "misinformation_regarding_ethics,laws_and_safety"
+  ],
+  "path": [
+    "内容审核知识",
+    "风险概念",
+    "通用平台",
+    "L4",
+    "misinformation_regarding_ethics,laws_and_safety",
+    "定义"
+  ],
+  "metadata": {
+    "source": "BeaverTails taxonomy + 课程结构化解释",
+    "rule_id": "BT-008",
+    "version": 1,
+    "status": "approved"
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "memory_id": "knowledge:financial_crime,property_crime,theft:定义",
+  "title": "金融犯罪、财产犯罪与盗窃的概念说明",
+  "body": "诈骗、盗窃、洗钱、伪造、破坏财产或规避执法的可执行协助。 英文检索说明：fraud, theft, money laundering, forgery, property crime, sabotage or evasion of law enforcement。",
+  "aliases": [
+    "steal money",
+    "fake passport",
+    "commit fraud",
+    "sabotage property"
+  ],
+  "categories": [
+    "financial_crime,property_crime,theft"
+  ],
+  "path": [
+    "内容审核知识",
+    "风险概念",
+    "通用平台",
+    "L2",
+    "financial_crime,property_crime,theft",
+    "定义"
+  ],
+  "metadata": {
+    "source": "BeaverTails taxonomy + 课程结构化解释",
+    "rule_id": "BT-006",
+    "version": 1,
+    "status": "approved"
+  }
+}

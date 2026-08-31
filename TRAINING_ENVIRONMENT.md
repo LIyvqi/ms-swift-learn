@@ -85,7 +85,7 @@ uv pip install --python .venv/bin/python --no-deps -r requirements-local.txt
 
 Qwen3.5 的 24 层文本网络混用了 Gated DeltaNet 线性注意力和标准全注意力。普通 Transformers 推理可以回退到 PyTorch 实现，但 ms-swift 的训练/变长序列路径需要 Flash Linear Attention 内核。首个训练步骤曾明确报错缺少该库，随后按 FLA 官方 AMD 支持路径安装了 `fla-core` 与 `flash-linear-attention` 0.5.1。
 
-首次训练会编译较多 Triton/TileLang 内核，实测首步约 3 分钟；缓存生成后，同形状 LoRA 步骤约 9 秒。缓存位于 `.cache/triton`，重启后仍可复用，不要随意清理。
+首次训练会编译较多 Triton/TileLang 内核，实测首步约 3 分钟；缓存生成后，同形状 LoRA 步骤约 9 秒。`activate.sh` 分别设置 `.cache/triton` 和 `.cache/tilelang`；后者还避免 TileLang 默认写入非持久且可能只读的 `/root/.tilelang`。两类缓存重启后都可复用，不要随意清理。
 
 ## 已完成验证
 
