@@ -1,6 +1,6 @@
 # ms-swift-learn
 
-这是一个围绕 `Qwen3.5-0.8B-Base` 和 ms-swift 4.4.3 源码环境编写的大模型训练学习仓库。项目使用固定的 GSM8K、CMMU 多模态子集、复旦新闻与 BeaverTails 教学数据，覆盖 LoRA/全参 SFT、DFT、DPO、RM/PPO、KTO、CPO、SimPO、ORPO、GRPO/RLOO/DAPO/GSPO、自定义奖励、GKD、OPD/MOPD/OPSD、Regression-Aware REAL，以及无需梯度更新的 JitRL Agent 持续学习、KCR-JitRL 三库协同、Agent-R1 风格多轮规则智能体、MeMo 参数化规则记忆、CA-MeMo 置信度校准/主动验证、RLCR 自报置信度强化学习、独立 Qwen Verifier、Macaron-V1 风格多 LoRA 内容审核、独立多源分层记忆审核 Agent 和 RiT 思维量规强化学习。第 01～04 课同时提供纯文本、纯图像、图文混合以及 Direct/显式 CoT 训练链路。所有新增课程、脚本注释和笔记都使用中文。
+这是一个围绕 `Qwen3.5-0.8B-Base` 和 ms-swift 4.4.3 源码环境编写的大模型训练学习仓库。项目使用固定的 GSM8K、CMMU 多模态子集、复旦新闻与 BeaverTails 教学数据，覆盖 LoRA/全参 SFT、DFT、DPO、RM/PPO、KTO、CPO、SimPO、ORPO、GRPO/RLOO/DAPO/GSPO、自定义奖励、GKD、OPD/MOPD/OPSD、Regression-Aware REAL，以及无需梯度更新的 JitRL Agent 持续学习、KCR-JitRL 三库协同、Agent-R1 风格多轮规则智能体、MeMo 参数化规则记忆、CA-MeMo 置信度校准/主动验证、RLCR 自报置信度强化学习、独立 Qwen Verifier、Macaron-V1 风格多 LoRA 内容审核、独立多源分层记忆审核 Agent 和 RiT 思维量规强化学习。第 32 课还包含一个不开自由 think、能调用独立规则/Case 库的 RiT 审核 Agent。第 01～04 课同时提供纯文本、纯图像、图文混合以及 Direct/显式 CoT 训练链路。所有新增课程、脚本注释和笔记都使用中文。
 
 ## 已完成实验
 
@@ -24,8 +24,9 @@
 | Macaron 多 LoRA + RAG | 14 类内容审核、版本规则和案例库 | 单体 Micro-F1 **70.24%**；Top-2 **63.64%** |
 | RiT 思维量规 GRPO | 结果奖励、过程 rubric 与硬门控 | SFT **57%**；ORM **57%**；本地 RiT **56%**（未提升） |
 | 短结构化审核 | 关闭自由 think，保留证据/规则/边界字段 | Exact **55%**；输出缩短 **31.19%**；吞吐提高 **59.58%** |
+| RiT 两库审核 Agent | 多轮规则/Case 检索与无自由 think 决策 | SFT Safety **60%**、Micro-F1 **52.08%**；30-step RL 出现 SAFE 塌缩 |
 
-前面的数学与蒸馏结果来自固定 100 条验证题；MeMo 结果来自 120 条独立新闻审核案例；CA-MeMo 结果来自严格分离的 72 条校准案例和 72 条困难测试案例；Macaron 课程使用 200 条清洁测试和 100 条成对表面扰动挑战；RiT 使用 200 条独立多标签审核测试。各项均为温度 0 的实际生成，完整参数、轮次、格式率和长度对照见 [多轮调参报告](course/TUNING_RESULTS.md)、[MeMo 实测报告](course/26_memo_rule_memory/RESULTS.md)、[CA-MeMo 实测报告](course/27_calibrated_adaptive_memo/RESULTS.md)、[Macaron 实测报告](course/30_macaron_mol_audit/RESULTS.md) 与 [RiT 实测报告](course/32_rit_rubric_rl/RESULTS.md)。
+前面的数学与蒸馏结果来自固定 100 条验证题；MeMo 结果来自 120 条独立新闻审核案例；CA-MeMo 结果来自严格分离的 72 条校准案例和 72 条困难测试案例；Macaron 课程使用 200 条清洁测试和 100 条成对表面扰动挑战；RiT 与两库 Agent 使用 200 条独立多标签审核测试。各项均为温度 0 的实际生成，完整参数、轮次、格式率和长度对照见 [多轮调参报告](course/TUNING_RESULTS.md)、[MeMo 实测报告](course/26_memo_rule_memory/RESULTS.md)、[CA-MeMo 实测报告](course/27_calibrated_adaptive_memo/RESULTS.md)、[Macaron 实测报告](course/30_macaron_mol_audit/RESULTS.md)、[RiT 实测报告](course/32_rit_rubric_rl/RESULTS.md) 与 [RiT Agent 实测报告](course/32_rit_rubric_rl/AGENT_RESULTS.md)。
 
 新闻分类 SFT/RLOO 的 Direct 结果与 CoT-RLOO 使用不同输出要求；97.50% 是 320 条独立新闻上的显式 CoT 分类结果，不应只按数值与 99.06% 的 Direct 短答案结果判断优劣。
 
@@ -38,7 +39,7 @@ ms-swift-learn/
 ├── course/                     # 按学习顺序组织的训练课程与中文笔记
 │   ├── 30_macaron_mol_audit/data/ # 2000 条多标签审核数据、规则库和案例库
 │   ├── 31_hierarchical_memory_agent/ # 独立三库、分层检索、SFT/GRPO 和经验 Wiki
-│   └── 32_rit_rubric_rl/      # 思维量规 GRPO、硬门控和短结构审核
+│   └── 32_rit_rubric_rl/      # 思维量规、短结构审核和多轮检索 Agent
 ├── datasets/gsm8k_1k/         # 固定 1000 条教学数据和 SHA-256 校验值
 ├── datasets/multimodal_200/   # 固定 200 条文本/图片/图文混合教学数据
 ├── datasets/fudan_news_4class/ # 固定 1600 条四分类数据和校验值
@@ -51,6 +52,7 @@ ms-swift-learn/
 ├── datasets/confidence_news/ # RLCR、独立 Verifier、ID 校准与真实 OOD 数据
 ├── datasets/hierarchical_memory_audit/ # 多源分层审核轨迹、规则与目录知识
 ├── datasets/rit_audit/          # 显式思维与短结构化 RiT 数据视图
+├── datasets/rit_audit_agent/    # 独立规则/Case、专家多轮轨迹和 GYM 数据
 ├── results/evaluations/       # 33 组逐题生成评测
 ├── results/figures/           # 精选训练曲线
 ├── results/jitrl/             # JitRL 精选实验摘要
@@ -209,6 +211,9 @@ bash course/31_hierarchical_memory_agent/run_full.sh
 
 # RiT 思维量规 GRPO 与短结构化审核消融
 bash course/32_rit_rubric_rl/run_full.sh
+
+# 无自由思维链的 RiT 规则/Case 审核 Agent
+AGENT_RL_STEPS=30 bash course/32_rit_rubric_rl/run_agent.sh
 ```
 
 训练产物、JitRL、KCR-JitRL、MeMo 和 CA-MeMo 完整轨迹默认写入被 Git 忽略的 `outputs/`。项目不会自动上传模型或检查点。

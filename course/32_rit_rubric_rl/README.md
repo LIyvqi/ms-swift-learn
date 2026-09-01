@@ -7,10 +7,11 @@
 - 论文：[RiT: Rubrics-in-Thinking Reinforcement Learning for Improved Reasoning in LLMs](https://aclanthology.org/2026.findings-acl.192/)
 - 实现：[Qwen-Applications/RiT](https://github.com/Qwen-Applications/RiT)
 
-本课有两条明确分开的路线：
+本课有三条明确分开的路线：
 
 1. **论文式 RiT 主线**：输出显式 `<think>`，比较只看结果的 ORM-GRPO 与 thinking-rubric-GRPO。
 2. **短结构化消融**：设置 `enable_thinking=false`，不输出自由思维链，把证据、命中规则和边界核对压缩为公开字段。这是面向审核业务的实用扩展，不是论文的等价复现。
+3. **多轮审核 Agent**：模型按需调用独立规则库和案例库，再用 RiT 约束动作、证据、引用和短链效率。数据格式、制作方法、训练脚本和 ms-swift 扩展点见 [Agent 专题](AGENT.md)，实际结果见 [Agent 实验结果](AGENT_RESULTS.md)。
 
 ## 1. RiT 到底改变了什么
 
@@ -188,6 +189,7 @@ python course/32_rit_rubric_rl/prepare_data.py
 | 论文的 `min` 硬门控与消融 | 否 | `融合奖励()` |
 | 提示注入隔离 | 否 | 角色标记破坏与 HTML 转义 |
 | 保留集推理质量、长度和逐 rubric 评测 | 否 | 两个 `evaluate_*_model.py` |
+| 多轮工具环境与调度 | 有扩展接口 | 注册 GYM 环境、调度器和三路 Agent 奖励 |
 
 插件必须显式传给 ms-swift：
 
@@ -215,6 +217,13 @@ python course/32_rit_rubric_rl/prepare_data.py
 | `evaluate_model.py` | 显式思维真实生成和逐 rubric 评测 |
 | `evaluate_structured_model.py` | 短结构化真实生成、长度和字段评测 |
 | `test_rit.py` | 解析、奖励、注入隔离、数据隔离单元测试 |
+| `prepare_agent_data.py` | 生成独立规则/Case 快照、专家多轮 SFT 和 GYM-GRPO 数据 |
+| `train_agent_sft.sh` | 无自由 think 的多轮动作暖启动 |
+| `train_agent_orm.sh` | 只优化最终精确答案的 Agent-GRPO 对照 |
+| `train_agent_rit.sh` | 六项行为量规与结果硬门控的 Agent-RiT |
+| `evaluate_agent.py` | 真实逐轮调用两库，并支持关闭记忆的消融评测 |
+| `summarize_agent_results.py` | 从完整测试轨迹生成四组 Markdown 对照表 |
+| `run_agent.sh` | 八阶段训练、对照、消融和评测编排，可断点续跑 |
 
 ## 9. 推荐运行顺序
 
@@ -250,6 +259,12 @@ RL_STEPS=30 bash course/32_rit_rubric_rl/train_rit.sh
 bash course/32_rit_rubric_rl/train_structured_sft.sh
 RL_STEPS=30 bash course/32_rit_rubric_rl/train_structured_orm.sh
 RL_STEPS=30 bash course/32_rit_rubric_rl/train_structured_rit.sh
+```
+
+多轮安全审核 Agent：
+
+```bash
+AGENT_RL_STEPS=30 bash course/32_rit_rubric_rl/run_agent.sh
 ```
 
 脚本自动寻找对应 SFT 目录的最新 `checkpoint-*`。如需固定起点，显式设置：
@@ -337,3 +352,9 @@ Qwen3.5 的非思考模板仍可能在响应最前面放一个空的 `<think>\n\
 - **短结构字段等于思维链**：不等于。它是可审计的决策依据，不代表完整内部推理过程。
 
 真实训练时间、显存、保留集指标、失败输出和结论见 [RESULTS.md](RESULTS.md)。
+
+## 14. 从短字段到可训练 Agent
+
+静态 `<audit>` 消融证明了“不开自由 think、改用补充分析字段”在格式上可行，但它不能自己获取外部依据。Agent 扩展把同一思想变成动态流程：模型先输出 `search_rule` 或 `search_case`，读取真实工具观察后再 `finish`；最终字段增加版本化 `rule_ids` 和 `case_ids`，环境会拒绝虚构引用。
+
+这条路线使用 14 条独立规则、141 条 train-only 已确认 Case、1600 条专家多轮轨迹和独立 200 条 test。规则与 Case 如何维护、四种 JSONL schema、专家轨迹如何回放、ms-swift 原生能力与必须自定义的环境接口，集中写在 [无自由思维链的 RiT 安全审核 Agent](AGENT.md)。

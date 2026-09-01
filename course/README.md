@@ -42,6 +42,7 @@
 | `29_independent_confidence_verifier` | [独立 Qwen 置信度 Verifier](29_independent_confidence_verifier/README.md)；[实测结果](29_independent_confidence_verifier/RESULTS.md) |
 | `30_macaron_mol_audit` | [Macaron-V1 风格多 LoRA 内容审核](30_macaron_mol_audit/README.md)；[实测结果](30_macaron_mol_audit/RESULTS.md) |
 | `31_hierarchical_memory_agent` | [独立多源分层记忆审核 Agent](31_hierarchical_memory_agent/README.md)；[实测结果](31_hierarchical_memory_agent/RESULTS.md) |
+| `32_rit_rubric_rl` | [RiT 思维量规与短结构审核](32_rit_rubric_rl/README.md)；[无自由思维链审核 Agent](32_rit_rubric_rl/AGENT.md)；[RiT 结果](32_rit_rubric_rl/RESULTS.md)；[Agent 结果](32_rit_rubric_rl/AGENT_RESULTS.md) |
 | `plugins` | [奖励插件与自定义奖励](plugins/README.md) |
 | `tools` | [数据生成与资产校验](tools/README.md) |
 
@@ -296,6 +297,8 @@ bash course/32_rit_rubric_rl/run_full.sh
 ```
 
 第 32 节使用本地 BeaverTails 1600 条 train，把普通结果奖励 GRPO 与 RiT 的六项 thinking rubric + `min` 硬门控放在同一 SFT 起点对照，并额外实现 `enable_thinking=false` 的证据、规则、边界五字段路线。真实实验中本地模板 RiT 从 57% 降到 56%，没有产生增益；短结构路线达到 55%，但输出缩短 31.19%、吞吐提高 59.58%。失败原因、数据通用格式、API 独立评审和 ms-swift 额外插件见 [RiT 教程](32_rit_rubric_rl/README.md) 与 [实测报告](32_rit_rubric_rl/RESULTS.md)。
+
+同课的 Agent 扩展不输出自由 `<think>`，而是让 0.8B 策略按需调用独立规则库和 Case 库，最终提交证据、规则、边界和来源 ID。它用 ms-swift GYM-GRPO 对比结果奖励与 RiT 行为量规。SFT + 两库在 200 条隔离测试上达到 60% 安全准确率和 52.08% Micro-F1；两条 30-step GRPO 都塌缩为约 95% 的 SAFE 预测，不能作为更优模型。完整四类数据格式、制作方法和框架扩展点见 [Agent 专题](32_rit_rubric_rl/AGENT.md)，负结果分析见 [Agent 实测报告](32_rit_rubric_rl/AGENT_RESULTS.md)。
 
 ## 先跑完整冒烟测试链路
 

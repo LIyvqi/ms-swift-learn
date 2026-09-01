@@ -135,6 +135,18 @@ orms["course_custom_reward"] = 自定义奖励
 
 API 裁判不是默认依赖。只有显式选择 `course_rit_api_gated` 时，插件才读取 `RIT_JUDGE_API_BASE`、`RIT_JUDGE_API_KEY` 和 `RIT_JUDGE_MODEL`；密钥只应通过当前进程环境变量传入，不能写进脚本、数据或 Git。完整数据格式、奖励公式、数据制作流程和真实对照实验见 [第 32 课](../32_rit_rubric_rl/README.md)。
 
+## RiT 安全审核 Agent 环境
+
+`rit_audit_agent.py` 是第 32 课的无自由思维链多轮扩展，同时注册：
+
+- `course_rit_audit_agent`：执行 `search_rule`、`search_case`、`finish`，并校验证据和引用。
+- `course_rit_audit_agent_scheduler`：把真实工具观察注入下一轮，并将终态量规写进 `rollout_infos`。
+- `course_rit_agent_response`：SAFE/UNSAFE 与完整多标签精确结果分。
+- `course_rit_agent_process`：动作、证据、规则、案例、边界和短链效率六项均分。
+- `course_rit_agent_gated`：`min(过程分, 结果分)` 的 RiT 门控分。
+
+ms-swift 会自动把 GYM 环境累计分追加为第四路 reward，所以三路自定义 ORM 必须提供四个权重。ORM 对照为 `1 0 0 0`，RiT 主实验为 `0 0 1 0`。数据 schema、两个独立库和完整训练链路见 [Agent 专题](../32_rit_rubric_rl/AGENT.md)。
+
 ## 注意事项
 
 - 奖励函数返回列表长度必须和 `completions` 一致。

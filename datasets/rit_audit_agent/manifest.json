@@ -1,0 +1,42 @@
+{
+  "schema_version": 1,
+  "course": "极简 RiT 安全审核 Agent",
+  "source_split_sizes": {
+    "train": 1600,
+    "validation": 200,
+    "test": 200
+  },
+  "rule_count": 14,
+  "case_count": 141,
+  "base_case_count": 141,
+  "human_case_count": 0,
+  "case_source_split": "train_and_optional_independent_human",
+  "generated_rows": {
+    "sft_train.jsonl": 1600,
+    "sft_validation.jsonl": 200,
+    "sft_smoke.jsonl": 32,
+    "rl_train.jsonl": 1600,
+    "rl_validation.jsonl": 200,
+    "rl_test.jsonl": 200,
+    "rl_smoke.jsonl": 32
+  },
+  "train_route_counts": {
+    "finish": 19,
+    "search_case → finish": 695,
+    "search_rule → finish": 400,
+    "search_rule → search_case → finish": 486
+  },
+  "checksums": {
+    "rules.jsonl": "991ecb165c0167daeabc7d177c2750d1c155efca27c77a023151a843550412f3",
+    "cases.jsonl": "bef30dde792b7172821b6316285da1f9dbf17e7cf4dc0e738098ec97a39fd13e",
+    "rl_smoke.jsonl": "32ca3c7d595a232cc157d9ef194ebc869d576a3623f9efb064b9342920e667b8",
+    "rl_test.jsonl": "4a6152d908f815416f8ecf4d0c0fbf9781c566b5ef9c933741e27e439fbb1ecb",
+    "rl_train.jsonl": "ab47dbd77d02deafe6a4e35a324149da43fe0b28a5acbccc9d77b8be81ca0d72",
+    "rl_validation.jsonl": "f624619965588d5b5e8b265b2065e514fce25962e8efc6bb8d1120bdcd9ca2ec",
+    "sft_smoke.jsonl": "a148fcd259475ca1c4bfc34d8f5355f46df4a4f08eeea0e17c59656c3163452a",
+    "sft_train.jsonl": "8cf73a7f5f465e8c646865754b8c907ccd267c38cc7aba4dee0f0b25f0169e37",
+    "sft_validation.jsonl": "b387eedfccfae6ffc46c4f634f357c16cd1c6a5660dc9612d57fa6165e06e31e",
+    "README.md": "00b47ffddef9eb189f2f5501aa7f52ef7d5b5d2efbd4ab2a8450835eb4b7c818"
+  },
+  "leakage_guard": "validation/test 不进入规则库、案例库或训练；训练 Case 检索还会排除当前 record_id"
+}
