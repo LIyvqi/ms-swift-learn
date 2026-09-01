@@ -1,6 +1,6 @@
 # 奖励插件说明
 
-本目录存放 ms-swift 可动态加载的自定义奖励和环境。`gsm8k_rewards.py` 同时提供数学答案、严格显式 CoT、可执行计算代理和异步大模型裁判；`classification_rewards.py` 用于中文四分类正确性与严格短格式；`cot_classification_rewards.py` 进一步奖励分类 CoT 的证据覆盖和结论一致性；`agent_r1_news.py` 注册新闻规则 GYM 环境、多轮调度器和五个分层奖励。
+本目录存放 ms-swift 可动态加载的自定义奖励和环境。`gsm8k_rewards.py` 同时提供数学答案、严格显式 CoT、可执行计算代理和异步大模型裁判；`classification_rewards.py` 用于中文四分类正确性与严格短格式；`cot_classification_rewards.py` 进一步奖励分类 CoT 的证据覆盖和结论一致性；`agent_r1_news.py` 注册新闻规则 GYM 环境、多轮调度器和五个分层奖励；`rit_audit_rewards.py` 则实现内容审核场景的 RiT 双层量规奖励，以及不输出自由思维链的结构化审核奖励。
 
 ## 数据格式与参数传递
 
@@ -112,6 +112,28 @@ orms["course_custom_reward"] = 自定义奖励
 - `course_agent_news_retrieval`、`composition`、`decision`、`protocol`、`reflection`：按顶层 `task` 分流的多任务奖励。
 
 训练时 `--use_gym_env true` 会把 `rollout_infos.total_reward` 再追加为一路奖励，因此五个插件奖励对应六个 `reward_weights`。不适用于当前任务的奖励返回 `None`，不能返回 0。完整环境配置和通用数据格式见 [第 25 课](../25_agent_r1_news/README.md)。
+
+## RiT 内容审核奖励
+
+`rit_audit_rewards.py` 注册两组奖励。显式思维链路线要求回答同时含有 `<think>...</think>` 和 `<answer>{...}</answer>`；结构化路线允许 Qwen 非思考模式自动产生的空 `<think>\n\n</think>` 前缀，但禁止非空自由思维链，并要求最终回答只保留可审计字段。
+
+| 注册名 | 用途 | 主要顶层字段 |
+|---|---|---|
+| `course_rit_outcome` | 标签和安全结论的严格结果奖励 | `reference` |
+| `course_rit_thinking` | 六项二元思考量规的均值 | `reference`、`rubrics` |
+| `course_rit_gated` | 论文式融合后再由结果奖励设上限 | `reference`、`rubrics` |
+| `course_rit_api_gated` | 用 OpenAI 兼容 API 判定思考量规，再做门控融合 | `reference`、`rubrics` |
+| `course_rit_structured_outcome` | 结构化输出的标签和安全结论奖励 | `reference` |
+| `course_rit_structured_gated` | 对五个结构化分析字段评分，并由结果奖励门控 | `reference`、`rubrics` |
+
+显式路线的本地训练命令如下。`course_rit_gated` 已包含结果与过程融合，因此不要再同时叠加 `course_rit_outcome`，否则会重复放大结果信号。
+
+```text
+--external_plugins course/plugins/rit_audit_rewards.py
+--reward_funcs course_rit_gated
+```
+
+API 裁判不是默认依赖。只有显式选择 `course_rit_api_gated` 时，插件才读取 `RIT_JUDGE_API_BASE`、`RIT_JUDGE_API_KEY` 和 `RIT_JUDGE_MODEL`；密钥只应通过当前进程环境变量传入，不能写进脚本、数据或 Git。完整数据格式、奖励公式、数据制作流程和真实对照实验见 [第 32 课](../32_rit_rubric_rl/README.md)。
 
 ## 注意事项
 

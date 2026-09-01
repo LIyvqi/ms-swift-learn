@@ -19,6 +19,7 @@
 | ConfidNet 论文 | <https://proceedings.neurips.cc/paper/2019/hash/757f843a169cc678064d9530d12a1881-Abstract.html> | 第 29 节 failure prediction 与 True Class Probability 思想参考 |
 | Training Verifiers 论文 | <https://arxiv.org/abs/2110.14168> | 第 29 节独立候选正确性 Verifier 设计参考 |
 | Macaron-V1 论文与 Harness | <https://github.com/MindLab-Research/Mixture-of-LoRA-Harness> | 第 30 节冻结 Base、回合级 LoRA 路由和新增专家设计参考；官方源码未复制到本仓库 |
-| BeaverTails | <https://huggingface.co/datasets/PKU-Alignment/BeaverTails> | 第 30、31 节 2000 条多标签内容审核教学样本；数据页标注 CC BY-NC 4.0 |
+| RiT 论文与官方实现 | <https://github.com/Qwen-Applications/RiT> | 第 32 节 thinking rubrics、融合奖励、最小值硬门控和 GRPO 对照设计参考；官方源码未复制到本仓库 |
+| BeaverTails | <https://huggingface.co/datasets/PKU-Alignment/BeaverTails> | 第 30～32 节 2000 条多标签内容审核教学样本；数据页标注 CC BY-NC 4.0 |
 
 提交、再分发或商用模型与数据前，应分别查看对应上游页面中的最新许可证和使用条款。本仓库中的训练结果不改变上游内容的许可证归属。

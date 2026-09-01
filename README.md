@@ -1,6 +1,6 @@
 # ms-swift-learn
 
-这是一个围绕 `Qwen3.5-0.8B-Base` 和 ms-swift 4.4.3 源码环境编写的大模型训练学习仓库。项目使用固定的 GSM8K、CMMU 多模态子集、复旦新闻与 BeaverTails 教学数据，覆盖 LoRA/全参 SFT、DFT、DPO、RM/PPO、KTO、CPO、SimPO、ORPO、GRPO/RLOO/DAPO/GSPO、自定义奖励、GKD、OPD/MOPD/OPSD、Regression-Aware REAL，以及无需梯度更新的 JitRL Agent 持续学习、KCR-JitRL 三库协同、Agent-R1 风格多轮规则智能体、MeMo 参数化规则记忆、CA-MeMo 置信度校准/主动验证、RLCR 自报置信度强化学习、独立 Qwen Verifier、Macaron-V1 风格多 LoRA 内容审核和独立多源分层记忆审核 Agent。第 01～04 课同时提供纯文本、纯图像、图文混合以及 Direct/显式 CoT 训练链路。所有新增课程、脚本注释和笔记都使用中文。
+这是一个围绕 `Qwen3.5-0.8B-Base` 和 ms-swift 4.4.3 源码环境编写的大模型训练学习仓库。项目使用固定的 GSM8K、CMMU 多模态子集、复旦新闻与 BeaverTails 教学数据，覆盖 LoRA/全参 SFT、DFT、DPO、RM/PPO、KTO、CPO、SimPO、ORPO、GRPO/RLOO/DAPO/GSPO、自定义奖励、GKD、OPD/MOPD/OPSD、Regression-Aware REAL，以及无需梯度更新的 JitRL Agent 持续学习、KCR-JitRL 三库协同、Agent-R1 风格多轮规则智能体、MeMo 参数化规则记忆、CA-MeMo 置信度校准/主动验证、RLCR 自报置信度强化学习、独立 Qwen Verifier、Macaron-V1 风格多 LoRA 内容审核、独立多源分层记忆审核 Agent 和 RiT 思维量规强化学习。第 01～04 课同时提供纯文本、纯图像、图文混合以及 Direct/显式 CoT 训练链路。所有新增课程、脚本注释和笔记都使用中文。
 
 ## 已完成实验
 
@@ -22,8 +22,10 @@
 | Brier-RLCR | 正确性 + proper scoring rule 联合训练 | Accuracy **98.13%**；Brier **0.0250** |
 | 独立 Qwen Verifier | 全参数 RM 估计候选正确概率 | 对错 AUROC **93.63%**；OOD 检出 **99%** |
 | Macaron 多 LoRA + RAG | 14 类内容审核、版本规则和案例库 | 单体 Micro-F1 **70.24%**；Top-2 **63.64%** |
+| RiT 思维量规 GRPO | 结果奖励、过程 rubric 与硬门控 | SFT **57%**；ORM **57%**；本地 RiT **56%**（未提升） |
+| 短结构化审核 | 关闭自由 think，保留证据/规则/边界字段 | Exact **55%**；输出缩短 **31.19%**；吞吐提高 **59.58%** |
 
-前面的数学与蒸馏结果来自固定 100 条验证题；MeMo 结果来自 120 条独立新闻审核案例；CA-MeMo 结果来自严格分离的 72 条校准案例和 72 条困难测试案例；Macaron 课程使用 200 条清洁测试和 100 条成对表面扰动挑战。各项均为温度 0 的实际生成，完整参数、轮次、格式率和长度对照见 [多轮调参报告](course/TUNING_RESULTS.md)、[MeMo 实测报告](course/26_memo_rule_memory/RESULTS.md)、[CA-MeMo 实测报告](course/27_calibrated_adaptive_memo/RESULTS.md) 与 [Macaron 实测报告](course/30_macaron_mol_audit/RESULTS.md)。
+前面的数学与蒸馏结果来自固定 100 条验证题；MeMo 结果来自 120 条独立新闻审核案例；CA-MeMo 结果来自严格分离的 72 条校准案例和 72 条困难测试案例；Macaron 课程使用 200 条清洁测试和 100 条成对表面扰动挑战；RiT 使用 200 条独立多标签审核测试。各项均为温度 0 的实际生成，完整参数、轮次、格式率和长度对照见 [多轮调参报告](course/TUNING_RESULTS.md)、[MeMo 实测报告](course/26_memo_rule_memory/RESULTS.md)、[CA-MeMo 实测报告](course/27_calibrated_adaptive_memo/RESULTS.md)、[Macaron 实测报告](course/30_macaron_mol_audit/RESULTS.md) 与 [RiT 实测报告](course/32_rit_rubric_rl/RESULTS.md)。
 
 新闻分类 SFT/RLOO 的 Direct 结果与 CoT-RLOO 使用不同输出要求；97.50% 是 320 条独立新闻上的显式 CoT 分类结果，不应只按数值与 99.06% 的 Direct 短答案结果判断优劣。
 
@@ -35,7 +37,8 @@
 ms-swift-learn/
 ├── course/                     # 按学习顺序组织的训练课程与中文笔记
 │   ├── 30_macaron_mol_audit/data/ # 2000 条多标签审核数据、规则库和案例库
-│   └── 31_hierarchical_memory_agent/ # 独立三库、分层检索、SFT/GRPO 和经验 Wiki
+│   ├── 31_hierarchical_memory_agent/ # 独立三库、分层检索、SFT/GRPO 和经验 Wiki
+│   └── 32_rit_rubric_rl/      # 思维量规 GRPO、硬门控和短结构审核
 ├── datasets/gsm8k_1k/         # 固定 1000 条教学数据和 SHA-256 校验值
 ├── datasets/multimodal_200/   # 固定 200 条文本/图片/图文混合教学数据
 ├── datasets/fudan_news_4class/ # 固定 1600 条四分类数据和校验值
@@ -47,6 +50,7 @@ ms-swift-learn/
 ├── datasets/calibrated_adaptive_memo/ # 校准集、OOD 与六类困难审核测试
 ├── datasets/confidence_news/ # RLCR、独立 Verifier、ID 校准与真实 OOD 数据
 ├── datasets/hierarchical_memory_audit/ # 多源分层审核轨迹、规则与目录知识
+├── datasets/rit_audit/          # 显式思维与短结构化 RiT 数据视图
 ├── results/evaluations/       # 33 组逐题生成评测
 ├── results/figures/           # 精选训练曲线
 ├── results/jitrl/             # JitRL 精选实验摘要
@@ -120,6 +124,7 @@ bash course/run_multimodal_full.sh
 17. 完成 [独立 Qwen Verifier](course/29_independent_confidence_verifier/README.md)，学习用真实成对 RM 训练估计候选正确概率并拒绝 OOD。
 18. 完成 [Macaron-V1 风格多 LoRA 内容审核](course/30_macaron_mol_audit/README.md)，学习回合级专家路由、Top-2 多标签扩展、规则/案例检索和新增专家回归验证。
 19. 完成 [独立多源分层记忆审核 Agent](course/31_hierarchical_memory_agent/README.md)，学习三类独立库、深层目录导航、多轮 SFT/GYM-GRPO，以及非 Skill 的 Experience Wiki。
+20. 完成 [RiT 思维量规强化学习](course/32_rit_rubric_rl/README.md)，学习逐样本二元 rubric、结果硬门控、ms-swift 自定义 ORM，以及关闭自由 think 的短结构化消融。
 
 ## 复现命令
 
@@ -201,6 +206,9 @@ bash course/30_macaron_mol_audit/run_full.sh
 
 # 独立规则、Case、知识三库的分层记忆审核 Agent
 bash course/31_hierarchical_memory_agent/run_full.sh
+
+# RiT 思维量规 GRPO 与短结构化审核消融
+bash course/32_rit_rubric_rl/run_full.sh
 ```
 
 训练产物、JitRL、KCR-JitRL、MeMo 和 CA-MeMo 完整轨迹默认写入被 Git 忽略的 `outputs/`。项目不会自动上传模型或检查点。

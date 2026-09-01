@@ -289,6 +289,14 @@ bash course/31_hierarchical_memory_agent/run_full.sh
 
 第 31 节不再把规则、Case 和知识假设成同一个库，而是用源注册表连接 JSONL、SQLite 和目录文档三个独立深层后端。一个 Qwen Agent 学习 `locate → search → finish` 或直接结束，先做完整轨迹 SFT，再用逐状态 `last_round` SFT 对齐真实多轮推理，最后通过 GYM-GRPO 优化来源选择、引用落地和工具效率。课程还借鉴 WikiSkill 的经验沉淀组织方式，但 Experience Wiki 不是 Skill，详见 [课程说明](31_hierarchical_memory_agent/README.md) 与 [实测报告](31_hierarchical_memory_agent/RESULTS.md)。
 
+### 20. RiT：思维量规强化学习与短结构化审核
+
+```bash
+bash course/32_rit_rubric_rl/run_full.sh
+```
+
+第 32 节使用本地 BeaverTails 1600 条 train，把普通结果奖励 GRPO 与 RiT 的六项 thinking rubric + `min` 硬门控放在同一 SFT 起点对照，并额外实现 `enable_thinking=false` 的证据、规则、边界五字段路线。真实实验中本地模板 RiT 从 57% 降到 56%，没有产生增益；短结构路线达到 55%，但输出缩短 31.19%、吞吐提高 59.58%。失败原因、数据通用格式、API 独立评审和 ms-swift 额外插件见 [RiT 教程](32_rit_rubric_rl/README.md) 与 [实测报告](32_rit_rubric_rl/RESULTS.md)。
+
 ## 先跑完整冒烟测试链路
 
 ```bash
@@ -310,6 +318,10 @@ SMOKE=1 bash course/25_agent_r1_news/train_grpo.sh
 SMOKE=1 bash course/31_hierarchical_memory_agent/train_sft.sh
 SMOKE=1 bash course/31_hierarchical_memory_agent/train_state_sft.sh
 SMOKE=1 bash course/31_hierarchical_memory_agent/train_grpo.sh
+SMOKE=1 bash course/32_rit_rubric_rl/train_sft.sh
+SMOKE=1 bash course/32_rit_rubric_rl/train_rit.sh
+SMOKE=1 bash course/32_rit_rubric_rl/train_structured_sft.sh
+SMOKE=1 bash course/32_rit_rubric_rl/train_structured_rit.sh
 ```
 
 冒烟测试输出带 `_smoke` 后缀，不会被正式实验误用。正式实验不设置 `SMOKE`，脚本会自动寻找同一模式下最近的前置检查点。
@@ -343,6 +355,7 @@ find outputs -name logging.jsonl -print
 - JitRL：总体/前 10 局/后 10 局成功率、经验邻居数、参数不变量。
 - Agent-R1：Recall@K、反思最佳增益/成功率、组合 F1、决策 macro-F1、证据覆盖、显式思考覆盖率、无效动作率和平均轮数。
 - 分层记忆 Agent：目录 Recall@K、候选子树占比、来源选择、无效动作率、多标签 F1、记忆引用落地和平均工具调用数。
+- RiT：outcome/thinking/gated reward、组内零方差比例、逐 rubric 通过率、严格多标签 Exact 和平均输出长度。
 
 ## 参数实验顺序
 

@@ -1,0 +1,74 @@
+{
+  "schema_version": 1,
+  "course": "RiT 内容审核本地复现",
+  "source": "本地 BeaverTails 2000 + 第 31 课 active 规则",
+  "split_sizes": {
+    "train": 1600,
+    "validation": 200,
+    "test": 200
+  },
+  "generated_rows": {
+    "sft_train.jsonl": 1600,
+    "sft_validation.jsonl": 200,
+    "sft_smoke.jsonl": 32,
+    "rl_train.jsonl": 1600,
+    "rl_validation.jsonl": 200,
+    "rl_test.jsonl": 200,
+    "rl_smoke.jsonl": 32,
+    "structured_sft_train.jsonl": 1600,
+    "structured_sft_validation.jsonl": 200,
+    "structured_sft_smoke.jsonl": 32,
+    "structured_rl_train.jsonl": 1600,
+    "structured_rl_validation.jsonl": 200,
+    "structured_rl_test.jsonl": 200,
+    "structured_rl_smoke.jsonl": 32
+  },
+  "safe_unsafe": {
+    "train": {
+      "UNSAFE": 886,
+      "SAFE": 714
+    },
+    "validation": {
+      "UNSAFE": 110,
+      "SAFE": 90
+    },
+    "test": {
+      "UNSAFE": 111,
+      "SAFE": 89
+    }
+  },
+  "rubric_items": [
+    "任务分解",
+    "证据落地",
+    "规则覆盖",
+    "边界检查",
+    "结论一致",
+    "简洁不重复"
+  ],
+  "structured_rubric_items": [
+    "固定格式",
+    "证据落地",
+    "规则匹配",
+    "边界简洁",
+    "字段一致",
+    "无自由思维链"
+  ],
+  "checksums": {
+    "rl_smoke.jsonl": "5509ae0b700e91cbbe76af47ef74f71a683787a57ff909e6f31ed475cc1da7b5",
+    "rl_test.jsonl": "175de143ce2937e884c578fcd8567a3808e72fd350c9793a9d7e0de147bac00c",
+    "rl_train.jsonl": "515b54b2ba58a780fe0a076848e494372abc4f5dda220f4282dc21b9d508bb1a",
+    "rl_validation.jsonl": "9c9709a3741b497ff322779c56b885baf4fff0c84e5bd4e83ad6189455830c4c",
+    "sft_smoke.jsonl": "67008f2c1a5d0ac71dfe45f0af662b9e8da1724442c104cf56fbf239b44f6843",
+    "sft_train.jsonl": "dff73a82077a609f57495fa0512fa7fab9dde34e218ea76181466beb4aca214c",
+    "sft_validation.jsonl": "aa9687993a490d80ef2b52670a5348f391a96b5c2eff84b57897585438a69736",
+    "structured_rl_smoke.jsonl": "89a47bcfd27be3bb2955f284487d9419c5c06e9db9f1156bcb62684ec130b128",
+    "structured_rl_test.jsonl": "5da4f080146b82a2e344a23876ea441a122899cde745accd56035491268cb616",
+    "structured_rl_train.jsonl": "acb5b61b30865b1ef90edc12f231b34cb194aa0875009498670b562d646dc78a",
+    "structured_rl_validation.jsonl": "8857e2db2a67b69173b0ff41e86e76fec4b3659d238c8f721910db5bef903e64",
+    "structured_sft_smoke.jsonl": "1a52f240b7cdd6cba00bd4582aaea503f2d819ef15ddb9029902df148d3eab77",
+    "structured_sft_train.jsonl": "108cdf3653eab51d426e3b4bbb7711ac257cb0ede15fede01ab39789d14195f9",
+    "structured_sft_validation.jsonl": "d6d793c32f055e8fed47d576b21b10dd2faf6dae7c11f4ecee546118d9086efc",
+    "README.md": "54262aaab2bc1753db5cadaaf8badd5878bbb8f0597e22d5b25fdb5fb63e3c85"
+  },
+  "leakage_guard": "训练只用 train；validation/test 不进入 SFT、GRPO 或任何可检索 Case 库"
+}
